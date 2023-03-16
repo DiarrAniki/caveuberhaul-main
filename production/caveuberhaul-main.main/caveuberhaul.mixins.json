@@ -1,0 +1,15 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "diarr.caveuberhaul.mixin",
+    "compatibilityLevel": "JAVA_8",
+    "mixins": [
+        "MapGenBaseMixin",
+        "ChunkProviderGenerateOverworldMixin"
+    ],
+    "client": [
+    ],
+    "injectors": {
+        "defaultRequire": 1
+  }
+}
