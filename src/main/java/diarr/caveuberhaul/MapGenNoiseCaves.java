@@ -1,28 +1,19 @@
-package diarr.caveuberhaul.mixin;
+package diarr.caveuberhaul;
 
-
-import diarr.caveuberhaul.FastNoiseLite;
-import diarr.caveuberhaul.UberUtil;
-import net.minecraft.src.*;
 import net.minecraft.shared.Minecraft;
-import net.minecraft.src.Block;
-import net.minecraft.src.World;
-import org.spongepowered.asm.mixin.Mixin;
+import net.minecraft.src.*;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-//Huge thanks to Worley and the Worley Caves mod https://www.curseforge.com/minecraft/mc-mods/worleys-caves for explaining how alot of this works.
-//@Mixin(value= MapGenBase.class,remap = false)
-@Mixin(value= MapGenBase.class,remap = false)
-public class MapGenBaseMixin {
+public class MapGenNoiseCaves extends MapGenBase {
 
     public boolean[][][] cutoffValues;
 
     private static float surfaceCutoff=1.2f;
     private static int lavaDepth = 10;
-    @Shadow
+
     protected World worldObj;
 
     private static float coreThresCheese = 0.45f;
@@ -35,13 +26,17 @@ public class MapGenBaseMixin {
 
     private static UberUtil uberUtil = new UberUtil();
 
-    @Inject(method = "generate", at = @At("HEAD"),cancellable = true)
-    public void doGeneration(IChunkProvider ichunkprovider, World world, int baseChunkX, int baseChunkZ, short[] ashort0, CallbackInfo ci)
+    private boolean isAlpha;
+
+    public MapGenNoiseCaves(boolean isAlpha) {
+        this.isAlpha = isAlpha;
+    }
+
+    public void generate(IChunkProvider ichunkprovider, World world, int baseChunkX, int baseChunkZ, short[] ashort0)
     {
         this.worldObj = world;
         cutoffValues = new boolean[16][256][16];
         generateNoiseCaves(worldObj,baseChunkX, baseChunkZ, ashort0);
-        ci.cancel();
     }
 
     private void generateNoiseCaves(World world,int baseChunkX,int baseChunkZ, short[]data)
@@ -141,6 +136,8 @@ public class MapGenBaseMixin {
                     boolean caveFlagCoreCavern = noiseValCheese > coreCavernNoiseCutoff;
                     boolean waterFlag = Block.getBlock(data[x << Minecraft.WORLD_HEIGHT_BITS + 4 | z << Minecraft.WORLD_HEIGHT_BITS | y]) instanceof BlockFluid;
 
+                    cutoffValues[x][y][z]=false;
+
                     //System.out.println(noiseValCheese+" "+adjustedCheeseNoiseCutoffBetween);
                     if ((caveFlagCoreCavern||caveFlagChambers||caveFlagNoodle||caveFlagWorm)&&!bedrockFlag&&!waterFlag)
                     {
@@ -177,19 +174,19 @@ public class MapGenBaseMixin {
 
     private void digBlock(short[] data , int localX,int localY,int localZ)
     {
-            if(localY<= lavaDepth)
-            {
-                data[localX << Minecraft.WORLD_HEIGHT_BITS + 4 | localZ << Minecraft.WORLD_HEIGHT_BITS | localY] = (short)Block.fluidLavaStill.blockID;
-            } else
-            {
-                data[localX << Minecraft.WORLD_HEIGHT_BITS + 4 | localZ << Minecraft.WORLD_HEIGHT_BITS | localY]=0;
-
-                if (data[localX << Minecraft.WORLD_HEIGHT_BITS + 4 | localZ << Minecraft.WORLD_HEIGHT_BITS | localY] == 0 && data[localX << Minecraft.WORLD_HEIGHT_BITS + 4 | localZ << Minecraft.WORLD_HEIGHT_BITS | localY-1] == Block.dirt.blockID)
-                {
-                    data[localX << Minecraft.WORLD_HEIGHT_BITS + 4 | localZ << Minecraft.WORLD_HEIGHT_BITS | localY-1] = (short) Block.grass.blockID;
-                }
-            }
+        if(localY<= lavaDepth)
+        {
+            data[localX << Minecraft.WORLD_HEIGHT_BITS + 4 | localZ << Minecraft.WORLD_HEIGHT_BITS | localY] = (short)Block.fluidLavaStill.blockID;
+        } else
+        {
+            data[localX << Minecraft.WORLD_HEIGHT_BITS + 4 | localZ << Minecraft.WORLD_HEIGHT_BITS | localY]=0;
             this.cutoffValues[localX][localY][localZ] = true;
+            if (data[localX << Minecraft.WORLD_HEIGHT_BITS + 4 | localZ << Minecraft.WORLD_HEIGHT_BITS | localY] == 0 && data[localX << Minecraft.WORLD_HEIGHT_BITS + 4 | localZ << Minecraft.WORLD_HEIGHT_BITS | localY-1] == Block.dirt.blockID)
+            {
+                data[localX << Minecraft.WORLD_HEIGHT_BITS + 4 | localZ << Minecraft.WORLD_HEIGHT_BITS | localY-1] = (short) Block.grass.blockID;
+            }
+        }
+
     }
 
     private int getMaxSurfaceHeight(short[] data)
@@ -219,15 +216,5 @@ public class MapGenBaseMixin {
     private boolean isFluidBlock(Block block)
     {
         return block instanceof BlockFluid;
-    }
-
-    public float smoothUnion(float a, float b, float delta) {
-        float h = uberUtil.clamp(0.5F + 0.5F * (b - a) / delta, 0, 1);
-        return uberUtil.lerp(b, a, h) - delta * h * (1 - h);
-    }
-
-    private float ClampedLerp(float a,float b,float t)
-    {
-        return uberUtil.clamp(uberUtil.lerp(a,b,t),-1,1);
     }
 }

@@ -4,7 +4,6 @@
     "package": "diarr.caveuberhaul.mixin",
     "compatibilityLevel": "JAVA_8",
     "mixins": [
-        "MapGenBaseMixin",
         "ChunkProviderGenerateOverworldMixin"
     ],
     "client": [
