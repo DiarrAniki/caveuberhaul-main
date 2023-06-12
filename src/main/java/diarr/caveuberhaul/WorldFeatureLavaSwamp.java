@@ -1,13 +1,17 @@
 package diarr.caveuberhaul;
 
-import net.minecraft.core.block.Block;
-import net.minecraft.core.world.World;
-import net.minecraft.core.world.generate.feature.WorldFeature;
+import net.minecraft.shared.Minecraft;
+import net.minecraft.src.Block;
+import net.minecraft.src.Chunk;
+import net.minecraft.src.World;
+import net.minecraft.src.WorldGenerator;
+
 import java.util.Random;
 
 
-public class WorldFeatureLavaSwamp extends WorldFeature {
+public class WorldFeatureLavaSwamp extends WorldGenerator {
     private UberUtil uberUtil = new UberUtil();
+    private static FastNoiseLite swampNoise = new FastNoiseLite();
     public boolean generate(World world, Random random, int i, int j, int k) {
         int radius = random.nextInt(20)+6;
         int height = random.nextInt(5)+1;
@@ -23,17 +27,13 @@ public class WorldFeatureLavaSwamp extends WorldFeature {
                         double dist = uberUtil.distanceAB(circleX, circleY, circleZ, i, circleY, k);
 
                         if (uberUtil.isSurroundedAndFreeAbove(circleX, circleY, circleZ, world) && dist <= radius) {
-                            //System.out.println("placed at x: "+(i+circleX)+" z: "+(k+circleZ));
-                            for (int depth = circleY; depth >= circleY - random.nextInt(3); depth--) {
-                                if(!world.isAirBlock(circleX,depth-1,circleZ))
-                                world.setBlockRaw(circleX, depth, circleZ, Block.fluidLavaStill.id);
-                            }
+                            world.setBlock(circleX, circleY, circleZ, Block.fluidLavaStill.blockID);
+                            world.setBlock(circleX, circleY-1, circleZ, Block.fluidLavaStill.blockID);
                         }
                     }
                 }
             }
         }
-
         return true;
     }
 }

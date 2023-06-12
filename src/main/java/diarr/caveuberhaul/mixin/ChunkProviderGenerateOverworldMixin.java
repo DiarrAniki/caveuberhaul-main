@@ -1,695 +1,576 @@
 package diarr.caveuberhaul.mixin;
 
-import diarr.caveuberhaul.UberUtil;
-import diarr.caveuberhaul.WorldFeatureLavaSwamp;
-import diarr.caveuberhaul.WorldFeatureThermalVent;
-import net.minecraft.core.Minecraft;
-import net.minecraft.core.block.Block;
-import net.minecraft.core.block.BlockFluid;
-import net.minecraft.core.block.BlockSand;
-import net.minecraft.core.block.material.Material;
-import net.minecraft.core.world.World;
-import net.minecraft.core.world.WorldType;
-import net.minecraft.core.world.biome.Biome;
-import net.minecraft.core.world.chunk.Chunk;
-import net.minecraft.core.world.generate.chunk.perlin.overworld.ChunkDecoratorOverworld;
-import net.minecraft.core.world.generate.feature.*;
-import net.minecraft.core.world.noise.NoiseGeneratorOctaves;
+import diarr.caveuberhaul.*;
+import net.minecraft.shared.Minecraft;
+import net.minecraft.src.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Random;
 
 //Huge thanks to Worley and the Worley Caves mod https://www.curseforge.com/minecraft/mc-mods/worleys-caves for explaining how alot of this works.
-@Mixin(value= ChunkDecoratorOverworld.class,remap = false)
+@Mixin(value= ChunkProviderGenerateOverworld.class,remap = false)
 public class ChunkProviderGenerateOverworldMixin {
 
     private UberUtil uberUtil = new UberUtil();
 
-    @Shadow
-    private World world;
-    @Shadow
-    private NoiseGeneratorOctaves treeDensityNoise;
-    @Shadow
-    private int treeDensityOverride;
+    private CaveBiomeProvider caveBiomeProvider = new CaveBiomeProvider();
+    private static FastNoiseLite noFlowstoneNoiseMap = new FastNoiseLite();
 
-    @Inject(method = "decorate", at = @At("HEAD"),cancellable = true)
-    public void populate(Chunk chunk, CallbackInfo ci)
+    protected MapGenBase caveGen = new MapGenNoiseCaves(false);
+    private int[][][] caveBiomeValues;
+
+    @Shadow
+    protected World worldObj;
+    @Shadow
+    protected Random rand;
+    @Shadow
+    protected int terrainMaxHeight;
+    @Shadow
+    protected int heightModifier;
+    @Shadow
+    protected int treeDensityOverride;
+
+    @Shadow
+    public NoiseGeneratorOctaves mobSpawnerNoise;
+
+    @Shadow
+    protected double[] generatedTemperatures;
+    @Shadow
+    protected BiomeGenBase[] biomesForGeneration;
+     @Shadow
+     protected int oceanHeight;
+
+    //@Shadow protected MapGenBase caveGen;
+
+    @Inject(method = "provideChunk", at = @At("HEAD"),cancellable = true)
+    public void provideChunk(int x, int z, CallbackInfoReturnable<Chunk> cir) {
+        this.rand.setSeed((long)x * 341873128712L + (long)z * 132897987541L);
+        short[] ashort0 = new short[256 * Minecraft.WORLD_HEIGHT_BLOCKS];
+        Chunk chunk = new Chunk(this.worldObj, ashort0, x, z);
+        this.biomesForGeneration = this.worldObj.getWorldChunkManager().loadBlockGeneratorData(this.biomesForGeneration, x * 16, z * 16, 16, 16);
+
+        for(int i = 0; i < 256; ++i) {
+            chunk.biome[i] = (byte)this.biomesForGeneration[i].id;
+        }
+
+        ((ChunkProviderGenerateOverworld)(Object)this).generateTerrain(x, z, ashort0);
+        ((ChunkProviderGenerateOverworld)(Object)this).replaceBlocksForBiome(x, z, ashort0, this.biomesForGeneration);
+        caveGen.generate(((ChunkProviderGenerateOverworld)(Object)this), this.worldObj, x, z, ashort0);
+        chunk.func_1024_c();
+        cir.setReturnValue(chunk);
+    }
+
+    @Inject(method = "populate", at = @At("HEAD"),cancellable = true)
+    public void populate(IChunkProvider ichunkprovider, int chunkX, int chunkZ, CallbackInfo ci)
     {
-        int chunkX = chunk.xPosition;
-        int chunkZ = chunk.zPosition;
-
-        int minY = world.getWorldType().minY;
-        int maxY = world.getWorldType().maxY;
-        int rangeY = (maxY + 1) - minY;
-
-        float oreHeightModifier = rangeY / 128f;
-
         BlockSand.fallInstantly = true;
         int x = chunkX * 16;
         int z = chunkZ * 16;
-        int y = world.getHeightValue(x + 16, z + 16);
-        Biome biome = world.getBlockBiome(x + 16, y, z + 16);
-        Random rand = new Random(world.getRandomSeed());
-        long l1 = (rand.nextLong() / 2L) * 2L + 1L;
-        long l2 = (rand.nextLong() / 2L) * 2L + 1L;
-        rand.setSeed((long) chunkX * l1 + (long) chunkZ * l2 ^ world.getRandomSeed());
-        Random swampRand = new Random((long) chunkX * l1 + (long) chunkZ * l2 ^ world.getRandomSeed());
-        double d = 0.25D;
+        BiomeGenBase biomegenbase = this.worldObj.getWorldChunkManager().getBiomeGenAt(x + 16, z + 16);
+        caveBiomeValues = caveBiomeProvider.provideCaveBiomeValueChunk(chunkX,chunkZ,worldObj);
+        this.rand.setSeed(this.worldObj.getRandomSeed());
+        long l1 = this.rand.nextLong() / 2L * 2L + 1L;
+        long l2 = this.rand.nextLong() / 2L * 2L + 1L;
+        this.rand.setSeed((long)chunkX * l1 + (long)chunkZ * l2 ^ this.worldObj.getRandomSeed());
+        double d = 0.25;
+
+        int pillarChance = 4;
+
+        Chunk chunk = worldObj.getChunkFromChunkCoords(chunkX,chunkZ);
+        short[] blocks = chunk.blocks;
+        replaceBlocksForCaveBiome(chunk,blocks,x,z,worldObj);
+
 
         if(rand.nextFloat()>0.92f) {
             int lsx = x + rand.nextInt(16);
             int lsz = z + rand.nextInt(16);
-            new WorldFeatureLavaSwamp().generate(world, rand, lsx, 10, lsz);
+            new WorldFeatureLavaSwamp().generate(worldObj, rand, lsx, 10, lsz);
         }
 
-        /*if(rand.nextFloat()>0.6f)
-        {
-            int tvcx = x + rand.nextInt(16);
-            int tvcz = z + rand.nextInt(16);
-            int tvcy = 10;
-            for(int k1 = 0;k1<=3+rand.nextInt(3);k1++)
-            {
-                double r = rand.nextInt(12)+6 * Math.sqrt(rand.nextFloat());
-                double theta = rand.nextFloat() * 2 * Math.PI;
-                int tvx = (int) (tvcx + r * Math.cos((theta)));
-                int tvy = uberUtil.GetFirstAirBlock(tvcx,10,tvcz,world);
-                int tvz = (int) (tvcz + r * Math.sin(theta));
-                new WorldFeatureThermalVent().generate(world, rand, tvx, tvy, tvz);
-            }
-        }*/
-
-        // Water pass for swamps
-        if (biome == Biome.SWAMPLAND)
-        {
-            (new WorldFeatureMudPatch()).generate(world, rand, x, 0, z);
-            for (int dx = 0; dx < 16; dx++)
-            {
-                for (int dz = 0; dz < 16; dz++)
-                {
-                    int topBlock = world.getHeightValue(x + dx, z + dz);
-                    int id = world.getBlockId(x + dx, topBlock - 1, z + dz);
-                    if (id == Block.grass.id)
-                    {
-                        boolean shouldPlaceWater = swampRand.nextFloat() < 0.5f;
-                        if (shouldPlaceWater)
-                        {
-                            int posXId = world.getBlockId(x + dx + 1, topBlock - 1, z + dz);
-                            int negXId = world.getBlockId(x + dx - 1, topBlock - 1, z + dz);
-                            int posZId = world.getBlockId(x + dx, topBlock - 1, z + dz + 1);
-                            int negZId = world.getBlockId(x + dx, topBlock - 1, z + dz - 1);
-                            int negYId = world.getBlockId(x + dx, topBlock - 2, z + dz);
-                            if (
-                                    posXId != 0 && (Block.blocksList[posXId].blockMaterial.isSolid() || Block.blocksList[posXId].blockMaterial == Material.water) &&
-                                            negXId != 0 && (Block.blocksList[negXId].blockMaterial.isSolid() || Block.blocksList[negXId].blockMaterial == Material.water) &&
-                                            posZId != 0 && (Block.blocksList[posZId].blockMaterial.isSolid() || Block.blocksList[posZId].blockMaterial == Material.water) &&
-                                            negZId != 0 && (Block.blocksList[negZId].blockMaterial.isSolid() || Block.blocksList[negZId].blockMaterial == Material.water) &&
-                                            negYId != 0 && Block.blocksList[negYId].blockMaterial.isSolid()
-                            )
-                            {
-                                world.setBlock(x + dx, topBlock - 1, z + dz, Block.fluidWaterStill.id);
-                                world.setBlock(x + dx, topBlock, z + dz, 0);
-                            }
-                        }
-                    }
-                }
+        for(int i=0;i<=rand.nextInt(8);i++) {
+            int px = x + rand.nextInt(16);
+            int pz = z + rand.nextInt(16);
+            int py = 11+rand.nextInt(terrainMaxHeight-11);
+            if(worldObj.isAirBlock(px,py,pz)) {
+                new WorldFeatureCavePillar().generate(worldObj, rand, px, py, pz);
             }
         }
 
-        if (biome == Biome.OUTBACK) {
-
-            (new WorldFeatureScorchedGrass()).generate(world, rand, x, 0, z);
+        for(int i=0;i<=4+rand.nextInt(12);i++) {
+            int px = x + rand.nextInt(16);
+            int pz = z + rand.nextInt(16);
+            int py = 40 + rand.nextInt(terrainMaxHeight-40);
+            if(worldObj.isAirBlock(px,py,pz)) {
+                new WorldFeatureSmallCavePillar().generate(worldObj, rand, px, py, pz);
+            }
         }
+
+        for(int i=0;i<=rand.nextInt(4);i++) {
+            int px = x + rand.nextInt(16);
+            int pz = z + rand.nextInt(16);
+            int py = rand.nextInt(terrainMaxHeight);
+            if(worldObj.isAirBlock(px,py,pz)) {
+                new WorldFeatureSmallCavePillar().generate(worldObj, rand, px, py, pz);
+            }
+        }
+
 
         int lakeChance = 4;
-        if (biome == Biome.SWAMPLAND)
+        if (biomegenbase == BiomeGenBase.swampland) {
             lakeChance = 2;
-        if (biome == Biome.DESERT)
+        }
+
+        if (biomegenbase == BiomeGenBase.desert) {
             lakeChance = 0;
+        }
         if (lakeChance != 0 && rand.nextInt(lakeChance) == 0) {
-            int fluid = Block.fluidWaterStill.id;
-            if (biome.hasSurfaceSnow())
-            {
-                fluid = Block.ice.id;
-            }
             int i1 = x + rand.nextInt(16) + 8;
-            int l4 = minY + rand.nextInt(rangeY);
+            int l4 = rand.nextInt(terrainMaxHeight);
             int i8 = z + rand.nextInt(16) + 8;
-            (new WorldFeatureLake(fluid)).generate(world, rand, i1, l4, i8);
+            (new WorldGenLakes(Block.fluidWaterStill.blockID)).generate(worldObj, rand, i1, l4, i8);
         }
         if (rand.nextInt(8) == 0) {
             int xf = x + rand.nextInt(16) + 8;
-            int yf = minY + rand.nextInt(rand.nextInt(rangeY - (rangeY / 16)) + (rangeY / 16));
+            int yf = this.rand.nextInt(this.rand.nextInt(this.terrainMaxHeight - this.terrainMaxHeight / 16) + this.terrainMaxHeight / 16);
             int zf = z + rand.nextInt(16) + 8;
-            if (yf < minY + rangeY / 2 || rand.nextInt(10) == 0) {
-                (new WorldFeatureLake(Block.fluidLavaStill.id)).generate(world, rand, xf, yf, zf);
+            if (yf < 64 || this.rand.nextInt(10) == 0) {
+                (new WorldGenLakes(Block.fluidLavaStill.blockID)).generate(this.worldObj, this.rand, xf, yf, zf);
             }
         }
 
-        for (int k1 = 0; k1 < (8 * oreHeightModifier); k1++) {
+
+
+        for (int k1 = 0; k1 < (8 * this.heightModifier); k1++) {
             int j5 = x + rand.nextInt(16) + 8;
-            int k8 = minY + rand.nextInt(rangeY);
+            int k8 = this.rand.nextInt(this.terrainMaxHeight);
             int j11 = z + rand.nextInt(16) + 8;
             if (rand.nextInt(2) == 0) {
-                (new WorldFeatureDungeon(Block.brickClay.id, Block.brickClay.id, null)).generate(world, rand, j5, k8, j11);
+                (new WorldGenDungeon(Block.brickClay.blockID, Block.brickClay.blockID, null)).generate(worldObj, rand, j5, k8, j11);
             } else {
-                (new WorldFeatureDungeon(Block.cobbleStone.id, Block.cobbleStoneMossy.id, null)).generate(world, rand, j5, k8, j11);
+                (new WorldGenDungeon(Block.cobbleStone.blockID, Block.cobbleStoneMossy.blockID, null)).generate(worldObj, rand, j5, k8, j11);
             }
         }
 
         for (int k1 = 0; k1 < 1; k1++) {
             int j5 = x + rand.nextInt(16) + 8;
             int j11 = z + rand.nextInt(16) + 8;
-            int k8 = world.getHeightValue(j5, j11) - (rand.nextInt(2) + 2);
+            int k8 = worldObj.getHeightValue(j5, j11) - (rand.nextInt(2) + 2);
 
             //chance to sink labyrinth
             if (rand.nextInt(5) == 0)
                 k8 -= rand.nextInt(10) + 30;
 
             if (rand.nextInt(700) == 0) {
-                (new WorldFeatureLabyrinth()).generate(world, rand, j5, k8, j11);
+                (new WorldGenLabyrinth()).generate(worldObj, rand, j5, k8, j11);
             }
         }
 
-        for (int i2 = 0; i2 < (20 * oreHeightModifier); i2++) {
+        for (int i2 = 0; i2 < (20 * this.heightModifier); i2++) {
             int k5 = x + rand.nextInt(16);
-            int l8 = minY + rand.nextInt(rangeY);
+            int l8 = this.rand.nextInt(this.terrainMaxHeight);
             int k11 = z + rand.nextInt(16);
-            (new WorldFeatureClay(32)).generate(world, rand, k5, l8, k11);
+            (new WorldGenClay(32)).generate(worldObj, rand, k5, l8, k11);
         }
-        if (biome == Biome.OUTBACK) {
+        if (biomegenbase == BiomeGenBase.outback) {
             int l5 = x + rand.nextInt(16);
             int l11 = z + rand.nextInt(16);
-            int i9 = world.getHeightValue(l5, l11);
-            (new WorldFeatureRichScorchedDirt(20)).generate(world, rand, l5, i9, l11);
+            int i9 = worldObj.getHeightValue(l5, l11);
+            (new WorldGenRichDirt(20)).generate(worldObj, rand, l5, i9, l11);
         }
 
-
-        for (int j2 = 0; j2 < (20 * oreHeightModifier); j2++) {
+        for (int j2 = 0; j2 < (20 * this.heightModifier); j2++) {
             int l5 = x + rand.nextInt(16);
-            int i9 = minY + rand.nextInt(rangeY);
+            int i9 = 32+this.rand.nextInt(this.terrainMaxHeight-32);
             int l11 = z + rand.nextInt(16);
-            (new WorldFeatureOre(Block.dirt.id, 32, false)).generate(world, rand, l5, i9, l11);
+            (new WorldGenMinable(Block.dirt.blockID, 32, false)).generate(worldObj, rand, l5, i9, l11);
         }
 
-        for (int k2 = 0; k2 < (10 * oreHeightModifier); k2++) {
+        for (int k2 = 0; k2 < (10 * this.heightModifier); k2++) {
             int i6 = x + rand.nextInt(16);
-            int j9 = minY + rand.nextInt(rangeY);
+            int j9 = this.rand.nextInt(this.terrainMaxHeight);
             int i12 = z + rand.nextInt(16);
-            (new WorldFeatureOre(Block.gravel.id, 32, false)).generate(world, rand, i6, j9, i12);
+            (new WorldGenMinable(Block.gravel.blockID, 32, false)).generate(worldObj, rand, i6, j9, i12);
         }
 
-        for (int i3 = 0; i3 < (20 * oreHeightModifier); i3++) {
+        for (int i3 = 0; i3 < (20 * this.heightModifier); i3++) {
             int j6 = x + rand.nextInt(16);
-            int k9 = minY + 40+rand.nextInt(rangeY-40);
+            int k9 = 40+rand.nextInt(this.terrainMaxHeight-40);
             int j12 = z + rand.nextInt(16);
-            (new WorldFeatureOre(Block.oreCoalStone.id, 16, true)).generate(world, rand, j6, k9, j12);
+            (new WorldGenMinable(Block.oreCoalStone.blockID, 16, true)).generate(worldObj, rand, j6, k9, j12);
         }
 
-        for (int j3 = 0; j3 < (20 * oreHeightModifier); j3++) {
+        for (int j3 = 0; j3 < (20 * this.heightModifier); j3++) {
             int k6 = x + rand.nextInt(16);
-            int l9 = minY + 30 + rand.nextInt(rangeY / 2-30);
+            int l9 = 30 + rand.nextInt(this.terrainMaxHeight / 2-30);
             int k12 = z + rand.nextInt(16);
-            (new WorldFeatureOre(Block.oreIronStone.id, 8, true)).generate(world, rand, k6, l9, k12);
+            (new WorldGenMinable(Block.oreIronStone.blockID, 8, true)).generate(worldObj, rand, k6, l9, k12);
         }
-        for (int j3 = 0; j3 < (5 * oreHeightModifier); j3++) {
+        for (int j3 = 0; j3 < (5 * this.heightModifier); j3++) {
             int k6 = x + rand.nextInt(16);
-            int l9 = minY + (rand.nextInt(30));
+            int l9 = (rand.nextInt(30));
             int k12 = z + rand.nextInt(16);
-            (new WorldFeatureOre(Block.oreIronStone.id, 8, true)).generate(world, rand, k6, l9, k12);
+            (new WorldGenMinable(Block.oreIronStone.blockID, 8, true)).generate(worldObj, rand, k6, l9, k12);
         }
 
-        for (int k3 = 0; k3 < (2 * oreHeightModifier); k3++) {
+        for (int k3 = 0; k3 < (2 * this.heightModifier); k3++) {
             int l6 = x + rand.nextInt(16);
-            int i10 = minY + rand.nextInt(rangeY / 4);
+            int i10 = rand.nextInt(this.terrainMaxHeight / 4);
             int l12 = z + rand.nextInt(16);
-            (new WorldFeatureOre(Block.oreGoldStone.id, 8, true)).generate(world, rand, l6, i10, l12);
+            (new WorldGenMinable(Block.oreGoldStone.blockID, 8, true)).generate(worldObj, rand, l6, i10, l12);
         }
 
-        for (int l3 = 0; l3 < (8 * oreHeightModifier); l3++) {
+        for (int l3 = 0; l3 < (8 * this.heightModifier); l3++) {
             int i7 = x + rand.nextInt(16);
-            int j10 = minY + rand.nextInt(rangeY / 8);
+            int j10 = rand.nextInt(this.terrainMaxHeight / 8);
             int i13 = z + rand.nextInt(16);
-            (new WorldFeatureOre(Block.oreRedstoneStone.id, 7, true)).generate(world, rand, i7, j10, i13);
+            (new WorldGenMinable(Block.oreRedstoneStone.blockID, 7, true)).generate(worldObj, rand, i7, j10, i13);
         }
 
-        for (int i4 = 0; i4 < oreHeightModifier/2; i4++) {
+        for (int i4 = 0; i4 < this.heightModifier/2; i4++) {
             int j7 = x + rand.nextInt(16);
-            int k10 = minY + rand.nextInt(rangeY / 8);
+            int k10 = rand.nextInt(this.terrainMaxHeight / 8);
             int j13 = z + rand.nextInt(16);
-            (new WorldFeatureOre(Block.oreDiamondStone.id, 7, true)).generate(world, rand, j7, k10, j13);
+            (new WorldGenMinable(Block.oreDiamondStone.blockID, 7, true)).generate(worldObj, rand, j7, k10, j13);
         }
 
-        for (int i4 = 0; i4 < oreHeightModifier; i4++) {
+        for (int i4 = 0; i4 < this.heightModifier; i4++) {
             int j7 = x + rand.nextInt(16);
-            int k10 = minY + 40 + rand.nextInt(rangeY / 2-40);
+            int k10 = 40 + rand.nextInt(this.terrainMaxHeight / 2-40);
             int j13 = z + rand.nextInt(16);
-            (new WorldFeatureOre(Block.mossStone.id, 32, true)).generate(world, rand, j7, k10, j13);
+            (new WorldGenMinable(Block.mossStone.blockID, 32, true)).generate(worldObj, rand, j7, k10, j13);
         }
 
-        for (int j4 = 0; j4 < oreHeightModifier; j4++) {
+        for (int j4 = 0; j4 < this.heightModifier; j4++) {
             int k7 = x + rand.nextInt(16);
-            int l10 = minY + rand.nextInt(rangeY / 8) + rand.nextInt(rangeY / 8);
+            int l10 = rand.nextInt(this.terrainMaxHeight / 8) + rand.nextInt(this.terrainMaxHeight / 8);
             int k13 = z + rand.nextInt(16);
-            (new WorldFeatureOre(Block.oreLapisStone.id, 6, true)).generate(world, rand, k7, l10, k13);
+            (new WorldGenMinable(Block.oreLapisStone.blockID, 6, true)).generate(worldObj, rand, k7, l10, k13);
         }
 
 
-        d = 0.5D;
-        int k4 = (int) ((treeDensityNoise.generateNoise((double) x * d, (double) z * d) / 8D + rand.nextDouble() * 4D + 4D) / 3D);
+        d = 0.5;
+        int k4 = (int)((this.mobSpawnerNoise.func_806_a((double)x * d, (double)z * d) / 8.0 + this.rand.nextDouble() * 4.0 + 4.0) / 3.0);
         int treeDensity = 0;
-        if (rand.nextInt(10) == 0) {
-            treeDensity++;
+        if (this.treeDensityOverride != -1) {
+            treeDensity = this.treeDensityOverride;
+        } else {
+            if (this.rand.nextInt(10) == 0) {
+                ++treeDensity;
+            }
+
+            if (biomegenbase == BiomeGenBase.forest) {
+                treeDensity += k4 + 5;
+            }
+
+            if (biomegenbase == BiomeGenBase.rainforest) {
+                treeDensity += k4 + 10;
+            }
+
+            if (biomegenbase == BiomeGenBase.seasonalForest) {
+                treeDensity += k4 + 2;
+            }
+
+            if (biomegenbase == BiomeGenBase.taiga) {
+                treeDensity += k4 + 5;
+            }
+
+            if (biomegenbase == BiomeGenBase.borealForest) {
+                treeDensity += k4 + 3;
+            }
+
+            if (biomegenbase == BiomeGenBase.desert) {
+                treeDensity += k4 + 1;
+            }
+
+            if (biomegenbase == BiomeGenBase.tundra) {
+                treeDensity -= 20;
+            }
+
+            if (biomegenbase == BiomeGenBase.plains) {
+                treeDensity -= 20;
+            }
+
+            if (biomegenbase == BiomeGenBase.swampland) {
+                treeDensity += k4 + 4;
+            }
         }
-        if (biome == Biome.FOREST) {
-            treeDensity += k4 + 5;
-        }
-        if (biome == Biome.BIRCH_FOREST) {
-            treeDensity += k4 + 4;
-        }
-        if (biome == Biome.RAINFOREST) {
-            treeDensity += k4 + 10;
-        }
-        if (biome == Biome.SEASONAL_FOREST) {
-            treeDensity += k4 + 2;
-        }
-        if (biome == Biome.TAIGA) {
-            treeDensity += k4 + 5;
-        }
-        if (biome == Biome.BOREAL_FOREST) {
-            treeDensity += k4 + 3;
-        }
-        if (biome == Biome.DESERT) {
-            treeDensity += k4 + 1;
-        }
-        if (biome == Biome.TUNDRA) {
-            treeDensity -= 20;
-        }
-        if (biome == Biome.PLAINS) {
-            treeDensity -= 20;
-        }
-        if (biome == Biome.SWAMPLAND) {
-            treeDensity += k4 + 4;
-        }
+
         if (treeDensityOverride != -1) treeDensity = treeDensityOverride;
         for (int i11 = 0; i11 < treeDensity; i11++) {
             int l13 = x + rand.nextInt(16) + 8;
             int j14 = z + rand.nextInt(16) + 8;
-            WorldFeature worldgenerator = biome.getRandomWorldGenForTrees(rand);
+            WorldGenerator worldgenerator = biomegenbase.getRandomWorldGenForTrees(this.rand);
             worldgenerator.func_517_a(1.0D, 1.0D, 1.0D);
-            worldgenerator.generate(world, rand, l13, world.getHeightValue(l13, j14), j14);
+            worldgenerator.generate(worldObj, rand, l13, worldObj.getHeightValue(l13, j14), j14);
         }
         byte byteReeds = 0;
-        if (biome == Biome.RAINFOREST) {
+        if (biomegenbase == BiomeGenBase.rainforest) {
             byteReeds = 1;
         }
         for (int i11 = 0; i11 < byteReeds; i11++) {
             int i18 = x + rand.nextInt(16) + 8;
             int i23 = z + rand.nextInt(16) + 8;
-            int i21 = world.getHeightValue(i18, i23);
-            (new WorldFeatureSugarCaneTall()).generate(world, rand, i18, i21, i23);
+            int i21 = worldObj.getHeightValue(i18, i23);
+            (new WorldGenReedTall()).generate(worldObj, rand, i18, i21, i23);
         }
 
         byte byteMeadow = 0;
-        if (biome == Biome.SEASONAL_FOREST) {
+        if (biomegenbase == BiomeGenBase.seasonalForest) {
             byteMeadow = 1;
         }
-        if (biome == Biome.MEADOW) {
+
+        if (biomegenbase == BiomeGenBase.meadow) {
             byteMeadow = 2;
         }
-        if (biome == Biome.BOREAL_FOREST) {
+
+        if (biomegenbase == BiomeGenBase.borealForest) {
             byteMeadow = 2;
         }
-        if (biome == Biome.SHRUBLAND) {
+
+        if (biomegenbase == BiomeGenBase.shrubland) {
             byteMeadow = 1;
         }
         for (int l14 = 0; l14 < byteMeadow; l14++) {
-            int blockId = Block.flowerYellow.id;
+            int blockId = Block.flowerYellow.blockID;
             if (rand.nextInt(3) != 0) {
-                blockId = Block.flowerRed.id;
+                blockId = Block.flowerRed.blockID;
             }
             int l19 = x + rand.nextInt(16) + 8;
             int k22 = rand.nextInt(Minecraft.WORLD_HEIGHT_BLOCKS);
             int j24 = z + rand.nextInt(16) + 8;
-            (new WorldFeatureTallGrass(blockId)).generate(world, rand, l19, k22, j24);
+            (new WorldGenTallGrass(blockId)).generate(worldObj, rand, l19, k22, j24);
         }
 
         byte byte0 = 0;
-        if (biome == Biome.FOREST) {
+        if (biomegenbase == BiomeGenBase.forest) {
             byte0 = 2;
         }
-        if (biome == Biome.SWAMPLAND) {
+
+        if (biomegenbase == BiomeGenBase.swampland) {
             byte0 = 2;
         }
-        if (biome == Biome.TAIGA) {
+
+        if (biomegenbase == BiomeGenBase.taiga) {
             byte0 = 2;
         }
-        if (biome == Biome.PLAINS) {
+
+        if (biomegenbase == BiomeGenBase.plains) {
             byte0 = 3;
         }
         for (int i14 = 0; i14 < byte0; i14++) {
             int k14 = x + rand.nextInt(16) + 8;
-            int l16 = minY + rand.nextInt(rangeY);
+            int l16 = rand.nextInt(this.terrainMaxHeight);
             int k19 = z + rand.nextInt(16) + 8;
-            (new WorldFeatureFlowers(Block.flowerYellow.id)).generate(world, rand, k14, l16, k19);
+            (new WorldGenFlowers(Block.flowerYellow.blockID)).generate(worldObj, rand, k14, l16, k19);
         }
 
         byte byte1 = 0;
-        if (biome == Biome.FOREST) {
+        if (biomegenbase == BiomeGenBase.forest) {
             byte1 = 2;
         }
-        if (biome == Biome.MEADOW) {
+
+        if (biomegenbase == BiomeGenBase.meadow) {
             byte1 = 2;
         }
-        if (biome == Biome.RAINFOREST) {
+
+        if (biomegenbase == BiomeGenBase.rainforest) {
             byte1 = 10;
         }
-        if (biome == Biome.DESERT) {
+
+        if (biomegenbase == BiomeGenBase.desert) {
             byte1 = 5;
         }
-        if (biome == Biome.SEASONAL_FOREST) {
+
+        if (biomegenbase == BiomeGenBase.seasonalForest) {
             byte1 = 2;
         }
-        if (biome == Biome.TAIGA) {
+
+        if (biomegenbase == BiomeGenBase.taiga) {
             byte1 = 1;
         }
-        if (biome == Biome.BOREAL_FOREST) {
+
+        if (biomegenbase == BiomeGenBase.borealForest) {
             byte1 = 5;
         }
-        if (biome == Biome.PLAINS) {
+
+        if (biomegenbase == BiomeGenBase.plains) {
             byte1 = 10;
         }
-        if (biome == Biome.SWAMPLAND) {
+
+        if (biomegenbase == BiomeGenBase.swampland) {
             byte1 = 4;
         }
-        if (biome == Biome.SHRUBLAND) {
+
+        if (biomegenbase == BiomeGenBase.shrubland) {
             byte1 = 2;
-        }
-        if (biome == Biome.BIRCH_FOREST) {
-            byte1 = 10;
         }
         for (int l14 = 0; l14 < byte1; l14++) {
-            int type = Block.tallgrass.id;
-            if ((biome == Biome.RAINFOREST || biome == Biome.SWAMPLAND || biome == Biome.BOREAL_FOREST || biome == Biome.TAIGA) && rand.nextInt(3) != 0) {
-                type = Block.tallgrassFern.id;
+            int type = Block.tallgrass.blockID;
+            if ((biomegenbase == BiomeGenBase.rainforest || biomegenbase == BiomeGenBase.swampland || biomegenbase == BiomeGenBase.borealForest || biomegenbase == BiomeGenBase.taiga) && this.rand.nextInt(3) != 0) {
+                type = Block.tallgrassFern.blockID;
             }
             int l19 = x + rand.nextInt(16) + 8;
-            int k22 = minY + rand.nextInt(rangeY);
+            int k22 = rand.nextInt(this.terrainMaxHeight);
             int j24 = z + rand.nextInt(16) + 8;
-            (new WorldFeatureTallGrass(type)).generate(world, rand, l19, k22, j24);
+            (new WorldGenTallGrass(type)).generate(worldObj, rand, l19, k22, j24);
         }
 
 
         byte1 = 0;
-        if (biome == Biome.OUTBACK) {
+        if (biomegenbase == BiomeGenBase.outback) {
             byte1 = 2;
         }
         for (int i15 = 0; i15 < byte1; i15++) {
             int i17 = x + rand.nextInt(16) + 8;
-            int i20 = minY + rand.nextInt(rangeY);
+            int i20 = rand.nextInt(this.terrainMaxHeight);
             int l22 = z + rand.nextInt(16) + 8;
-            (new WorldFeatureTallGrass(Block.spinifex.id)).generate(world, rand, i17, i20, l22);
+            (new WorldGenTallGrass(Block.spinifex.blockID)).generate(worldObj, rand, i17, i20, l22);
         }
 
         byte1 = 0;
-        if (biome == Biome.DESERT) {
+        if (biomegenbase == BiomeGenBase.desert) {
             byte1 = 2;
         }
         for (int i15 = 0; i15 < byte1; i15++) {
             int i17 = x + rand.nextInt(16) + 8;
-            int i20 = minY + rand.nextInt(rangeY);
+            int i20 = rand.nextInt(this.terrainMaxHeight);
             int l22 = z + rand.nextInt(16) + 8;
-            (new WorldFeatureDeadBush(Block.deadbush.id)).generate(world, rand, i17, i20, l22);
+            (new WorldGenDeadBush(Block.deadbush.blockID)).generate(worldObj, rand, i17, i20, l22);
         }
 
         if (rand.nextInt(2) == 0) {
             int j15 = x + rand.nextInt(16) + 8;
-            int j17 = minY + rand.nextInt(rangeY);
+            int j17 = rand.nextInt(this.terrainMaxHeight);
             int j20 = z + rand.nextInt(16) + 8;
-            (new WorldFeatureFlowers(Block.flowerRed.id)).generate(world, rand, j15, j17, j20);
+            (new WorldGenFlowers(Block.flowerRed.blockID)).generate(worldObj, rand, j15, j17, j20);
         }
         if (rand.nextInt(4) == 0) {
             int k15 = x + rand.nextInt(16) + 8;
-            int k17 = minY + rand.nextInt(rangeY);
+            int k17 = rand.nextInt(this.terrainMaxHeight);
             int k20 = z + rand.nextInt(16) + 8;
-            (new WorldFeatureFlowers(Block.mushroomBrown.id)).generate(world, rand, k15, k17, k20);
+            (new WorldGenFlowers(Block.mushroomBrown.blockID)).generate(worldObj, rand, k15, k17, k20);
         }
         if (rand.nextInt(8) == 0) {
             int l15 = x + rand.nextInt(16) + 8;
-            int l17 = minY + rand.nextInt(rangeY);
+            int l17 = rand.nextInt(this.terrainMaxHeight);
             int l20 = z + rand.nextInt(16) + 8;
-            (new WorldFeatureFlowers(Block.mushroomRed.id)).generate(world, rand, l15, l17, l20);
+            (new WorldGenFlowers(Block.mushroomRed.blockID)).generate(worldObj, rand, l15, l17, l20);
         }
         if(rand.nextInt(5) == 0) {
             int i18 = x + rand.nextInt(16) + 8;
             int i23 = z + rand.nextInt(16) + 8;
-            int i21 = world.getHeightValue(i18, i23);
-            (new WorldFeatureSugarCane()).generate(world, rand, i18, i21, i23);
+            int i21 = worldObj.getHeightValue(i18, i23);
+            (new WorldGenReed()).generate(worldObj, rand, i18, i21, i23);
         }
 
         if(rand.nextInt(128) == 0)
         {
             int j16 = x + rand.nextInt(16) + 8;
             int j21 = z + rand.nextInt(16) + 8;
-            int i22 = world.getHeightValue(j16, j21);
-            (new WorldFeaturePumpkin()).generate(world, rand, j16, i22, j21);
+            int i22 = worldObj.getHeightValue(j16, j21);
+            (new WorldGenPumpkin()).generate(worldObj, rand, j16, i22, j21);
         }
         if(rand.nextInt(64) == 0)
         {
             int j16 = x + rand.nextInt(16) + 8;
             int j21 = z + rand.nextInt(16) + 8;
-            int i22 = world.getHeightValue(j16, j21);
-            (new WorldFeatureSponge()).generate(world, rand, j16, i22, j21);
+            int i22 = worldObj.getHeightValue(j16, j21);
+            (new WorldGenSponge()).generate(worldObj, rand, j16, i22, j21);
         }
 
         int k16 = 0;
-        if(biome == Biome.DESERT)
+        if(biomegenbase == BiomeGenBase.desert)
         {
             k16 += 10;
         }
         for(int k18 = 0; k18 < k16; k18++)
         {
             int k21 = x + rand.nextInt(16) + 8;
-            int j23 = minY + rand.nextInt(rangeY);
+            int j23 = rand.nextInt(this.terrainMaxHeight);
             int k24 = z + rand.nextInt(16) + 8;
-            (new WorldFeatureCactus()).generate(world, rand, k21, j23, k24);
+            (new WorldGenCactus()).generate(worldObj, rand, k21, j23, k24);
         }
 
         for(int l18 = 0; l18 < 50; l18++)
         {
             int l21 = x + rand.nextInt(16) + 8;
-            int k23 = minY + rand.nextInt(rand.nextInt(rangeY - (rangeY / 16)) + (rangeY / 16));
+            int k23 =  rand.nextInt(rand.nextInt(this.terrainMaxHeight - (this.terrainMaxHeight / 16)) + (this.terrainMaxHeight / 16));
             int l24 = z + rand.nextInt(16) + 8;
-            (new WorldFeatureLiquid(Block.fluidWaterFlowing.id)).generate(world, rand, l21, k23, l24);
+            (new WorldGenLiquids(Block.fluidWaterFlowing.blockID)).generate(worldObj, rand, l21, k23, l24);
         }
 
         for(int i19 = 0; i19 < 20; i19++)
         {
             int i22 = x + rand.nextInt(16) + 8;
-            int l23 = minY + rand.nextInt(rand.nextInt(rand.nextInt(rangeY - (rangeY / 8)) + (rangeY / 16)) + (rangeY / 16));
+            int l23 = rand.nextInt(rand.nextInt(rand.nextInt(this.terrainMaxHeight - (this.terrainMaxHeight / 8)) + (this.terrainMaxHeight / 16)) + (this.terrainMaxHeight / 16));
             int i25 = z + rand.nextInt(16) + 8;
-            (new WorldFeatureLiquid(Block.fluidLavaFlowing.id)).generate(world, rand, i22, l23, i25);
+            (new WorldGenLiquids(Block.fluidLavaFlowing.blockID)).generate(worldObj, rand, i22, l23, i25);
         }
 
-        int oceanY = world.getWorldType().oceanY;
-        for(int dx = x + 8; dx < x + 8 + 16; dx++)
-        {
-            for(int dz = z + 8; dz < z + 8 + 16; dz++)
-            {
-                int dy = world.getHeightValue(dx, dz);
-                Biome localBiome = world.getBlockBiome(dx, dy, dz);
+        this.generatedTemperatures = this.worldObj.getWorldChunkManager().getTemperatures(this.generatedTemperatures, x + 8, z + 8, 16, 16);
 
-                if ((localBiome.hasSurfaceSnow() || world.worldType == WorldType.overworldWinter) && dy > 0 && dy < Minecraft.WORLD_HEIGHT_BLOCKS)
-                {
-                    if (world.isAirBlock(dx, dy, dz) && world.getBlockMaterial(dx, dy - 1, dz).getIsSolid())
-                    {
-                        world.setBlockWithNotify(dx, dy, dz, Block.layerSnow.id);
-                    }
-                }
-                if ((localBiome.hasSurfaceSnow() || world.worldType == WorldType.overworldWinter) && (world.getBlockId(dx, oceanY - 1, dz) == Block.fluidWaterStill.id || world.getBlockId(dx, oceanY - 1, dz) == Block.fluidWaterFlowing.id))
-                {
-                    world.setBlockWithNotify(dx, oceanY - 1, dz, Block.ice.id);
+        for(int j19 = x + 8; j19 < x + 8 + 16; ++j19) {
+            for(int j22 = z + 8; j22 < z + 8 + 16; ++j22) {
+                if (this.worldObj.getCurrentWeather() != null) {
+                    this.worldObj.getCurrentWeather().doEnvironmentGenerate(this.worldObj, j19, j22);
                 }
 
+                BiomeGenBase biome = this.worldObj.getWorldChunkManager().getBiomeGenAt(j19, j22);
+                int k25 = this.worldObj.getHeightValue(j19, j22);
+                if ((biome.hasSurfaceSnow() || this.worldObj.dimension.worldType == WorldType.overworldWinter) && k25 > 0 && k25 < Minecraft.WORLD_HEIGHT_BLOCKS && this.worldObj.isAirBlock(j19, k25, j22) && this.worldObj.getBlockMaterial(j19, k25 - 1, j22).getIsSolid()) {
+                    this.worldObj.setBlockWithNotify(j19, k25, j22, Block.layerSnow.blockID);
+                }
+
+                if ((biome.hasSurfaceSnow() || this.worldObj.dimension.worldType == WorldType.overworldWinter) && (this.worldObj.getBlockId(j19, this.oceanHeight - 1, j22) == Block.fluidWaterStill.blockID || this.worldObj.getBlockId(j19, this.oceanHeight - 1, j22) == Block.fluidWaterFlowing.blockID)) {
+                    this.worldObj.setBlockWithNotify(j19, this.oceanHeight - 1, j22, Block.ice.blockID);
+                }
             }
-
         }
 
         BlockSand.fallInstantly = false;
         ci.cancel();
     }
 
-    /*private void GeneratePillar(int gx, int gz,Random rand,int heightModifier)
+    private void replaceBlocksForCaveBiome(Chunk chunk, short[] data, int x, int z, World world)
     {
-        int upperY;
-        int lowerY;
-        for(int chance = 0; chance <  2*heightModifier; ++chance) {
-            int lx = gx+rand.nextInt(16);
-            int ly = rand.nextInt(Minecraft.WORLD_HEIGHT_BLOCKS/2)+10;
-            int lz = gz+rand.nextInt(16) ;
-            if(!uberUtil.isRockBlockAndNotLava(Block.getBlock(world.getBlockId(lx,ly,lz))))
-            {
-                lowerY = GetBlocksDown(lx, ly, lz,0,15);
-                upperY = GetBlocksUp(lx, lowerY, lz,0,30);
-            }
-            else
-            {
-                lowerY = GetFirstNonSolidUp(lx,ly,lz);
-                upperY = GetBlocksUp(lx, lowerY, lz,0,15);
-            }
-            int heightdiff = (upperY+3)-(lowerY-3);
-            double radius = uberUtil.clamp(heightdiff*0.3f,0,6);
-            if(ly > 14)
-            {
-                if(canPillarBePlaced(lx,upperY,lowerY,lz,radius,2,0)) {
-                    //BuildPillar(lx, lz, lowerY-3, upperY+3,heightdiff,radius);
-                    BuildPillar2(lx, lz, lowerY-3, upperY+3,heightdiff,radius);
-                }
-            }
-            else
-            {
-                if(canPillarBePlaced(lx,upperY,lowerY,lz,radius,2,2)) {
-                    //BuildPillar(lx, lz, lowerY-3, upperY+3,heightdiff,radius);
-                    BuildPillar2(lx, lz, lowerY-3, upperY+3,heightdiff,radius);
-                }
-            }
-
-        }
-    }
-
-    private void BuildPillar(int x,int z, int lower ,int upper, int height, double radius,Random rand)
-    {
-        //worldObj.setBlock(x, upper, z, Block.blockDiamond.blockID);
-        //worldObj.setBlock(x, lower, z, Block.blockGold.blockID);
-
-       // int pillarBlockId = GetPillarBlock(x,lower-1,z);
-
-        //int heightdif = upper-lower;
-        int half = height/2+rand.nextInt(2)-1;
-
-        //float radius = uberUtil.clamp(heightdif*0.3f,0,6);
-        int radiusInt = (int) Math.round(Math.floor(radius));
-
-            for (int xPos = x - radiusInt; xPos <= x + radiusInt; xPos++) {
-                for (int zPos = z - radiusInt; zPos <= z + radiusInt; zPos++) {
-
-                    float dist = Math.round(uberUtil.distanceAB(xPos, lower, zPos, x, lower, z));
-
-                    //TODO random block addition depending on distance from center. If xPos OR zPos on max/min, heighest random addition, if xPos AND zPos on max/min, either 0 or random reduction. (Hopefully round shape?)
-                    int inWorldHeight = uberUtil.clamp(lower+(half-(int)Math.rint(Math.pow(2,dist))),lower-3,lower+half)+rand.nextInt(3);
-                    int heightDifFromMid = (lower+half)-inWorldHeight;//+ rand.nextInt(3)-1;
-
-                    if(dist ==0)
-                    {
-                        inWorldHeight += 2+rand.nextInt(3);
-                    }
-                    for (int yPos = lower; yPos <= upper; yPos++) {
-
-                        //boolean needTrim = !uberUtil.solidBlockExists(xPos,yPos,zPos,worldObj)&&((yPos<lower+3 && uberUtil.solidBlockExists(xPos,yPos+1,zPos,worldObj)) || (yPos>upper-3 && uberUtil.solidBlockExists(xPos,yPos-1,zPos,worldObj)));
-                        boolean blockOmit = dist < radius && (yPos<inWorldHeight||yPos>=lower+half+heightDifFromMid);
-                        boolean blockRules = world.getBlockId(xPos, yPos, zPos) != Block.bedrock.id&& !uberUtil.solidBlockExists(xPos,yPos,zPos,world);// && worldObj.getBlockId(xPos, yPos, zPos) != Block.blockDiamond.blockID && worldObj.getBlockId(xPos, yPos, zPos) != Block.blockGold.blockID );
-                        if (blockOmit && blockRules) {
-                           // world.setBlock(xPos, yPos, zPos, pillarBlockId);
-                        }
-                    }
-                }
-        }
-    }
-
-    private void BuildPillar2(int x,int z, int lower ,int upper, int height, double radius)
-    {
-        //worldObj.setBlock(x, upper, z, Block.blockDiamond.blockID);
-        //worldObj.setBlock(x, lower, z, Block.blockGold.blockID);
-
-        //int pillarBlockId = GetPillarBlock(x,lower-1,z);
-
-        //int heightdif = upper-lower;
-        int maxHeight = 2*height /5;
-
-        //float radius = uberUtil.clamp(heightdif*0.3f,0,6);
-        int radiusInt = (int) radius;
-
-        for (int xPos = x - radiusInt; xPos <= x + radiusInt; xPos++) {
-            for (int zPos = z - radiusInt; zPos <= z + radiusInt; zPos++) {
-
-                float dist = Math.round(uberUtil.distanceAB(xPos, lower, zPos, x, lower, z));
-
-                int actualHeight = (int) uberUtil.clampedLerp(lower,lower+maxHeight,1/(dist/radius)/3-0.2f,lower,lower+maxHeight);
-
-                for(int yPos = lower;yPos<=actualHeight;yPos++) {
-                    boolean blockRules = world.getBlockId(xPos, yPos, zPos) != Block.bedrock.id && !uberUtil.solidBlockExists(xPos, yPos, zPos, world);// && worldObj.getBlockId(xPos, yPos, zPos) != Block.blockDiamond.blockID && worldObj.getBlockId(xPos, yPos, zPos) != Block.blockGold.blockID );
-                    if (blockRules) {
-                        //world.setBlock(xPos, yPos, zPos, pillarBlockId);
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean canPillarBePlaced(int x, int upper,int lower ,int z,double radius,int upperRange,int lowerRange)
-    {
-        //int halfRad = Math.round(radius/2);
-        boolean test = true;
-        if(lower == 0 || upper ==0 || upper-lower<=3)
+        float[][] noFlowstoneNoise = uberUtil.getInterpolatedNoiseValue2D(uberUtil.sampleNoise2D(chunk.xPosition,chunk.zPosition,0.08f,world, noFlowstoneNoiseMap, FastNoiseLite.NoiseType.OpenSimplex2S));
+        boolean placeFlowstone;
+        for(int lx = 0; lx<16; lx++)
         {
-            test = false;
-        }
-        else {
-            for (int xp = x - 1; xp <= x +1; xp++) {
-                for (int zp = z - 1; zp <= z + 1; zp++) {
-                    for (int yup = upper; yup <= upper + upperRange; yup++) {
-                        if (!uberUtil.solidBlockExists(xp, yup + 1, zp, world)) {
-                            test = false;
+            for(int lz = 0; lz<16; lz++)
+            {
+                placeFlowstone = noFlowstoneNoise[lx][lz]>-0.1f;
+                for(int ly = Minecraft.WORLD_HEIGHT_BLOCKS-1; ly > 0; ly--)
+                {
+                    if(caveBiomeValues[lx][ly][lz]==1) {
+                        //Spawners get replaced, chests get replaced, only rock and stone should be replaced, fine tune block placement, fix wierd water placement.
+                        if (!worldObj.isAirBlock(x + lx, ly, z + lz) && data[lx << Minecraft.WORLD_HEIGHT_BITS + 4 | lz << Minecraft.WORLD_HEIGHT_BITS | ly] != Block.bedrock.blockID && Block.getBlock(data[lx << Minecraft.WORLD_HEIGHT_BITS + 4 | lz << Minecraft.WORLD_HEIGHT_BITS | ly]) instanceof BlockStone && placeFlowstone)
+                        {
+                            //worldObj.setBlock(x+lx,ly,z+lz,CaveUberhaul.flowstone.blockID);
+                            data[lx << Minecraft.WORLD_HEIGHT_BITS + 4 | lz << Minecraft.WORLD_HEIGHT_BITS | ly] = (short) CaveUberhaul.flowstone.blockID;
+                            //System.out.println("Flowstone placed at x: "+(x+lx)+ " y: "+ ly+ " z: "+(z+lz));
                         }
-                    }
-                    for (int ydn = lower; ydn >= lower - lowerRange; ydn--) {
-                        if (!uberUtil.solidBlockExists(xp, ydn - 1, zp, world)) {
-                            test = false;
+                        if(worldObj.getBlockId(lx+x,ly,lz+z) == CaveUberhaul.flowstone.blockID && rand.nextFloat()>=0.45f&&uberUtil.isSurroundedFreeAboveNoLava(x+lx,ly,z+lz,worldObj))
+                        {
+                            //worldObj.setBlock(x + lx, ly, z + lz, Block.fluidWaterStill.blockID);
+                            if(worldObj.isAirBlock(lx+x,ly-1,lz+z))
+                            {
+                                chunk.setBlockID(lx,ly,lz,Block.fluidWaterFlowing.blockID);
+                            }
+                            else {
+                                data[lx << Minecraft.WORLD_HEIGHT_BITS + 4 | lz << Minecraft.WORLD_HEIGHT_BITS | ly] = (short) Block.fluidWaterStill.blockID;
+                            }
                         }
                     }
                 }
             }
         }
-        //System.out.println(test);
-        return test;
-    }*/
-
-    private int GetFirstNonSolidUp(int x,int y,int z)
-    {
-        if(y<=Minecraft.WORLD_HEIGHT_BLOCKS/2&&y>8)
-        {
-            if(!uberUtil.solidBlockExists(x,y+1,z,world))
-            {
-                return y + 1;
-            }
-            else
-            {
-                return GetFirstNonSolidUp(x, y + 1, z);
-            }
-        }
-        else
-        {
-            return 0;
-        }
+        chunk.blocks = data;
     }
 
-    private int GetFirstAirUp(int x,int y,int z)
-    {
-        if(world.isAirBlock(x,y,z))
-        {return y;}
-        else {
-            if (y <= Minecraft.WORLD_HEIGHT_BLOCKS / 2 && y > 8) {
-                if (world.isAirBlock(x, y + 1, z)) {
-                    return y + 1;
-                } else {
-                    return GetFirstAirUp(x, y + 1, z);
-                }
-            } else {
-                return 0;
-            }
-        }
-    }
 }

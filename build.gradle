@@ -1,5 +1,5 @@
 plugins {
-	id 'babric-loom' version '0.12-SNAPSHOT'
+	id 'babric-loom' version '1.1.+'
 	id 'java'
 }
 
@@ -8,9 +8,9 @@ archivesBaseName = project.mod_name
 version = project.mod_version
 
 loom {
-	clientOnlyMinecraftJar()
+	gluedMinecraftJar()
 	noIntermediateMappings()
-	customMinecraftManifest.set("https://github.com/ClickNinYT/bta-manifest-repo/releases/download/v${project.bta_version}/${project.bta_version}.json")
+	customMinecraftManifest.set("https://github.com/Turnip-Labs/bta-manifest-repo/releases/download/v${project.bta_version}/${project.bta_version}.json")
 }
 
 repositories {
@@ -57,11 +57,11 @@ dependencies {
 	modImplementation "babric:fabric-loader:${project.loader_version}"
 
 	// Helper library
+	// If you do not need Halplibe you can comment this line out or delete this line
 	modImplementation "bta-halplibe:halplibe:${project.halplibe_version}"
 
 	modImplementation "org.slf4j:slf4j-api:1.8.0-beta4"
 	modImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:2.16.0"
-
 }
 
 java {
