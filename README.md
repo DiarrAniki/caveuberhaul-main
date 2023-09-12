@@ -1,6 +1,5 @@
 # Caveuberhaul
  Make your caves go UBER
- (Now with trace amounts of duct tape)
 
  ## Version 1.2.0
 ### Added Cave Biomes
