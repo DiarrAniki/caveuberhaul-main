@@ -52,7 +52,7 @@
 // /*FNLfloat*/ float
 // /*FNLfloat*/ double
 
-package diarr.caveuberhaul;
+package diarr.caveuberhaul.gen;
 
 public class FastNoiseLite
 {

@@ -1,36 +1,55 @@
-package diarr.caveuberhaul;
+package diarr.caveuberhaul.features;
 
-
-
-import net.minecraft.src.Block;
-import net.minecraft.src.World;
-import net.minecraft.src.WorldGenerator;
+import diarr.caveuberhaul.UberUtil;
+import net.minecraft.core.world.World;
+import net.minecraft.core.world.generate.feature.WorldFeature;
 
 import java.util.Random;
 
-public class WorldFeatureCavePillar extends WorldGenerator {
-    private UberUtil uberUtil = new UberUtil();
+public class WorldFeatureCavePillar extends WorldFeature {
+    //private UberUtil uberUtil = new UberUtil();
+    int lowerpos,highpos;
+    int blockFloor,blockCeil;
+
+    public WorldFeatureCavePillar(int lowerpos,int highpos,int blockFloor,int blockCeil)
+    {
+        this.lowerpos = lowerpos;
+        this.highpos = highpos;
+        this.blockFloor = blockFloor;
+        this.blockCeil = blockCeil;
+    }
 
     public boolean generate(World world, Random random, int i, int j, int k) {
         //TODO rewrite the top and lower find function to use the noise maps for the caves instead. Also consider Sebastian Lagues video about planet generation and craters for merge between collumn noise and cave noise
-        int lower = uberUtil.GetFloor(i, j, k,  32, world);
-        int upper = uberUtil.GetCeiling(i, j, k, 32, world);
-        int blockId = uberUtil.GetPillarBlock(i, lower - 1, k, world);
+        int lower = lowerpos;//UberUtil.getFloor(i, j, k,  32, world);
+        int upper = highpos;//UberUtil.getCeiling(i, j, k, 32, world);
+        int blockIdFloor = blockFloor;//UberUtil.getPillarBlock(i, lower - 1, k, world);
+        int blockIdCeil = blockCeil;//UberUtil.getPillarBlock(i, upper + 1, k, world);
+        if(blockIdCeil == 0 || blockIdFloor ==0 || lower<10)
+        {
+            return false;
+        }
         int heightdif = upper - lower;
         double radius = heightdif*0.3f+random.nextInt(4)-2;
         int radius_int = (int) Math.round(radius);
-        if (heightdif < 50 && heightdif > 4 && world.getBlockId(i,lower+1,k) != Block.fluidLavaStill.blockID && world.getBlockId(i,lower+1,k) != Block.fluidLavaFlowing.blockID) {
+        if (heightdif < 50 && heightdif > 3 ) {
             float randLimit = random.nextFloat()*0.3f;
             if(canPlace(world,i,lower-3,k,radius_int-1)&&canPlace(world,i,upper+3,k,radius_int-1)) {
                 for (int x = i - radius_int; x <= i + radius_int; x++) {
                     for (int z = k - radius_int; z <= k + radius_int; z++) {
                         for (int y = lower - 3; y <= upper + 3; y++) {
-                            double dist = uberUtil.distanceAB(x, lower, z, i, lower, k);
-                            int c = Math.round(uberUtil.clampedLerp(3,1,dist/radius, 1, 3));
+                            double dist = UberUtil.distanceAB(x, lower, z, i, lower, k);
+                            int c = Math.round(UberUtil.clampedLerp(3,1,dist/radius, 1, 3));
                             int limit = (int) Math.round (Math.pow((radius - dist)*(0.9-randLimit), 2)  + random.nextInt(c));
 
-                            if (dist <= radius && (y <= lower-3 + limit || y >= upper+3 - limit)) {
-                                world.setBlock(x, y, z, blockId);
+                            if (dist <= radius && (y <= lower-3 + limit || y >= upper+3 - limit)&& world.isAirBlock(x,y,z)&&!world.canBlockSeeTheSky(x,y,z)) {
+                                if(y<lower+(heightdif/2)+random.nextInt(4)-2) {
+                                    world.setBlock(x, y, z, blockIdFloor);
+                                }
+                                else
+                                {
+                                    world.setBlock(x, y, z, blockIdCeil);
+                                }
                             }
                                 /*if (dist <= innerRad) {
                                     world.setBlock(x, y, z, blockId);
