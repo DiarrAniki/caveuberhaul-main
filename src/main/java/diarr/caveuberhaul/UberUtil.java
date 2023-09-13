@@ -334,7 +334,7 @@ public class UberUtil
         if(world.isAirBlock(x,y,z))
         {
             for (int height = y; height >= y - limit; height--) {
-                if (height>9&&world.isAirBlock(x,height,z) && solidBlockExists(x,height-1,z,world)) {
+                if (height>9&&world.isAirBlock(x,height,z) && solidBlockExists(x,height-1,z,world)&&!(world.getBlock(x,height-1,z)instanceof BlockLeavesBase)) {
                     return height;
                 }
             }
@@ -348,7 +348,7 @@ public class UberUtil
         if(world.isAirBlock(x,y,z))
         {
             for (int height = y; height <= y + limit; height++) {
-                if (height>9&&height<world.getHeightBlocks()&&world.isAirBlock(x,height,z) && solidBlockExists(x,height+1,z,world)) {
+                if (height>9&&height<world.getHeightBlocks()&&world.isAirBlock(x,height,z) && solidBlockExists(x,height+1,z,world)&&!(world.getBlock(x,height+1,z)instanceof BlockLeavesBase)) {
                     return height;
                 }
             }

@@ -21,9 +21,12 @@ public class BlockFlowstone extends Block {
 
 
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-        if(Block.getBlock(world.getBlockId(i,j-1,k))instanceof BlockStalagtite && !world.isAirBlock(i,j+1,k)&&(world.getBlockId(i,j+2,k) == Block.fluidWaterStill.id||world.getBlockId(i,j+2,k) == Block.fluidWaterFlowing.id)) {
+        Block b = Block.getBlock(world.getBlockId(i,j-1,k));
+        if(b instanceof BlockStalagtite && !world.isAirBlock(i,j+1,k)&&(world.getBlockId(i,j+2,k) == Block.fluidWaterStill.id||world.getBlockId(i,j+2,k) == Block.fluidWaterFlowing.id)) {
             world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
-            ((BlockStalagtite) Block.getBlock(world.getBlockId(i,j-1,k))).checkForGrowthConditionAndPropagate(world,i,j-1,k);
+            //if(world.getBlockMetadata(i,j-1,k)==0&&b instanceof BlockStalagtite) {
+                //((BlockStalagtite) b).checkForGrowthConditionAndPropagate(world, i, j - 1, k);
+           // }
         }
     }
 

@@ -220,7 +220,7 @@ public class ChunkDecoratorOverworldMixin {
 
         for (int j2 = 0; j2 < (20 * oreHeightModifier); j2++) {
             int l5 = x + rand.nextInt(16);
-            int i9 = 48 + rand.nextInt(rangeY)-48;
+            int i9 = 48 + (rand.nextInt(rangeY)-48);
             int l11 = z + rand.nextInt(16);
             (new WorldFeatureOre(Block.dirt.id, 32, false)).generate(world, rand, l5, i9, l11);
         }
@@ -276,7 +276,7 @@ public class ChunkDecoratorOverworldMixin {
 
         for (int i4 = 0; i4 < oreHeightModifier; i4++) {
             int j7 = x + rand.nextInt(16);
-            int k10 = 32 + rand.nextInt(rangeY / 2)-32;
+            int k10 = 32 + (rand.nextInt(rangeY / 2)-32);
             int j13 = z + rand.nextInt(16);
             (new WorldFeatureOre(Block.mossStone.id, 32, true)).generate(world, rand, j7, k10, j13);
         }

@@ -14,8 +14,9 @@ public class EntityDripFx extends EntityFX {
         this.particleTextureIndex= 22;
         this.particleScale *= this.random.nextFloat() * 0.5F + 1F;
         this.xd *= 0.009999999776482582;
-        this.yd = motionY  -0.2F;
+        this.yd = motionY  -0.35F;
         this.zd *= 0.009999999776482582;
+        this.particleMaxAge = 128;
     }
 
     public void renderParticle(Tessellator t, float renderPartialTicks, float rotationX, float rotationXZ, float rotationZ, float rotationYZ, float rotationXY) {

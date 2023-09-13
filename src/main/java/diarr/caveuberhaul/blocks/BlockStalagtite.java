@@ -44,7 +44,7 @@ public class BlockStalagtite extends BlockConnectable {
     }
 
     public boolean anyPlayerInRange(World world, int x,int y,int z) {
-        return world.getClosestPlayer((double)x + 0.5, (double)y + 0.5, (double)z + 0.5, 16.0) != null;
+        return world.getClosestPlayer((double)x + 0.5, (double)y + 0.5, (double)z + 0.5, 32.0) != null;
     }
 
     public void checkForGrowthConditionAndPropagate(World world,int i,int j,int k)
@@ -78,22 +78,26 @@ public class BlockStalagtite extends BlockConnectable {
     }
 
     public void updateTick(World world, int i, int j, int k, Random random) {
-        if(world.getBlockMetadata(i,j,k)==2)
-        {
-            if(world.isAirBlock(i,j-1,k)&&random.nextInt(256)==1)
+        if(this.state==0) {
+            int length = 0;
+            while(world.getBlock(i,j+length,k)instanceof BlockStalagtite)
             {
-                world.setBlockAndMetadataWithNotify(i,j-1,k,CaveUberhaul.flowstoneStalagtite1.id,2);
+                length++;
             }
-            else
-            {
-                world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
-            }
-        }
-        else
-        {
-            if(world.isAirBlock(i,j-1,k)&&random.nextInt(1024)==1)
-            {
-                world.setBlockAndMetadataWithNotify(i,j-1,k,CaveUberhaul.flowstoneStalagtite1.id,0);
+            if (length <= 7) {
+                if (world.getBlockMetadata(i, j, k) == 2 && world.isAirBlock(i, j - 1, k)) {
+                    if (random.nextInt(512) == 1) {
+                        world.setBlockAndMetadataWithNotify(i, j - 1, k, CaveUberhaul.flowstoneStalagtite1.id, 2);
+                    } else {
+                        world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
+                    }
+                } else {
+                    if (random.nextInt(2048) == 1) {
+                        world.setBlockAndMetadataWithNotify(i, j - 1, k, CaveUberhaul.flowstoneStalagtite1.id, 0);
+                    } else {
+                        world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
+                    }
+                }
             }
         }
     }
@@ -104,7 +108,7 @@ public class BlockStalagtite extends BlockConnectable {
             if (anyPlayerInRange(world, x, y, z)) {
                 double xp = (double)x + 0.5 + (rand.nextFloat()-0.5f)*0.1f;
                 double zp = (double)z + 0.5 + (rand.nextFloat()-0.5f)*0.1f;
-                world.spawnParticle("drip", xp, y-0.52f, zp, 0.0, -0.5f, 0.0);
+                world.spawnParticle("drip", xp, y, zp, 0.0, -0.5f, 0.0);
             }
         }
     }
@@ -157,17 +161,11 @@ public class BlockStalagtite extends BlockConnectable {
         {
             tryToFall(world,i,j,k);
         }
-        else
-        {
-            //this.checkForGrowthConditionAndPropagate(world,i,j,k);
-            world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
-        }
     }
 
     public void onBlockRemoval(World world, int x, int y, int z) {
         if(Block.getBlock(world.getBlockId(x,y+1,z)) instanceof BlockStalagtite)
         {
-            //((BlockStalagtite) Block.getBlock(world.getBlockId(x,y+1,z))).doConnectLogic(world,x,y+1,z);
             this.doConnectLogic(world,x,y+1,z);
         }
     }

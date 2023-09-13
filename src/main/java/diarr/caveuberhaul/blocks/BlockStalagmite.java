@@ -37,26 +37,30 @@ public class BlockStalagmite extends BlockConnectable {
         }
     }
 
-    public int tickRate() {
-        return 256;
-    }
-
-    public void updateTick(World world, int i, int j, int k, Random random) {
-            if(world.isAirBlock(i,j+1,k)&&!world.canBlockSeeTheSky(i,j,k)&&random.nextInt(1024)==1)
-            {
-                world.setBlockAndMetadataWithNotify(i,j+1,k,CaveUberhaul.flowstoneStalagmite1.id,0);
-            }
-            else {
-                world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
-            }
-    }
-
     public ItemStack[] getBreakResult(World world, EnumDropCause dropCause, int x, int y, int z, int meta, TileEntity tileEntity) {
         return dropCause != EnumDropCause.IMPROPER_TOOL ? new ItemStack[]{new ItemStack(CaveUberhaul.flowstoneStalagtiteItem.id,1,0)} : null;
     }
 
+    public void updateTick(World world, int i, int j, int k, Random random) {
+        if (this.state == 0) {
+            int length = 0;
+            while (world.getBlock(i, j - length, k) instanceof BlockStalagmite) {
+                length++;
+            }
+            if (length <= 7) {
+                if (world.isAirBlock(i, j + 1, k)) {
+                    if (random.nextInt(2048) == 1) {
+                        world.setBlockWithNotify(i, j + 1, k, CaveUberhaul.flowstoneStalagmite1.id);
+                    } else {
+                        world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
+                    }
+                }
+            }
+        }
+    }
+
     public void onBlockAdded(World world, int x, int y, int z) {
-        ((BlockStalagmite) Block.getBlock(world.getBlockId(x,y,z))).doConnectLogic(world,x,y,z);
+        this.doConnectLogic(world,x,y,z);
         world.scheduleBlockUpdate(x, y, z, this.id, this.tickRate());
     }
 
@@ -70,16 +74,12 @@ public class BlockStalagmite extends BlockConnectable {
                 j++;
             }
         }
-        else
-        {
-            world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
-        }
     }
 
     public void onBlockRemoval(World world, int x, int y, int z) {
         if(Block.getBlock(world.getBlockId(x,y-1,z)) instanceof BlockStalagmite)
         {
-            ((BlockStalagmite) Block.getBlock(world.getBlockId(x,y-1,z))).doConnectLogic(world,x,y-1,z);
+            this.doConnectLogic(world,x,y-1,z);
         }
     }
 
