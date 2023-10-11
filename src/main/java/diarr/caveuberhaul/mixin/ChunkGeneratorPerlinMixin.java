@@ -35,6 +35,11 @@ public class ChunkGeneratorPerlinMixin extends ChunkGenerator {
         super(world, decorator);
     }
 
+    @Shadow
+    protected short[] doBlockGeneration(Chunk chunk) {
+        return new short[0];
+    }
+
     @Inject(method = "doBlockGeneration", at = @At("HEAD"),cancellable = true)
     public void provideChunk(Chunk chunk, CallbackInfoReturnable<short[]> cir) {
         double[] densityMap = this.terrainGenerator.getDensityGenerator().generateDensityMap(chunk);
@@ -44,8 +49,5 @@ public class ChunkGeneratorPerlinMixin extends ChunkGenerator {
         cir.setReturnValue(blocks);
     }
 
-    @Override
-    protected short[] doBlockGeneration(Chunk chunk) {
-        return new short[0];
-    }
+
 }
