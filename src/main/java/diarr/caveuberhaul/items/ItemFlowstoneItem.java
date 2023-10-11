@@ -10,6 +10,7 @@ import net.minecraft.core.enums.EnumBlockSoundEffectType;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.player.gamemode.Gamemode;
+import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
 
 import java.util.Random;
@@ -19,63 +20,40 @@ public class ItemFlowstoneItem extends Item {
     public ItemFlowstoneItem(int i) {
         super(i);
     }
-
-    public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer) {
-        Minecraft mc = Minecraft.getMinecraft(Minecraft.class);
-
-        if (mc.objectMouseOver != null && mc.objectMouseOver.entity == null) {
-            int x = mc.objectMouseOver.x;
-            int y = mc.objectMouseOver.y;
-            int z = mc.objectMouseOver.z;
-
-            int sideHit = mc.objectMouseOver.side.getId();
-
-            //0 = unten, 1= oben
-            if(world.getBlockId(x,y,z)== CaveUberhaul.flowstone.id||world.getBlockId(x,y,z)==CaveUberhaul.flowstonePillar.id)
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int blockX, int blockY, int blockZ, Side side, double xPlaced, double yPlaced) {
+        //0 = unten, 1= oben
+        if(world.getBlockId(blockX,blockY,blockZ)== CaveUberhaul.flowstone.id||world.getBlockId(blockX,blockY,blockZ)==CaveUberhaul.flowstonePillar.id)
+        {
+            if(side == Side.TOP &&CaveUberhaul.flowstoneStalagmite1.canPlaceBlockAt(world,blockX,blockY+1,blockZ))
             {
-                if(sideHit == 1&&CaveUberhaul.flowstoneStalagmite1.canPlaceBlockAt(world,x,y+1,z))
-                {
-                    world.setBlockWithNotify(x,y+1,z,CaveUberhaul.flowstoneStalagmite1.id);
-                    world.playBlockSoundEffect(x,y+1,z,Block.stone, EnumBlockSoundEffectType.PLACE);
-                    if(entityplayer.getGamemode() == Gamemode.survival) {
-                        itemstack.stackSize--;
-                    }
-                    entityplayer.swingItem();
-                    return itemstack;
-                }
-                else if(sideHit == 0&&CaveUberhaul.flowstoneStalagtite1.canPlaceBlockAt(world,x,y-1,z))
-                {
-                    world.setBlockWithNotify(x,y-1,z,CaveUberhaul.flowstoneStalagtite1.id);
-                    world.playBlockSoundEffect(x,y-1,z,Block.stone, EnumBlockSoundEffectType.PLACE);
-                    if(entityplayer.getGamemode() == Gamemode.survival) {
-                        itemstack.stackSize--;
-                    }
-                    entityplayer.swingItem();
-                    return itemstack;
-                }
+                world.setBlockWithNotify(blockX,blockY+1,blockZ,CaveUberhaul.flowstoneStalagmite1.id);
+                world.playBlockSoundEffect(blockX,blockY+1,blockZ,Block.stone, EnumBlockSoundEffectType.PLACE);
+                stack.consumeItem(player);
+                return true;
             }
-            else if(Block.getBlock(world.getBlockId(x,y,z)) instanceof BlockStalagmite &&CaveUberhaul.flowstoneStalagmite1.canPlaceBlockAt(world,x,y+1,z))
+            else if(side == Side.BOTTOM &CaveUberhaul.flowstoneStalagtite1.canPlaceBlockAt(world,blockX,blockY-1,blockZ))
             {
-                world.setBlockWithNotify(x,y+1,z,CaveUberhaul.flowstoneStalagmite1.id);
-                world.playBlockSoundEffect(x,y+1,z,Block.stone, EnumBlockSoundEffectType.PLACE);
-                if(entityplayer.getGamemode() == Gamemode.survival) {
-                    itemstack.stackSize--;
-                }
-                entityplayer.swingItem();
-                return itemstack;
-            }
-            else if(Block.getBlock(world.getBlockId(x,y,z)) instanceof BlockStalagtite &&CaveUberhaul.flowstoneStalagtite1.canPlaceBlockAt(world,x,y-1,z))
-            {
-                world.setBlockWithNotify(x,y-1,z,CaveUberhaul.flowstoneStalagtite1.id);
-                world.playBlockSoundEffect(x,y-1,z,Block.stone, EnumBlockSoundEffectType.PLACE);
-                if(entityplayer.getGamemode() == Gamemode.survival) {
-                    itemstack.stackSize--;
-                }
-                entityplayer.swingItem();
-                return itemstack;
+                world.setBlockWithNotify(blockX,blockY-1,blockZ,CaveUberhaul.flowstoneStalagtite1.id);
+                world.playBlockSoundEffect(blockX,blockY-1,blockZ,Block.stone, EnumBlockSoundEffectType.PLACE);
+                stack.consumeItem(player);
+                return true;
             }
         }
-        entityplayer.swingItem();
-        return itemstack;
+        else if(Block.getBlock(world.getBlockId(blockX,blockY,blockZ)) instanceof BlockStalagmite &&CaveUberhaul.flowstoneStalagmite1.canPlaceBlockAt(world,blockX,blockY+1,blockZ))
+        {
+            world.setBlockWithNotify(blockX,blockY+1,blockZ,CaveUberhaul.flowstoneStalagmite1.id);
+            world.playBlockSoundEffect(blockX,blockY+1,blockZ,Block.stone, EnumBlockSoundEffectType.PLACE);
+            stack.consumeItem(player);
+            return true;
+        }
+        else if(Block.getBlock(world.getBlockId(blockX,blockY,blockZ)) instanceof BlockStalagtite &&CaveUberhaul.flowstoneStalagtite1.canPlaceBlockAt(world,blockX,blockY-1,blockZ))
+        {
+            world.setBlockWithNotify(blockX,blockY-1,blockZ,CaveUberhaul.flowstoneStalagtite1.id);
+            world.playBlockSoundEffect(blockX,blockY-1,blockZ,Block.stone, EnumBlockSoundEffectType.PLACE);
+            stack.consumeItem(player);
+            return true;
+        }
+        return super.onItemUse(stack, player, world, blockX, blockY, blockZ, side, xPlaced, yPlaced);
     }
+
 }
