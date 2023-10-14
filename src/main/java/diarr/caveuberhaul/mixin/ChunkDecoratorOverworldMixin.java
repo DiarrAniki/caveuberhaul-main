@@ -591,7 +591,6 @@ public class ChunkDecoratorOverworldMixin {
         }
 
         BlockSand.fallInstantly = false;
-        ci.cancel();
     }
 
     @Unique
