@@ -1,7 +1,5 @@
 package diarr.caveuberhaul.mixin;
 
-import diarr.caveuberhaul.gen.CaveBiomeProvider;
-import diarr.caveuberhaul.gen.FastNoiseLite;
 import diarr.caveuberhaul.gen.MapGenNoiseCaves;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.chunk.Chunk;

@@ -2,12 +2,7 @@ package diarr.caveuberhaul.mixin;
 
 import diarr.caveuberhaul.particles.EntityDripFx;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.render.RenderBlocks;
-import net.minecraft.client.render.RenderEngine;
 import net.minecraft.client.render.RenderGlobal;
-import net.minecraft.core.block.Block;
-import net.minecraft.core.entity.fx.*;
-import net.minecraft.core.item.Item;
 import net.minecraft.core.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
