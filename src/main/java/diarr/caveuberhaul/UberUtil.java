@@ -249,11 +249,11 @@ public class UberUtil
 
     public static boolean solidBlockExists(int x,int y,int z, World world)
     {
-        return !world.isAirBlock(x,y,z) && !(Block.getBlock(world.getBlockId(x,y,z)) instanceof BlockFluid);
+        return !world.isAirBlock(x,y,z) && !(world.getBlock(x,y,z) instanceof BlockFluid);
     }
     public static boolean solidBlockExistsNoBedrock(int x,int y,int z, World world)
     {
-        return solidBlockExists(x,y,z,world) && Block.getBlock(world.getBlockId(x,y,z)).blockMaterial == Material.stone;
+        return solidBlockExists(x,y,z,world) && world.getBlock(x,y,z).blockMaterial == Material.stone;
     }
     public static float lerp(float a, float b, float t)
     {
@@ -296,12 +296,19 @@ public class UberUtil
 
     public static double distanceAB(int x1,int y1,int z1,int x2, int y2, int z2)
     {
-        return Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2)+Math.pow(z1-z2,2));
+        int difX = x1 - x2;
+        int difY = y1 - y2;
+        int difZ = z1 - z2;
+        return Math.sqrt(difX * difX + difY * difY + difZ * difZ);
     }
 
     public static boolean isSurroundedAndFreeAbove(int x, int y, int z, World world)
     {
-        return (isNeitherAirNorWater(x-1,y,z,world) && isNeitherAirNorWater(x+1,y,z,world)  && isNeitherAirNorWater(x,y,z-1,world)  && isNeitherAirNorWater(x,y,z+1,world)  && world.isAirBlock(x,y+1,z));
+        return (isNeitherAirNorWater(x-1,y,z,world)
+                && isNeitherAirNorWater(x+1,y,z,world)
+                && isNeitherAirNorWater(x,y,z-1,world)
+                && isNeitherAirNorWater(x,y,z+1,world)
+                && world.isAirBlock(x,y+1,z));
     }
 
     public static boolean isSurroundedFreeAboveNoLava(int x, int y, int z, World world)
@@ -321,12 +328,12 @@ public class UberUtil
 
     public static boolean isNeitherAirNorWater(int x,int y,int z, World world)
     {
-        return !(world.isAirBlock(x,y,z) || Block.getBlock(world.getBlockId(x,y,z)).blockMaterial == Material.water);
+        return !(world.isAirBlock(x,y,z) || world.getBlock(x,y,z).blockMaterial == Material.water);
     }
 
     public static boolean isNeitherAirNorLava(int x, int y, int z, World world)
     {
-        return !(world.isAirBlock(x,y,z) || Block.getBlock(world.getBlockId(x,y,z)).blockMaterial == Material.lava);
+        return !(world.isAirBlock(x,y,z) || world.getBlock(x,y,z).blockMaterial == Material.lava);
     }
 
     public static int getFloor(int x, int y, int z, int limit, World world)
