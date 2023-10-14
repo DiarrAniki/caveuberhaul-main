@@ -28,6 +28,7 @@ import net.minecraft.core.world.noise.PerlinNoise;
 import net.minecraft.core.world.type.WorldTypes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -36,11 +37,8 @@ import java.util.Random;
 
 @Mixin(value= ChunkDecoratorOverworld.class,remap = false)
 public class ChunkDecoratorOverworldMixin {
-
     private CaveBiomeProvider caveBiomeProvider = new CaveBiomeProvider();
     private static FastNoiseLite caveBiomeDecoratorNoiseMap = new FastNoiseLite();
-
-    protected MapGenBase caveGen = new MapGenNoiseCaves(false);
     private int[] caveBiomeValues;
     float pillarChance = 0.003F;
     int bigPillarChance = 6;
@@ -600,10 +598,11 @@ public class ChunkDecoratorOverworldMixin {
         }
 
         BlockSand.fallInstantly = false;
-
+        ci.cancel();
     }
 
-    private void placePillars(int x,int y,int z,int xChunk, int zChunk, World worldObj,Random rand)
+    @Unique
+    private void placePillars(int x, int y, int z, int xChunk, int zChunk, World worldObj, Random rand)
     {
         int gx = x+xChunk;
         int gz = z+zChunk;
@@ -641,7 +640,8 @@ public class ChunkDecoratorOverworldMixin {
         }
     }
 
-    private void replaceBlocksForCaveBiome(Chunk chunk, short[] data, int x, int z, float[][] biomeDecNoise,World worldObj,Random rand)
+    @Unique
+    private void replaceBlocksForCaveBiome(Chunk chunk, short[] data, int x, int z, float[][] biomeDecNoise, World worldObj, Random rand)
     {
         boolean placeFlowstone;
         for(int lx = 0; lx<16; lx++)
@@ -685,13 +685,5 @@ public class ChunkDecoratorOverworldMixin {
             }
         }
         chunk.blocks = data;
-    }
-
-    public Entity createEntity(Class<? extends Entity> entityClass, World world) {
-        try {
-            return (Entity)entityClass.getConstructor(World.class).newInstance(world);
-        } catch (Exception var3) {
-            throw new CommandError("Could not create Entity!");
-        }
     }
 }

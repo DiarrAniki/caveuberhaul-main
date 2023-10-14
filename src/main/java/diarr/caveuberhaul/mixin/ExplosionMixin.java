@@ -20,9 +20,7 @@ public class ExplosionMixin {
     @Shadow public double explosionX;
     @Shadow public double explosionY;
     @Shadow public double explosionZ;
-
     @Shadow protected World worldObj;
-
     @Inject(method = "doExplosionB",at = @At("TAIL"))
     private void doExplode(boolean particles, CallbackInfo ci)
     {
