@@ -73,7 +73,7 @@ public class MapGenBaseMixin {
 
         double modifOffset = 0.6f;
         int depth = 0;
-        Block currentBlock = null;
+        Block currentBlock;
 
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z <16; ++z) {

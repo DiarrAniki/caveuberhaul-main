@@ -19,14 +19,12 @@ public class WorldFeatureLavaSwamp extends WorldFeature {
         {
             for(int circleZ = z-radius;circleZ<=z+radius;circleZ++)
             {
-                if (Math.hypot(circleX - x, circleZ- z) < radius) {
-                    for (int circleY = y; circleY <= y + height; circleY++) {
-                        if (random.nextFloat() >= 0.3f) {
-                            if (UberUtil.isSurroundedAndFreeAbove(circleX, circleY, circleZ, world)) {
-                                world.setBlock(circleX, circleY, circleZ, Block.fluidLavaStill.id);
-                                world.setBlock(circleX, circleY - 1, circleZ, Block.fluidLavaStill.id);
-                            }
-                        }
+                if (random.nextFloat() < 0.3f) {continue;}
+                if (Math.hypot(circleX - x, circleZ- z) > radius) {continue;}
+                for (int circleY = y; circleY <= y + height; circleY += 2) {
+                    if (UberUtil.isSurroundedAndFreeAbove(circleX, circleY, circleZ, world)) {
+                        world.setBlock(circleX, circleY, circleZ, Block.fluidLavaStill.id);
+                        world.setBlock(circleX, circleY - 1, circleZ, Block.fluidLavaStill.id);
                     }
                 }
             }
