@@ -48,31 +48,101 @@ public class CaveUberhaul implements ModInitializer {
 
     public static final Item flowstoneStalagtiteItem = ItemHelper.createItem(MOD_ID, new ItemFlowstoneItem(config.getInt("ItemStartId")+1), "flowstone.item", "stalagtite1.png");
 
-    public static final Block flowstone = new BlockBuilder(MOD_ID).setHardness(1.2f).setResistance(8f).setTextures("flowstone.png")
-            .setTags(BlockTags.MINEABLE_BY_PICKAXE).build(new BlockFlowstone("flowstone",config.getInt("BlockStartId"),Material.stone));
-    public static final Block flowstonePillar = new BlockBuilder(MOD_ID).setHardness(1.2f).setResistance(8f).setTextures("flowstonePillar.png")
-            .setTags(BlockTags.MINEABLE_BY_PICKAXE).build(new BlockFlowstone("flowstone.Pillar",config.getInt("BlockStartId")+1,Material.stone));
-    public static final Block flowstoneStalagtite1 = new BlockBuilder(MOD_ID).setHardness(1.2f).setResistance(8f).setTextures("st1.png")
-            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU).setBlockModel(new BlockModelRenderBlocks(1)).build(new BlockStalagtite("cu.flowstone.st1",config.getInt("BlockStartId")+2,Material.stone,0));
-    public static final Block flowstoneStalagtite2 = new BlockBuilder(MOD_ID).setHardness(1.2f).setResistance(8f).setTextures("st2.png")
-            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU).setBlockModel(new BlockModelRenderBlocks(1)).build(new BlockStalagtite("cu.flowstone.st2",config.getInt("BlockStartId")+3,Material.stone,1));
-    public static final Block flowstoneStalagtite3 = new BlockBuilder(MOD_ID).setHardness(1.2f).setResistance(8f).setTextures("st3.png")
-            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU).setBlockModel(new BlockModelRenderBlocks(1)).build(new BlockStalagtite("cu.flowstone.st3",config.getInt("BlockStartId")+4,Material.stone,2));
-    public static final Block flowstoneStalagtite4 = new BlockBuilder(MOD_ID).setHardness(1.2f).setResistance(8f).setTextures("st4.png")
-            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU).setBlockModel(new BlockModelRenderBlocks(1)).build(new BlockStalagtite("cu.flowstone.st4",config.getInt("BlockStartId")+5,Material.stone,3));
-    public static final Block flowstoneStalagtiteConnected = new BlockBuilder(MOD_ID).setHardness(1.2f).setResistance(8f).setTextures("st1c.png")
-            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU).setBlockModel(new BlockModelRenderBlocks(1)).build(new BlockStalagtite("cu.flowstone.st1c",config.getInt("BlockStartId")+6,Material.stone,0));
+    public static final Block flowstone = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setTextures("flowstone.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE)
+            .setTickOnLoad()
+            .build(new BlockFlowstone("flowstone",config.getInt("BlockStartId"),Material.stone));
+    public static final Block flowstonePillar = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setTextures("flowstonePillar.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE)
+            .setTickOnLoad()
+            .build(new BlockFlowstone("flowstone.Pillar",config.getInt("BlockStartId")+1,Material.stone));
+    public static final Block flowstoneStalagtite1 = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setTextures("st1.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockStalagtite("cu.flowstone.st1",config.getInt("BlockStartId")+2,Material.stone,0));
+    public static final Block flowstoneStalagtite2 = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setTextures("st2.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockStalagtite("cu.flowstone.st2",config.getInt("BlockStartId")+3,Material.stone,1));
+    public static final Block flowstoneStalagtite3 = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setTextures("st3.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockStalagtite("cu.flowstone.st3",config.getInt("BlockStartId")+4,Material.stone,2));
+    public static final Block flowstoneStalagtite4 = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setTextures("st4.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockStalagtite("cu.flowstone.st4",config.getInt("BlockStartId")+5,Material.stone,3));
+    public static final Block flowstoneStalagtiteConnected = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setTextures("st1c.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockStalagtite("cu.flowstone.st1c",config.getInt("BlockStartId")+6,Material.stone,0));
 
-    public static final Block flowstoneStalagmite1 = new BlockBuilder(MOD_ID).setHardness(1.2f).setResistance(8f).setTextures("sm1.png")
-            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU).setBlockModel(new BlockModelRenderBlocks(1)).build(new BlockStalagmite("cu.flowstone.sm1",config.getInt("BlockStartId")+7,Material.stone,0));
-    public static final Block flowstoneStalagmite2 = new BlockBuilder(MOD_ID).setHardness(1.2f).setResistance(8f).setTextures("sm2.png")
-            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU).setBlockModel(new BlockModelRenderBlocks(1)).build(new BlockStalagmite("cu.flowstone.sm2",config.getInt("BlockStartId")+8,Material.stone,1));
-    public static final Block flowstoneStalagmite3 = new BlockBuilder(MOD_ID).setHardness(1.2f).setResistance(8f).setTextures("sm3.png")
-            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU).setBlockModel(new BlockModelRenderBlocks(1)).build(new BlockStalagmite("cu.flowstone.sm3",config.getInt("BlockStartId")+9,Material.stone,2));
-    public static final Block flowstoneStalagmite4 = new BlockBuilder(MOD_ID).setHardness(1.2f).setResistance(8f).setTextures("sm4.png")
-            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU).setBlockModel(new BlockModelRenderBlocks(1)).build(new BlockStalagmite("cu.flowstone.sm4",config.getInt("BlockStartId")+10,Material.stone,3));
-    public static final Block flowstoneStalagmiteConnected = new BlockBuilder(MOD_ID).setHardness(1.2f).setResistance(8f).setTextures("sm1c.png")
-            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU).setBlockModel(new BlockModelRenderBlocks(1)).build(new BlockStalagmite("cu.flowstone.sm1c",config.getInt("BlockStartId")+11,Material.stone,0));
+    public static final Block flowstoneStalagmite1 = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setTextures("sm1.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockStalagmite("cu.flowstone.sm1",config.getInt("BlockStartId")+7,Material.stone,0));
+    public static final Block flowstoneStalagmite2 = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setTextures("sm2.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockStalagmite("cu.flowstone.sm2",config.getInt("BlockStartId")+8,Material.stone,1));
+    public static final Block flowstoneStalagmite3 = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setTextures("sm3.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockStalagmite("cu.flowstone.sm3",config.getInt("BlockStartId")+9,Material.stone,2));
+    public static final Block flowstoneStalagmite4 = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setTextures("sm4.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockStalagmite("cu.flowstone.sm4",config.getInt("BlockStartId")+10,Material.stone,3));
+    public static final Block flowstoneStalagmiteConnected = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setTextures("sm1c.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockStalagmite("cu.flowstone.sm1c",config.getInt("BlockStartId")+11,Material.stone,0));
 
     @Override
     public void onInitialize() {
