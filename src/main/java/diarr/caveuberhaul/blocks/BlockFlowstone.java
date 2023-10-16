@@ -22,29 +22,22 @@ public class BlockFlowstone extends Block {
 
 
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
-        Block b = Block.getBlock(world.getBlockId(i,j-1,k));
-        if(b instanceof BlockStalagtite && !world.isAirBlock(i,j+1,k)&&(world.getBlockId(i,j+2,k) == Block.fluidWaterStill.id||world.getBlockId(i,j+2,k) == Block.fluidWaterFlowing.id)) {
-            world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
-            //if(world.getBlockMetadata(i,j-1,k)==0&&b instanceof BlockStalagtite) {
-                //((BlockStalagtite) b).checkForGrowthConditionAndPropagate(world, i, j - 1, k);
-           // }
-        }
+        world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
     }
 
     public void updateTick(World world, int x, int y, int z, Random rand){
         Profiler.methodStart("FlowstoneUpdate");
-        if (world.getBlockId(x, y + 1, z) == Block.gravel.id)
-        {
-            world.setBlockWithNotify(x,y+1,z,Block.sand.id);
-            world.scheduleBlockUpdate(x, y, z, this.id, this.tickRate());
-        }
-        else if (world.getBlockId(x, y + 1, z) == Block.sand.id)
-        {
-            world.setBlockWithNotify(x,y+1,z,Block.mud.id);
-            world.scheduleBlockUpdate(x, y, z, this.id, this.tickRate());
-        }
-        else if (world.getBlockId(x, y + 1, z) == Block.mud.id) {
-            world.setBlockWithNotify(x,y+1,z,Block.blockClay.id);
+        Block b = Block.getBlock(world.getBlockId(x,y-1,z));
+        if(b instanceof BlockStalagtite && !world.isAirBlock(x,y+1,z)&&(world.getBlockId(x,y+2,z) == Block.fluidWaterStill.id||world.getBlockId(x,y+2,z) == Block.fluidWaterFlowing.id)) {
+            if (world.getBlockId(x, y + 1, z) == Block.gravel.id) {
+                world.setBlockWithNotify(x, y + 1, z, Block.sand.id);
+                world.scheduleBlockUpdate(x, y, z, this.id, this.tickRate());
+            } else if (world.getBlockId(x, y + 1, z) == Block.sand.id) {
+                world.setBlockWithNotify(x, y + 1, z, Block.mud.id);
+                world.scheduleBlockUpdate(x, y, z, this.id, this.tickRate());
+            } else if (world.getBlockId(x, y + 1, z) == Block.mud.id) {
+                world.setBlockWithNotify(x, y + 1, z, Block.blockClay.id);
+            }
         }
         Profiler.methodEnd("FlowstoneUpdate");
     }
