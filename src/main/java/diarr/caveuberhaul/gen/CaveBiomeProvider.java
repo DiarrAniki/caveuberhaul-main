@@ -7,13 +7,13 @@ import useless.profiler.Profiler;
 
 public class CaveBiomeProvider
 {
-    private static int offsetXZ=256;
-    private static int offsetY = 128;
-    private static float yCrunch = 0.75f;
+    private static final int offsetXZ=256;
+    private static final int offsetY = 128;
+    private static final float yCrunch = 0.75f;
     //private UberUtil uberUtil = new UberUtil();
     //private static FastNoiseLite depthNoise = new FastNoiseLite();
-    private static FastNoiseLite wetNoise = new FastNoiseLite();
-    private static FastNoiseLite weirdNoise = new FastNoiseLite();
+    private static final FastNoiseLite wetNoise = new FastNoiseLite();
+    private static final FastNoiseLite weirdNoise = new FastNoiseLite();
 
     public static int getCaveBiomeAt(int x,int y,int z)
     {
