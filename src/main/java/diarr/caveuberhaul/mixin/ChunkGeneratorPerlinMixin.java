@@ -1,5 +1,6 @@
 package diarr.caveuberhaul.mixin;
 
+import diarr.caveuberhaul.CaveUberhaul;
 import diarr.caveuberhaul.gen.MapGenNoiseCaves;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.chunk.Chunk;
@@ -14,6 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import useless.profiler.Profiler;
 
 //Huge thanks to Worley and the Worley Caves mod https://www.curseforge.com/minecraft/mc-mods/worleys-caves for explaining how alot of this works.
 @Mixin(value= ChunkGeneratorPerlin.class,remap = false)
@@ -36,10 +38,12 @@ public class ChunkGeneratorPerlinMixin extends ChunkGenerator {
 
     @Inject(method = "doBlockGeneration", at = @At("HEAD"),cancellable = true)
     public void provideChunk(Chunk chunk, CallbackInfoReturnable<short[]> cir) {
+        Profiler.methodStart(CaveUberhaul.MOD_ID, "doBlockGeneration");
         double[] densityMap = this.terrainGenerator.getDensityGenerator().generateDensityMap(chunk);
         short[] blocks = this.terrainGenerator.generateTerrain(chunk, densityMap);
         this.surfaceGenerator.generateSurface(chunk, blocks);
         this.caveGen.generate(this.world, chunk.xPosition, chunk.zPosition, blocks);
+        Profiler.methodEnd(CaveUberhaul.MOD_ID, "doBlockGeneration");
         cir.setReturnValue(blocks);
     }
 }
