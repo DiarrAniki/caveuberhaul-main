@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import useless.profiler.Profiler;
 
-//Huge thanks to Worley and the Worley Caves mod https://www.curseforge.com/minecraft/mc-mods/worleys-caves for explaining how alot of this works.
+//Huge thanks to Worley and the Worley Caves mod https://www.curseforge.com/minecraft/mc-mods/worleys-caves for explaining how a lot of this works.
 //@Mixin(value= MapGenBase.class,remap = false)
 @Mixin(value= MapGenBase.class,remap = false)
 public class MapGenBaseMixin {
@@ -125,7 +125,7 @@ public class MapGenBaseMixin {
                         coreCavernNoiseCutoff += (14 - y) * 0.05;
                     }
 
-                    // increase cutoff as we get closer to the minCaveHeight so it's not all flat floors
+                    // increase cutoff as we get closer to the minCaveHeight, so it's not all flat floors
                     if (y < 32)
                     {
                         adjustedCheeseNoiseCutoffBetween += (32 - y) * 0.05;

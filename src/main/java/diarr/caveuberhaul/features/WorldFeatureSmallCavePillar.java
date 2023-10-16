@@ -7,35 +7,35 @@ import java.util.Random;
 
 public class WorldFeatureSmallCavePillar extends WorldFeature
 {
-    int lowerpos,highpos;
+    int lowerPos, highPos;
     int blockFloor,blockCeil;
 
-    public WorldFeatureSmallCavePillar(int lowerpos,int highpos,int blockFloor,int blockCeil)
+    public WorldFeatureSmallCavePillar(int lowerPos, int highPos, int blockFloor, int blockCeil)
     {
-        this.lowerpos = lowerpos;
-        this.highpos = highpos;
+        this.lowerPos = lowerPos;
+        this.highPos = highPos;
         this.blockFloor = blockFloor;
         this.blockCeil = blockCeil;
     }
     public boolean generate(World world, Random random, int i, int j, int k) {
 
-        int lower = lowerpos;//UberUtil.getFloor(i,j,k,16,world);
-        int upper = highpos;//UberUtil.getCeiling(i,j,k,16,world);
+        int lower = lowerPos;//UberUtil.getFloor(i,j,k,16,world);
+        int upper = highPos;//UberUtil.getCeiling(i,j,k,16,world);
         int blockIdFloor = blockFloor;//UberUtil.getPillarBlock(i, lower - 1, k, world);
         int blockIdCeil = blockCeil;//UberUtil.getPillarBlock(i, upper + 1, k, world);
         if(blockIdCeil == 0 || blockIdFloor ==0||lower<10)
         {
             return false;
         }
-        int heightdif = upper-lower;
-        if(heightdif<28 && heightdif>3)
+        int heightDif = upper-lower;
+        if(heightDif<28 && heightDif>3)
         {
             for(int x = i-1;x<=i+1;x++) {
                 for (int z = k - 1; z <= k + 1; z++) {
                     for (int y = lower - 2; y <= upper + 2; y++) {
                         boolean setBlock = false;
                         if ((x != i&&z==k) || (z != k&&x==i)) {
-                            int limit = random.nextInt(2) + Math.round(heightdif*0.1f);
+                            int limit = random.nextInt(2) + Math.round(heightDif*0.1f);
                             if(y<=lower+limit||y>=upper-limit)
                             {
                                 //world.setBlock(x, y, z, blockId);
@@ -44,7 +44,7 @@ public class WorldFeatureSmallCavePillar extends WorldFeature
                         }
                         else if(x != i && z != k)
                         {
-                            int limit = random.nextInt(1)-1 + Math.round(heightdif*0.05f);
+                            int limit = random.nextInt(1)-1 + Math.round(heightDif*0.05f);
                             if(y<=lower+limit||y>=upper-limit)
                             {
                                 //world.setBlock(x, y, z, blockId);
@@ -58,7 +58,7 @@ public class WorldFeatureSmallCavePillar extends WorldFeature
                         }
                         if(setBlock&&world.isAirBlock(x,y,z)&&!world.canBlockSeeTheSky(x,y,z))
                         {
-                            if(y<lower+(heightdif/2)+random.nextInt(4)-2) {
+                            if(y<lower+(heightDif/2)+random.nextInt(4)-2) {
                                 world.setBlock(x, y, z, blockIdFloor);
                             }
                             else

@@ -18,10 +18,7 @@ public abstract class BlockConnectable extends Block {
     }
     public abstract void doConnectLogic(World world, int x, int y, int z);
 
-    public boolean isCollidable() {
-        return true;
-    }
-    public int getRenderType() {
+    public int getRenderBlockPass() {
         return 1;
     }
 
@@ -33,11 +30,4 @@ public abstract class BlockConnectable extends Block {
         return false;
     }
 
-    public boolean blocksLight() {
-        return false;
-    }
-
-    public AABB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
-        return AABB.getBoundingBoxFromPool((double)i + this.minX, (double)j + this.minY, (double)k + this.minZ, (double)i + this.maxX, (double)j + this.maxY, (double)k + this.maxZ);
-    }
 }

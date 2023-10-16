@@ -1,7 +1,7 @@
 package diarr.caveuberhaul.mixin;
 
-import diarr.caveuberhaul.blocks.EntityFallingStalagtite;
-import diarr.caveuberhaul.blocks.RenderFallingStalagtite;
+import diarr.caveuberhaul.blocks.EntityFallingStalactite;
+import diarr.caveuberhaul.blocks.RenderFallingStalactite;
 import net.minecraft.client.render.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import org.spongepowered.asm.mixin.Final;
@@ -21,8 +21,8 @@ public class RenderManagerMixin {
     @Inject(method = "<init>", at = @At("TAIL"))
     private void RenderManager(CallbackInfo ci)
     {
-        RenderFallingStalagtite fallingStalagtite = new RenderFallingStalagtite();
-        renderers.put(EntityFallingStalagtite.class, fallingStalagtite);
-        fallingStalagtite.setRenderDispatcher((EntityRenderDispatcher) (Object)this);
+        RenderFallingStalactite fallingStalactite = new RenderFallingStalactite();
+        renderers.put(EntityFallingStalactite.class, fallingStalactite);
+        fallingStalactite.setRenderDispatcher((EntityRenderDispatcher) (Object)this);
     }
 }

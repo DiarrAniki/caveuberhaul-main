@@ -53,7 +53,7 @@ public class MapGenNoiseCaves extends MapGenBase {
 
         double modifOffset = 0.6f;
         int depth = 0;
-        Block currentBlock = null;
+        Block currentBlock;
 
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z <16; ++z) {
@@ -107,7 +107,7 @@ public class MapGenNoiseCaves extends MapGenBase {
                         coreCavernNoiseCutoff += (14 - y) * 0.04;
                     }
 
-                    // increase cutoff as we get closer to the minCaveHeight so it's not all flat floors
+                    // increase cutoff as we get closer to the minCaveHeight, so it's not all flat floors
                     if (y < 32)
                     {
                         adjustedCheeseNoiseCutoffBetween += (32 - y) * 0.05;

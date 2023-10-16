@@ -76,7 +76,6 @@ public class ChunkDecoratorOverworldMixin {
         long l2 = (rand.nextLong() / 2L) * 2L + 1L;
         rand.setSeed((long) chunkX * l1 + (long) chunkZ * l2 ^ world.getRandomSeed());
         Random swampRand = new Random((long) chunkX * l1 + (long) chunkZ * l2 ^ world.getRandomSeed());
-        double d = 0.25D;
 
         caveBiomeValues = caveBiomeProvider.provideCaveBiomeValueChunk(chunk.xPosition,chunk.zPosition,world);
         short[] blocks = chunk.blocks;
@@ -301,7 +300,7 @@ public class ChunkDecoratorOverworldMixin {
             }
         }
 
-        d = 0.5D;
+        double d = 0.5D;
         int k4 = (int) ((treeDensityNoise.get((double) x * d, (double) z * d) / 8D + rand.nextDouble() * 4D + 4D) / 3D);
         int treeDensity = 0;
         if (rand.nextInt(10) == 0) {

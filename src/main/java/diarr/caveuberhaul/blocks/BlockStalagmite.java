@@ -13,10 +13,8 @@ import useless.profiler.Profiler;
 import java.util.Random;
 
 public class BlockStalagmite extends BlockConnectable {
-
-    UberUtil uberUtil = new UberUtil();
-    public BlockStalagmite(String s, int i, Material material,  int state) {
-        super(s,i, Material.stone,state);
+    public BlockStalagmite(String s, int i, int state) {
+        super(s,i, Material.stone, state);
         this.setTickOnLoad(true);
         switch (state) {
             case 0: {
@@ -76,7 +74,7 @@ public class BlockStalagmite extends BlockConnectable {
             while(Block.getBlock(world.getBlockId(i,j,k))instanceof BlockStalagmite)
             {
                 world.setBlockWithNotify(i, j, k, 0);
-                this.dropBlockWithCause(world,EnumDropCause.WORLD,i,j,k,0,(TileEntity)null);
+                this.dropBlockWithCause(world,EnumDropCause.WORLD,i,j,k,0,null);
                 j++;
             }
         }
@@ -88,11 +86,6 @@ public class BlockStalagmite extends BlockConnectable {
             this.doConnectLogic(world,x,y-1,z);
         }
     }
-
-    public int idDropped(int i, Random random) {
-        return CaveUberhaul.flowstoneStalagtiteItem.id;
-    }
-
     public void doConnectLogic(World world, int x, int y, int z)
     {
         int connectState;
@@ -101,7 +94,7 @@ public class BlockStalagmite extends BlockConnectable {
             connectState = 3;
         }
         else if (Block.getBlock(world.getBlockId(x, y + 1, z)) instanceof BlockStalagmite) {
-            connectState = uberUtil.clamp(((BlockStalagmite) Block.getBlock(world.getBlockId(x, y + 1, z))).getConnectedState() + 1,0,2 );
+            connectState = UberUtil.clamp(((BlockStalagmite) Block.getBlock(world.getBlockId(x, y + 1, z))).getConnectedState() + 1,0,2 );
         }
         else
         {

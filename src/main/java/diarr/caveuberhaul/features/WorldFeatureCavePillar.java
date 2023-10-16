@@ -8,31 +8,31 @@ import java.util.Random;
 
 public class WorldFeatureCavePillar extends WorldFeature {
     //private UberUtil uberUtil = new UberUtil();
-    int lowerpos,highpos;
+    int lowerPos, highPos;
     int blockFloor,blockCeil;
 
-    public WorldFeatureCavePillar(int lowerpos,int highpos,int blockFloor,int blockCeil)
+    public WorldFeatureCavePillar(int lowerPos, int highPos, int blockFloor, int blockCeil)
     {
-        this.lowerpos = lowerpos;
-        this.highpos = highpos;
+        this.lowerPos = lowerPos;
+        this.highPos = highPos;
         this.blockFloor = blockFloor;
         this.blockCeil = blockCeil;
     }
 
     public boolean generate(World world, Random random, int i, int j, int k) {
-        //TODO rewrite the top and lower find function to use the noise maps for the caves instead. Also consider Sebastian Lagues video about planet generation and craters for merge between collumn noise and cave noise
-        int lower = lowerpos;//UberUtil.getFloor(i, j, k,  32, world);
-        int upper = highpos;//UberUtil.getCeiling(i, j, k, 32, world);
+        //TODO rewrite the top and lower find function to use the noise maps for the caves instead. Also consider Sebastian Lague's video about planet generation and craters for merge between column noise and cave noise
+        int lower = lowerPos;//UberUtil.getFloor(i, j, k,  32, world);
+        int upper = highPos;//UberUtil.getCeiling(i, j, k, 32, world);
         int blockIdFloor = blockFloor;//UberUtil.getPillarBlock(i, lower - 1, k, world);
         int blockIdCeil = blockCeil;//UberUtil.getPillarBlock(i, upper + 1, k, world);
         if(blockIdCeil == 0 || blockIdFloor ==0 || lower<10)
         {
             return false;
         }
-        int heightdif = upper - lower;
-        double radius = heightdif*0.3f+random.nextInt(4)-2;
+        int heightDif = upper - lower;
+        double radius = heightDif*0.3f+random.nextInt(4)-2;
         int radius_int = (int) Math.round(radius);
-        if (heightdif < 50 && heightdif > 3 ) {
+        if (heightDif < 50 && heightDif > 3 ) {
             float randLimit = random.nextFloat()*0.3f;
             if(canPlace(world,i,lower-3,k,radius_int-1)&&canPlace(world,i,upper+3,k,radius_int-1)) {
                 for (int x = i - radius_int; x <= i + radius_int; x++) {
@@ -43,7 +43,7 @@ public class WorldFeatureCavePillar extends WorldFeature {
                             int limit = (int) Math.round (Math.pow((radius - dist)*(0.9-randLimit), 2)  + random.nextInt(c));
 
                             if (dist <= radius && (y <= lower-3 + limit || y >= upper+3 - limit)&& world.isAirBlock(x,y,z)&&!world.canBlockSeeTheSky(x,y,z)) {
-                                if(y<lower+(heightdif/2)+random.nextInt(4)-2) {
+                                if(y<lower+(heightDif/2)+random.nextInt(4)-2) {
                                     world.setBlock(x, y, z, blockIdFloor);
                                 }
                                 else

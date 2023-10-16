@@ -124,8 +124,8 @@ public class BlockStalagtite extends BlockConnectable {
         world.playBlockSoundEffect(i,j,k,Block.stone, EnumBlockSoundEffectType.MINE);
         while(Block.getBlock(world.getBlockId(i,j,k))instanceof BlockStalagtite)
         {
-            EntityFallingStalagtite entityfallingStalagtite = new EntityFallingStalagtite(world, (double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), this.id);
-            world.entityJoinedWorld(entityfallingStalagtite);
+            EntityFallingStalactite entityfallingStalactite = new EntityFallingStalactite(world, (double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), this.id);
+            world.entityJoinedWorld(entityfallingStalactite);
             world.setBlockWithNotify(i, j, k, 0);
             j--;
         }

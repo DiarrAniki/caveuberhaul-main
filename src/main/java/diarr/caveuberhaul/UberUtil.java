@@ -101,20 +101,16 @@ public class UberUtil
                 float x0y0z0 = NoiseSamples[x][z];
                 float x0y0z1 = NoiseSamples[x][z + 1];
                 float x1y0z0 = NoiseSamples[x + 1][z];
-                float x1y0z1 = NoiseSamples[x + 1][z + 1];
 
                 // noise values of 4 corners at y=0
-                float noiseStartX0 = x0y0z0;
-                float noiseStartX1 = x0y0z1;
-                float noiseEndX0 = x1y0z0;
-                float noiseEndX1 = x1y0z1;
+                float noiseEndX1 = NoiseSamples[x + 1][z + 1];
 
-                float noiseStartZ = noiseStartX0;
-                float noiseEndZ = noiseStartX1;
+                float noiseStartZ = x0y0z0;
+                float noiseEndZ = x0y0z1;
 
                 // how much to increment X values, linear interpolation
-                float noiseStepX0 = (noiseEndX0 - noiseStartX0) * quarter;
-                float noiseStepX1 = (noiseEndX1 - noiseStartX1) * quarter;
+                float noiseStepX0 = (x1y0z0 - x0y0z0) * quarter;
+                float noiseStepX1 = (noiseEndX1 - x0y0z1) * quarter;
 
                 for (int subx = 0; subx < 4; subx++) {
                     int localX = subx+x*4;
@@ -368,13 +364,11 @@ public class UberUtil
         int max = 0;
         int[][] testcords = {{2, 6}, {3, 11}, {7, 2}, {9, 13}, {12,4}, {13, 9}};
 
-        for (int n = 0; n < testcords.length; n++)
-        {
-            int testmax = getSurfaceHeight(testcords[n][0], testcords[n][1],data,world);
-            if(testmax > max)
-            {
+        for (int[] testcord : testcords) {
+            int testmax = getSurfaceHeight(testcord[0], testcord[1], data, world);
+            if (testmax > max) {
                 max = testmax;
-                if(max > 134)
+                if (max > 134)
                     return max;
             }
         }
@@ -400,7 +394,7 @@ public class UberUtil
         {
             return CaveUberhaul.flowstonePillar.id;
         }
-        else if(block instanceof BlockLeavesBase ||block instanceof BlockLog ||block instanceof BlockStalagtite||block instanceof BlockStalagmite)
+        else if(block instanceof BlockLeavesBase ||block instanceof BlockLog)
         {
             return 0;
         }

@@ -110,7 +110,7 @@ public class CaveUberhaul implements ModInitializer {
             .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
             .setBlockModel(new BlockModelRenderBlocks(1))
             .setTickOnLoad()
-            .build(new BlockStalagmite("cu.flowstone.sm1",config.getInt("BlockStartId")+7,Material.stone,0));
+            .build(new BlockStalagmite("cu.flowstone.sm1",config.getInt("BlockStartId")+7,0));
     public static final Block flowstoneStalagmite2 = new BlockBuilder(MOD_ID)
             .setHardness(1.2f)
             .setResistance(8f)
@@ -118,7 +118,7 @@ public class CaveUberhaul implements ModInitializer {
             .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
             .setBlockModel(new BlockModelRenderBlocks(1))
             .setTickOnLoad()
-            .build(new BlockStalagmite("cu.flowstone.sm2",config.getInt("BlockStartId")+8,Material.stone,1));
+            .build(new BlockStalagmite("cu.flowstone.sm2",config.getInt("BlockStartId")+8,1));
     public static final Block flowstoneStalagmite3 = new BlockBuilder(MOD_ID)
             .setHardness(1.2f)
             .setResistance(8f)
@@ -126,7 +126,7 @@ public class CaveUberhaul implements ModInitializer {
             .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
             .setBlockModel(new BlockModelRenderBlocks(1))
             .setTickOnLoad()
-            .build(new BlockStalagmite("cu.flowstone.sm3",config.getInt("BlockStartId")+9,Material.stone,2));
+            .build(new BlockStalagmite("cu.flowstone.sm3",config.getInt("BlockStartId")+9,2));
     public static final Block flowstoneStalagmite4 = new BlockBuilder(MOD_ID)
             .setHardness(1.2f)
             .setResistance(8f)
@@ -134,7 +134,7 @@ public class CaveUberhaul implements ModInitializer {
             .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
             .setBlockModel(new BlockModelRenderBlocks(1))
             .setTickOnLoad()
-            .build(new BlockStalagmite("cu.flowstone.sm4",config.getInt("BlockStartId")+10,Material.stone,3));
+            .build(new BlockStalagmite("cu.flowstone.sm4",config.getInt("BlockStartId")+10,3));
     public static final Block flowstoneStalagmiteConnected = new BlockBuilder(MOD_ID)
             .setHardness(1.2f)
             .setResistance(8f)
@@ -142,7 +142,7 @@ public class CaveUberhaul implements ModInitializer {
             .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
             .setBlockModel(new BlockModelRenderBlocks(1))
             .setTickOnLoad()
-            .build(new BlockStalagmite("cu.flowstone.sm1c",config.getInt("BlockStartId")+11,Material.stone,0));
+            .build(new BlockStalagmite("cu.flowstone.sm1c",config.getInt("BlockStartId")+11,0));
 
     @Override
     public void onInitialize() {
