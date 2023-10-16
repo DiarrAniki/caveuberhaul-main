@@ -1,18 +1,18 @@
 package diarr.caveuberhaul.features;
 
-import diarr.caveuberhaul.Profiler;
-import diarr.caveuberhaul.gen.FastNoiseLite;
+import diarr.caveuberhaul.CaveUberhaul;
 import diarr.caveuberhaul.UberUtil;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.generate.feature.WorldFeature;
+import useless.profiler.Profiler;
 
 import java.util.Random;
 
 
 public class WorldFeatureLavaSwamp extends WorldFeature {
     public boolean generate(World world, Random random, int x, int y, int z) {
-        Profiler.methodStart("lava-swamp");
+        Profiler.methodStart(CaveUberhaul.MOD_ID,"lava-swamp");
         int radius = random.nextInt(20)+6;
         int height = random.nextInt(5)+1;
         for(int circleX = x-radius;circleX<=x+radius;circleX++)
@@ -33,7 +33,7 @@ public class WorldFeatureLavaSwamp extends WorldFeature {
                 }
             }
         }
-        Profiler.methodEnd("lava-swamp");
+        Profiler.methodEnd(CaveUberhaul.MOD_ID,"lava-swamp");
         return true;
     }
 }

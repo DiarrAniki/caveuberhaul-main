@@ -1,7 +1,6 @@
 package diarr.caveuberhaul.mixin;
 
 import diarr.caveuberhaul.CaveUberhaul;
-import diarr.caveuberhaul.Profiler;
 import diarr.caveuberhaul.UberUtil;
 import diarr.caveuberhaul.features.*;
 import diarr.caveuberhaul.gen.CaveBiomeProvider;
@@ -26,6 +25,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import useless.profiler.Profiler;
 
 import java.util.Random;
 
@@ -47,7 +47,7 @@ public class ChunkDecoratorOverworldMixin {
     @Inject(method = "decorate", at = @At("HEAD"),cancellable = true)
     public void decorate(Chunk chunk, CallbackInfo ci)
     {
-        Profiler.methodStart("decorate");
+        Profiler.methodStart(CaveUberhaul.MOD_ID,"decorate");
         int chunkX = chunk.xPosition;
         int chunkZ = chunk.zPosition;
 
@@ -592,7 +592,7 @@ public class ChunkDecoratorOverworldMixin {
 
         }
         BlockSand.fallInstantly = false;
-        Profiler.methodEnd("decorate");
+        Profiler.methodEnd(CaveUberhaul.MOD_ID,"decorate");
     }
 
     @Unique

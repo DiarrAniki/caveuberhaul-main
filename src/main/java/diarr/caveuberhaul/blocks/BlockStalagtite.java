@@ -1,20 +1,15 @@
 package diarr.caveuberhaul.blocks;
 
 import diarr.caveuberhaul.CaveUberhaul;
-import diarr.caveuberhaul.Profiler;
 import diarr.caveuberhaul.UberUtil;
-import net.minecraft.core.achievement.AchievementList;
-import net.minecraft.core.achievement.stat.StatList;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.material.Material;
-import net.minecraft.core.entity.Entity;
-import net.minecraft.core.entity.player.EntityPlayer;
 import net.minecraft.core.enums.EnumBlockSoundEffectType;
 import net.minecraft.core.enums.EnumDropCause;
-import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.world.World;
+import useless.profiler.Profiler;
 
 import java.util.Random;
 
@@ -79,7 +74,7 @@ public class BlockStalagtite extends BlockConnectable {
     }
 
     public void updateTick(World world, int i, int j, int k, Random random) {
-        Profiler.methodStart("StalagtiteUpdate");
+        Profiler.methodStart(CaveUberhaul.MOD_ID, "StalagtiteUpdate");
         if(this.state==0) {
             int length = 0;
             while(world.getBlock(i,j+length,k)instanceof BlockStalagtite)
@@ -102,7 +97,7 @@ public class BlockStalagtite extends BlockConnectable {
                 }
             }
         }
-        Profiler.methodStart("StalagtiteUpdate");
+        Profiler.methodStart(CaveUberhaul.MOD_ID, "StalagtiteUpdate");
     }
 
     public void randomDisplayTick(World world, int x, int y, int z, Random rand)
