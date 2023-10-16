@@ -21,7 +21,7 @@ public class WorldFeatureLavaSwamp extends WorldFeature {
             {
                 for(int circleY = y;circleY<=y+height;circleY++)
                 {
-                    if(random.nextFloat()>=0.3f) {
+                    if(random.nextInt(10)> 2) {
 
                         double dist = UberUtil.distanceAB(circleX, circleY, circleZ, x, circleY, z);
 
