@@ -21,15 +21,17 @@ public class WorldFeatureLavaSwamp extends WorldFeature {
             {
                 for(int circleY = y;circleY<=y+height;circleY++)
                 {
-                    if(random.nextInt(10)> 2) {
+                    if (random.nextInt(10)< 3) {continue;}
+                    if (UberUtil.distanceAB(circleX, circleY, circleZ, x, circleY, z) > radius) { continue;}
+                    // Unrolled UberUtil.isSurroundedAndFreeAbove() to reduce the number of checks
+                    if (!UberUtil.isNeitherAirNorWater(x-1,y,z,world)) { continue;}
+                    if (!UberUtil.isNeitherAirNorWater(x+1,y,z,world)) { continue;}
+                    if (!UberUtil.isNeitherAirNorWater(x,y,z-1,world)) { continue;}
+                    if (!UberUtil.isNeitherAirNorWater(x,y,z+1,world)) { continue;}
+                    if (!world.isAirBlock(x,y+1,z)) {continue;}
+                    world.setBlock(circleX, circleY, circleZ, Block.fluidLavaStill.id);
+                    world.setBlock(circleX, circleY-1, circleZ, Block.fluidLavaStill.id);
 
-                        double dist = UberUtil.distanceAB(circleX, circleY, circleZ, x, circleY, z);
-
-                        if (dist <= radius && UberUtil.isSurroundedAndFreeAbove(circleX, circleY, circleZ, world)) {
-                            world.setBlock(circleX, circleY, circleZ, Block.fluidLavaStill.id);
-                            world.setBlock(circleX, circleY-1, circleZ, Block.fluidLavaStill.id);
-                        }
-                    }
                 }
             }
         }
