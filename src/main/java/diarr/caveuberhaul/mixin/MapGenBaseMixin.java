@@ -21,20 +21,29 @@ import useless.profiler.Profiler;
 @Mixin(value= MapGenBase.class,remap = false)
 public class MapGenBaseMixin {
 
+    @Unique
     public boolean[][][] cutoffValues;
 
-    private static float surfaceCutoff=1.2f;
-    private static int lavaDepth = 10;
+//    @Unique
+//    private static final float surfaceCutoff=1.2f;
+    @Unique
+    private static final int lavaDepth = 10;
     @Shadow
     protected World worldObj;
 
-    private static float coreThresCheese = 0.45f;
-    private static float caveThresWorm = -0.055f;
-    private static float caveThresNoodle = -0.085f;
+    @Unique
+    private static final float coreThresCheese = 0.45f;
+    @Unique
+    private static final float caveThresWorm = -0.055f;
+    @Unique
+    private static final float caveThresNoodle = -0.085f;
 
-    private static FastNoiseLite cavernNoise = new FastNoiseLite();
-    private static FastNoiseLite wormCaveNoise = new FastNoiseLite();
-    private static FastNoiseLite caveModifierNoise = new FastNoiseLite();
+    @Unique
+    private static final FastNoiseLite cavernNoise = new FastNoiseLite();
+    @Unique
+    private static final FastNoiseLite wormCaveNoise = new FastNoiseLite();
+    @Unique
+    private static final FastNoiseLite caveModifierNoise = new FastNoiseLite();
 
     //private static UberUtil uberUtil = new UberUtil();
 
@@ -205,13 +214,11 @@ public class MapGenBaseMixin {
         int max = 0;
         int[][] testcords = {{2, 6}, {3, 11}, {7, 2}, {9, 13}, {12,4}, {13, 9}};
 
-        for (int n = 0; n < testcords.length; n++)
-        {
-            int testmax = getSurfaceHeight(testcords[n][0], testcords[n][1],data,world);
-            if(testmax > max)
-            {
+        for (int[] testcord : testcords) {
+            int testmax = getSurfaceHeight(testcord[0], testcord[1], data, world);
+            if (testmax > max) {
                 max = testmax;
-                if(max > 134)
+                if (max > 134)
                     return max;
             }
         }
