@@ -4,9 +4,9 @@ import java.util.HashMap;
 import org.apache.commons.lang3.StringUtils;
 
 public class Profiler {
-    public static HashMap<String, Long> ellapsedTime = new HashMap<>();
-    public static HashMap<String, Long> startTimes = new HashMap<>();
-    public static HashMap<String, Integer> methodCalls = new HashMap<>();
+    protected static HashMap<String, Long> ellapsedTime = new HashMap<>();
+    protected static HashMap<String, Long> startTimes = new HashMap<>();
+    protected static HashMap<String, Integer> methodCalls = new HashMap<>();
     private static int longestKey = 0;
 
     public static float getAverageTime(String id){
@@ -38,6 +38,7 @@ public class Profiler {
         CaveUberhaul.LOGGER.info(builder.toString());
     }
     public static void printTimesInRespectToID(String id){
+        if (ellapsedTime.size() == 0) {return;}
         long totalKeyTime = ellapsedTime.get(id);
         StringBuilder builder = new StringBuilder("Function Times\n").append(StringUtils.rightPad("ID", longestKey)).append(" | ").append(StringUtils.rightPad("Percentage", 11)).append(" | ").append(StringUtils.rightPad("Average", 9)).append(" | ").append(StringUtils.rightPad("Ellapsed", 12)).append(" | ").append("Times called\n");
         for (String key: ellapsedTime.keySet()) {
