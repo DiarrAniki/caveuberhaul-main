@@ -19,6 +19,7 @@ import net.minecraft.core.world.generate.chunk.perlin.overworld.ChunkDecoratorOv
 import net.minecraft.core.world.generate.feature.*;
 import net.minecraft.core.world.noise.PerlinNoise;
 import net.minecraft.core.world.type.WorldTypes;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -31,20 +32,28 @@ import java.util.Random;
 
 @Mixin(value= ChunkDecoratorOverworld.class,remap = false)
 public class ChunkDecoratorOverworldMixin {
-    private CaveBiomeProvider caveBiomeProvider = new CaveBiomeProvider();
-    private static FastNoiseLite caveBiomeDecoratorNoiseMap = new FastNoiseLite();
+    @Unique
+    private final CaveBiomeProvider caveBiomeProvider = new CaveBiomeProvider();
+    @Unique
+    private static final FastNoiseLite caveBiomeDecoratorNoiseMap = new FastNoiseLite();
+    @Unique
     private int[] caveBiomeValues;
+    @Unique
     float pillarChance = 0.003F;
+    @Unique
     int bigPillarChance = 6;
+    @Final
     @Shadow
     private World world;
+    @Final
     @Shadow
     private PerlinNoise treeDensityNoise;
+    @Final
     @Shadow
     private int treeDensityOverride;
 
 
-    @Inject(method = "decorate", at = @At("HEAD"),cancellable = true)
+    @Inject(method = "decorate", at = @At("HEAD"))
     public void decorate(Chunk chunk, CallbackInfo ci)
     {
         Profiler.methodStart(CaveUberhaul.MOD_ID,"decorate");
@@ -647,31 +656,18 @@ public class ChunkDecoratorOverworldMixin {
                 placeFlowstone = biomeDecNoise[lx][lz]>-0.2f;
                 for(int ly = world.getHeightBlocks()-1; ly > 0; ly--)
                 {
-
-                    switch(caveBiomeValues[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly]) {
-                        case 1:
-                        {
-                            if (data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] !=0 && data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] != Block.bedrock.id && Block.getBlock(data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly]) instanceof BlockStone && placeFlowstone)
-                            {
-                                data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] = (short) CaveUberhaul.flowstone.id;
-                            }
-
-                            if(data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] !=0&&Block.getBlock(data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly]).blockMaterial==Material.stone&&rand.nextFloat()>=0.4f&&UberUtil.isSurroundedFreeAboveNoLava(x+lx,ly,z+lz,worldObj))
-                            {
-                                //worldObj.setBlock(x + lx, ly, z + lz, Block.fluidWaterStill.blockID);
-                                if(worldObj.isAirBlock(gx,ly-1,gz))
-                                {
-                                    data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly]=(short) Block.fluidWaterFlowing.id;
-                                }
-                                else {
-                                    data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] = (short) Block.fluidWaterStill.id;
-                                }
-                            }
-                            break;
+                    if (caveBiomeValues[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] == 1) {
+                        if (data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] != 0 && data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] != Block.bedrock.id && Block.getBlock(data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly]) instanceof BlockStone && placeFlowstone) {
+                            data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] = (short) CaveUberhaul.flowstone.id;
                         }
-                        default:
-                        {
-                            break;
+
+                        if (data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] != 0 && Block.getBlock(data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly]).blockMaterial == Material.stone && rand.nextFloat() >= 0.4f && UberUtil.isSurroundedFreeAboveNoLava(x + lx, ly, z + lz, worldObj)) {
+                            //worldObj.setBlock(x + lx, ly, z + lz, Block.fluidWaterStill.blockID);
+                            if (worldObj.isAirBlock(gx, ly - 1, gz)) {
+                                data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] = (short) Block.fluidWaterFlowing.id;
+                            } else {
+                                data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] = (short) Block.fluidWaterStill.id;
+                            }
                         }
                     }
                     placePillars(lx,ly,lz,x,z,worldObj,rand);
