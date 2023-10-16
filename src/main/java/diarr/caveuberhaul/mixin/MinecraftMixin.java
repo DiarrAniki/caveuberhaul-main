@@ -16,7 +16,7 @@ public class MinecraftMixin {
     private void checkProfileTimes(CallbackInfo ci){
         if (ticksRan % 100 == 0){
             Profiler.printTimesInRespectToID("Minecraft");
-            Profiler.clearTimes();
+            //Profiler.clearTimes();
         }
         Profiler.methodStart("Minecraft");
     }

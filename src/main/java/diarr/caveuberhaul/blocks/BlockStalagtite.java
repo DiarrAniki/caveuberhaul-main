@@ -1,6 +1,7 @@
 package diarr.caveuberhaul.blocks;
 
 import diarr.caveuberhaul.CaveUberhaul;
+import diarr.caveuberhaul.Profiler;
 import diarr.caveuberhaul.UberUtil;
 import net.minecraft.core.achievement.AchievementList;
 import net.minecraft.core.achievement.stat.StatList;
@@ -78,6 +79,7 @@ public class BlockStalagtite extends BlockConnectable {
     }
 
     public void updateTick(World world, int i, int j, int k, Random random) {
+        Profiler.methodStart("StalagtiteUpdate");
         if(this.state==0) {
             int length = 0;
             while(world.getBlock(i,j+length,k)instanceof BlockStalagtite)
@@ -100,6 +102,7 @@ public class BlockStalagtite extends BlockConnectable {
                 }
             }
         }
+        Profiler.methodStart("StalagtiteUpdate");
     }
 
     public void randomDisplayTick(World world, int x, int y, int z, Random rand)

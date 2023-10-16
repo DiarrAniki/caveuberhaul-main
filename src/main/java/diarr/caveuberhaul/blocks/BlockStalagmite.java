@@ -1,6 +1,7 @@
 package diarr.caveuberhaul.blocks;
 
 import diarr.caveuberhaul.CaveUberhaul;
+import diarr.caveuberhaul.Profiler;
 import diarr.caveuberhaul.UberUtil;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.entity.TileEntity;
@@ -42,6 +43,7 @@ public class BlockStalagmite extends BlockConnectable {
     }
 
     public void updateTick(World world, int i, int j, int k, Random random) {
+        Profiler.methodStart("StalagmiteUpdate");
         if (this.state == 0) {
             int length = 0;
             while (world.getBlock(i, j - length, k) instanceof BlockStalagmite) {
@@ -57,6 +59,7 @@ public class BlockStalagmite extends BlockConnectable {
                 }
             }
         }
+        Profiler.methodEnd("StalagmiteUpdate");
     }
 
     public void onBlockAdded(World world, int x, int y, int z) {

@@ -1,5 +1,6 @@
 package diarr.caveuberhaul.blocks;
 
+import diarr.caveuberhaul.Profiler;
 import diarr.caveuberhaul.UberUtil;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.material.Material;
@@ -31,18 +32,20 @@ public class BlockFlowstone extends Block {
     }
 
     public void updateTick(World world, int x, int y, int z, Random rand){
-            if (world.getBlockId(x, y + 1, z) == Block.gravel.id)
-            {
-                world.setBlockWithNotify(x,y+1,z,Block.sand.id);
-                world.scheduleBlockUpdate(x, y, z, this.id, this.tickRate());
-            }
-            else if (world.getBlockId(x, y + 1, z) == Block.sand.id)
-            {
-                world.setBlockWithNotify(x,y+1,z,Block.mud.id);
-                world.scheduleBlockUpdate(x, y, z, this.id, this.tickRate());
-            }
-            else if (world.getBlockId(x, y + 1, z) == Block.mud.id) {
-                world.setBlockWithNotify(x,y+1,z,Block.blockClay.id);
-            }
+        Profiler.methodStart("FlowstoneUpdate");
+        if (world.getBlockId(x, y + 1, z) == Block.gravel.id)
+        {
+            world.setBlockWithNotify(x,y+1,z,Block.sand.id);
+            world.scheduleBlockUpdate(x, y, z, this.id, this.tickRate());
+        }
+        else if (world.getBlockId(x, y + 1, z) == Block.sand.id)
+        {
+            world.setBlockWithNotify(x,y+1,z,Block.mud.id);
+            world.scheduleBlockUpdate(x, y, z, this.id, this.tickRate());
+        }
+        else if (world.getBlockId(x, y + 1, z) == Block.mud.id) {
+            world.setBlockWithNotify(x,y+1,z,Block.blockClay.id);
+        }
+        Profiler.methodEnd("FlowstoneUpdate");
     }
 }
