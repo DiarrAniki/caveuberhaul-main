@@ -41,6 +41,9 @@ public class BlockStalagmite extends BlockConnectable {
     public ItemStack[] getBreakResult(World world, EnumDropCause dropCause, int x, int y, int z, int meta, TileEntity tileEntity) {
         return dropCause != EnumDropCause.IMPROPER_TOOL ? new ItemStack[]{new ItemStack(CaveUberhaul.flowstoneStalagtiteItem.id,1,0)} : null;
     }
+    public int tickRate() {
+        return 256;
+    }
 
     public void updateTick(World world, int i, int j, int k, Random random) {
         Profiler.methodStart("StalagmiteUpdate");
