@@ -1,5 +1,6 @@
 package diarr.caveuberhaul.gen;
 
+import diarr.caveuberhaul.Profiler;
 import diarr.caveuberhaul.UberUtil;
 import net.minecraft.core.world.World;
 
@@ -22,6 +23,7 @@ public class CaveBiomeProvider
 
     public int[] provideCaveBiomeValueChunk(int chunkX, int chunkZ, World world)
     {
+        Profiler.methodStart("provideCaveBiomeValueChunk");
         //TODO Rework: Generiert nur 18 Chunks in postive und 26 Chunks in negative Richtung
         //Loop through chunk, interpret 2 noise values into CaveBiome Value. Save Cavebiome Value as int into array for usage.
         int[] BiomeInts = new int[256*world.getHeightBlocks()];
@@ -41,6 +43,7 @@ public class CaveBiomeProvider
                 }
             }
         }
+        Profiler.methodEnd("provideCaveBiomeValueChunk");
         return BiomeInts;
     }
 

@@ -1,6 +1,7 @@
 package diarr.caveuberhaul.mixin;
 
 
+import diarr.caveuberhaul.Profiler;
 import diarr.caveuberhaul.gen.FastNoiseLite;
 import diarr.caveuberhaul.UberUtil;
 import net.minecraft.core.block.Block;
@@ -39,9 +40,11 @@ public class MapGenBaseMixin {
     @Inject(method = "generate", at = @At("HEAD"),cancellable = true)
     public void doGeneration(World world, int baseChunkX, int baseChunkZ, short[] ashort0, CallbackInfo ci)
     {
+        Profiler.methodStart("genNoiseCaves");
         this.worldObj = world;
         cutoffValues = new boolean[16][256][16];
         generateNoiseCaves(worldObj,baseChunkX, baseChunkZ, ashort0);
+        Profiler.methodEnd("genNoiseCaves");
         ci.cancel();
     }
 
