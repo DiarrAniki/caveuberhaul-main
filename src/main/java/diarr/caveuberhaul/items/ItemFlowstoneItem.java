@@ -3,20 +3,15 @@ package diarr.caveuberhaul.items;
 import diarr.caveuberhaul.CaveUberhaul;
 import diarr.caveuberhaul.blocks.BlockStalagmite;
 import diarr.caveuberhaul.blocks.BlockStalagtite;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.entity.player.EntityPlayer;
 import net.minecraft.core.enums.EnumBlockSoundEffectType;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
-import net.minecraft.core.player.gamemode.Gamemode;
 import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
 
-import java.util.Random;
-
 public class ItemFlowstoneItem extends Item {
-    Random rand = new Random();
     public ItemFlowstoneItem(int i) {
         super(i);
     }

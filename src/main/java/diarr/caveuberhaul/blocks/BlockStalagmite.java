@@ -8,14 +8,13 @@ import net.minecraft.core.block.material.Material;
 import net.minecraft.core.enums.EnumDropCause;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.world.World;
+import useless.profiler.Profiler;
 
 import java.util.Random;
 
 public class BlockStalagmite extends BlockConnectable {
-
-    UberUtil uberUtil = new UberUtil();
-    public BlockStalagmite(String s, int i, Material material,  int state) {
-        super(s,i, Material.stone,state);
+    public BlockStalagmite(String s, int i, int state) {
+        super(s,i, Material.stone, state);
         this.setTickOnLoad(true);
         switch (state) {
             case 0: {
@@ -40,8 +39,12 @@ public class BlockStalagmite extends BlockConnectable {
     public ItemStack[] getBreakResult(World world, EnumDropCause dropCause, int x, int y, int z, int meta, TileEntity tileEntity) {
         return dropCause != EnumDropCause.IMPROPER_TOOL ? new ItemStack[]{new ItemStack(CaveUberhaul.flowstoneStalagtiteItem.id,1,0)} : null;
     }
+    public int tickRate() {
+        return 256;
+    }
 
     public void updateTick(World world, int i, int j, int k, Random random) {
+        Profiler.methodStart(CaveUberhaul.MOD_ID, "StalagmiteUpdate");
         if (this.state == 0) {
             int length = 0;
             while (world.getBlock(i, j - length, k) instanceof BlockStalagmite) {
@@ -57,6 +60,7 @@ public class BlockStalagmite extends BlockConnectable {
                 }
             }
         }
+        Profiler.methodEnd(CaveUberhaul.MOD_ID, "StalagmiteUpdate");
     }
 
     public void onBlockAdded(World world, int x, int y, int z) {
@@ -70,7 +74,7 @@ public class BlockStalagmite extends BlockConnectable {
             while(Block.getBlock(world.getBlockId(i,j,k))instanceof BlockStalagmite)
             {
                 world.setBlockWithNotify(i, j, k, 0);
-                this.dropBlockWithCause(world,EnumDropCause.WORLD,i,j,k,0,(TileEntity)null);
+                this.dropBlockWithCause(world,EnumDropCause.WORLD,i,j,k,0,null);
                 j++;
             }
         }
@@ -82,11 +86,6 @@ public class BlockStalagmite extends BlockConnectable {
             this.doConnectLogic(world,x,y-1,z);
         }
     }
-
-    public int idDropped(int i, Random random) {
-        return CaveUberhaul.flowstoneStalagtiteItem.id;
-    }
-
     public void doConnectLogic(World world, int x, int y, int z)
     {
         int connectState;
@@ -95,7 +94,7 @@ public class BlockStalagmite extends BlockConnectable {
             connectState = 3;
         }
         else if (Block.getBlock(world.getBlockId(x, y + 1, z)) instanceof BlockStalagmite) {
-            connectState = uberUtil.clamp(((BlockStalagmite) Block.getBlock(world.getBlockId(x, y + 1, z))).getConnectedState() + 1,0,2 );
+            connectState = UberUtil.clamp(((BlockStalagmite) Block.getBlock(world.getBlockId(x, y + 1, z))).getConnectedState() + 1,0,2 );
         }
         else
         {

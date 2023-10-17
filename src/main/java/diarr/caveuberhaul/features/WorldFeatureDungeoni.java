@@ -6,10 +6,7 @@ package diarr.caveuberhaul.features;//
 
 import java.util.Random;
 import net.minecraft.core.block.Block;
-import net.minecraft.core.block.entity.TileEntityMobSpawner;
 import net.minecraft.core.block.material.Material;
-import net.minecraft.core.item.Item;
-import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.generate.feature.WorldFeature;
 

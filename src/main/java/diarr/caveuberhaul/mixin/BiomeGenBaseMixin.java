@@ -16,6 +16,6 @@ import java.util.Random;
 public class BiomeGenBaseMixin {
     @Inject(method = "getRandomWorldGenForTrees", at = @At("HEAD"),cancellable = true)
         public void getRandomWorldGenForTreesMix(Random random, CallbackInfoReturnable<WorldFeature> cir) {
-            cir.setReturnValue ((WorldFeature)(random.nextInt(10) == 0 ? new WorldFeatureTreeFancy(Block.leavesOak.id, Block.logOak.id) : random.nextFloat()<=0.00001f?new WorldGenTreeShapeDefaulti(Block.logOak.id, 4):new WorldFeatureTreeFancy(Block.leavesOak.id, Block.logOak.id, 4)));
+            cir.setReturnValue ((random.nextInt(10) == 0 ? new WorldFeatureTreeFancy(Block.leavesOak.id, Block.logOak.id) : random.nextFloat()<=0.00001f?new WorldGenTreeShapeDefaulti(Block.logOak.id, 4):new WorldFeatureTreeFancy(Block.leavesOak.id, Block.logOak.id, 4)));
         }
 }

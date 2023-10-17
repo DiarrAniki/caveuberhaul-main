@@ -1,17 +1,19 @@
 package diarr.caveuberhaul.gen;
 
+import diarr.caveuberhaul.CaveUberhaul;
 import diarr.caveuberhaul.UberUtil;
 import net.minecraft.core.world.World;
+import useless.profiler.Profiler;
 
 public class CaveBiomeProvider
 {
-    private static int offsetXZ=256;
-    private static int offsetY = 128;
-    private static float yCrunch = 0.75f;
+    private static final int offsetXZ=256;
+    private static final int offsetY = 128;
+    private static final float yCrunch = 0.75f;
     //private UberUtil uberUtil = new UberUtil();
     //private static FastNoiseLite depthNoise = new FastNoiseLite();
-    private static FastNoiseLite wetNoise = new FastNoiseLite();
-    private static FastNoiseLite weirdNoise = new FastNoiseLite();
+    private static final FastNoiseLite wetNoise = new FastNoiseLite();
+    private static final FastNoiseLite weirdNoise = new FastNoiseLite();
 
     public static int getCaveBiomeAt(int x,int y,int z)
     {
@@ -22,6 +24,7 @@ public class CaveBiomeProvider
 
     public int[] provideCaveBiomeValueChunk(int chunkX, int chunkZ, World world)
     {
+        Profiler.methodStart(CaveUberhaul.MOD_ID,"provideCaveBiomeValueChunk");
         //TODO Rework: Generiert nur 18 Chunks in postive und 26 Chunks in negative Richtung
         //Loop through chunk, interpret 2 noise values into CaveBiome Value. Save Cavebiome Value as int into array for usage.
         int[] BiomeInts = new int[256*world.getHeightBlocks()];
@@ -41,6 +44,7 @@ public class CaveBiomeProvider
                 }
             }
         }
+        Profiler.methodEnd(CaveUberhaul.MOD_ID,"provideCaveBiomeValueChunk");
         return BiomeInts;
     }
 

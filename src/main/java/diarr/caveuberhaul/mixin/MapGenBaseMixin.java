@@ -1,6 +1,7 @@
 package diarr.caveuberhaul.mixin;
 
 
+import diarr.caveuberhaul.CaveUberhaul;
 import diarr.caveuberhaul.gen.FastNoiseLite;
 import diarr.caveuberhaul.UberUtil;
 import net.minecraft.core.block.Block;
@@ -9,42 +10,56 @@ import net.minecraft.core.world.World;
 import net.minecraft.core.world.generate.MapGenBase;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import useless.profiler.Profiler;
 
-//Huge thanks to Worley and the Worley Caves mod https://www.curseforge.com/minecraft/mc-mods/worleys-caves for explaining how alot of this works.
+//Huge thanks to Worley and the Worley Caves mod https://www.curseforge.com/minecraft/mc-mods/worleys-caves for explaining how a lot of this works.
 //@Mixin(value= MapGenBase.class,remap = false)
 @Mixin(value= MapGenBase.class,remap = false)
 public class MapGenBaseMixin {
 
+    @Unique
     public boolean[][][] cutoffValues;
 
-    private static float surfaceCutoff=1.2f;
-    private static int lavaDepth = 10;
+//    @Unique
+//    private static final float surfaceCutoff=1.2f;
+    @Unique
+    private static final int lavaDepth = 10;
     @Shadow
     protected World worldObj;
 
-    private static float coreThresCheese = 0.45f;
-    private static float caveThresWorm = -0.055f;
-    private static float caveThresNoodle = -0.085f;
+    @Unique
+    private static final float coreThresCheese = 0.45f;
+    @Unique
+    private static final float caveThresWorm = -0.055f;
+    @Unique
+    private static final float caveThresNoodle = -0.085f;
 
-    private static FastNoiseLite cavernNoise = new FastNoiseLite();
-    private static FastNoiseLite wormCaveNoise = new FastNoiseLite();
-    private static FastNoiseLite caveModifierNoise = new FastNoiseLite();
+    @Unique
+    private static final FastNoiseLite cavernNoise = new FastNoiseLite();
+    @Unique
+    private static final FastNoiseLite wormCaveNoise = new FastNoiseLite();
+    @Unique
+    private static final FastNoiseLite caveModifierNoise = new FastNoiseLite();
 
     //private static UberUtil uberUtil = new UberUtil();
 
     @Inject(method = "generate", at = @At("HEAD"),cancellable = true)
     public void doGeneration(World world, int baseChunkX, int baseChunkZ, short[] ashort0, CallbackInfo ci)
     {
+        Profiler.methodStart(CaveUberhaul.MOD_ID,"genNoiseCaves");
         this.worldObj = world;
         cutoffValues = new boolean[16][256][16];
         generateNoiseCaves(worldObj,baseChunkX, baseChunkZ, ashort0);
+        Profiler.methodEnd(CaveUberhaul.MOD_ID,"genNoiseCaves");
         ci.cancel();
     }
 
-    private void generateNoiseCaves(World world,int baseChunkX,int baseChunkZ, short[]data)
+    @Unique
+    private void generateNoiseCaves(World world, int baseChunkX, int baseChunkZ, short[]data)
     {
         int chunkMaxHeight = getMaxSurfaceHeight(data,world);
 
@@ -58,7 +73,7 @@ public class MapGenBaseMixin {
 
         double modifOffset = 0.6f;
         int depth = 0;
-        Block currentBlock = null;
+        Block currentBlock;
 
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z <16; ++z) {
@@ -110,7 +125,7 @@ public class MapGenBaseMixin {
                         coreCavernNoiseCutoff += (14 - y) * 0.05;
                     }
 
-                    // increase cutoff as we get closer to the minCaveHeight so it's not all flat floors
+                    // increase cutoff as we get closer to the minCaveHeight, so it's not all flat floors
                     if (y < 32)
                     {
                         adjustedCheeseNoiseCutoffBetween += (32 - y) * 0.05;
@@ -175,7 +190,8 @@ public class MapGenBaseMixin {
         }
     }
 
-    private void digBlock(short[] data , int localX,int localY,int localZ,World world)
+    @Unique
+    private void digBlock(short[] data , int localX, int localY, int localZ, World world)
     {
             if(localY<= lavaDepth)
             {
@@ -192,30 +208,31 @@ public class MapGenBaseMixin {
             this.cutoffValues[localX][localY][localZ] = true;
     }
 
-    private int getMaxSurfaceHeight(short[] data,World world)
+    @Unique
+    private int getMaxSurfaceHeight(short[] data, World world)
     {
         int max = 0;
         int[][] testcords = {{2, 6}, {3, 11}, {7, 2}, {9, 13}, {12,4}, {13, 9}};
 
-        for (int n = 0; n < testcords.length; n++)
-        {
-            int testmax = getSurfaceHeight(testcords[n][0], testcords[n][1],data,world);
-            if(testmax > max)
-            {
+        for (int[] testcord : testcords) {
+            int testmax = getSurfaceHeight(testcord[0], testcord[1], data, world);
+            if (testmax > max) {
                 max = testmax;
-                if(max > 134)
+                if (max > 134)
                     return max;
             }
         }
         return max;
     }
 
-    private int getSurfaceHeight(int localX, int localZ,short[] data,World world)
+    @Unique
+    private int getSurfaceHeight(int localX, int localZ, short[] data, World world)
     {
         // Using a recursive binary search to find the surface
         return UberUtil.recursiveBinarySurfaceSearchUp(localX, localZ, world.getHeightBlocks()-1, 0,data,world);
     }
 
+    @Unique
     private boolean isFluidBlock(Block block)
     {
         return block instanceof BlockFluid;

@@ -20,13 +20,11 @@ public class ExplosionMixin {
     @Shadow public double explosionX;
     @Shadow public double explosionY;
     @Shadow public double explosionZ;
-
     @Shadow protected World worldObj;
-
     @Inject(method = "doExplosionB",at = @At("TAIL"))
     private void doExplode(boolean particles, CallbackInfo ci)
     {
-        int destruction = (int) Math.round(this.explosionSize*4f);
+        int destruction = Math.round(this.explosionSize*4f);
         //System.out.println(destruction);
         for(int i=0;i<=destruction*2;i++)
         {

@@ -2,59 +2,61 @@ package diarr.caveuberhaul.mixin;
 
 import diarr.caveuberhaul.CaveUberhaul;
 import diarr.caveuberhaul.UberUtil;
-import diarr.caveuberhaul.blocks.EntityFallingStalagtite;
 import diarr.caveuberhaul.features.*;
 import diarr.caveuberhaul.gen.CaveBiomeProvider;
 import diarr.caveuberhaul.gen.FastNoiseLite;
-import diarr.caveuberhaul.gen.MapGenNoiseCaves;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockSand;
 import net.minecraft.core.block.BlockStone;
 import net.minecraft.core.block.material.Material;
-import net.minecraft.core.entity.Entity;
-import net.minecraft.core.entity.EntityDispatcher;
-import net.minecraft.core.entity.EntityLiving;
 import net.minecraft.core.entity.animal.EntityWolf;
-import net.minecraft.core.net.command.CommandError;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.biome.BiomeOutback;
 import net.minecraft.core.world.biome.Biomes;
 import net.minecraft.core.world.chunk.Chunk;
-import net.minecraft.core.world.generate.MapGenBase;
 import net.minecraft.core.world.generate.chunk.perlin.overworld.ChunkDecoratorOverworld;
 import net.minecraft.core.world.generate.feature.*;
 import net.minecraft.core.world.noise.PerlinNoise;
 import net.minecraft.core.world.type.WorldTypes;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import useless.profiler.Profiler;
 
 import java.util.Random;
 
 @Mixin(value= ChunkDecoratorOverworld.class,remap = false)
 public class ChunkDecoratorOverworldMixin {
-
-    private CaveBiomeProvider caveBiomeProvider = new CaveBiomeProvider();
-    private static FastNoiseLite caveBiomeDecoratorNoiseMap = new FastNoiseLite();
-
-    protected MapGenBase caveGen = new MapGenNoiseCaves(false);
+    @Unique
+    private final CaveBiomeProvider caveBiomeProvider = new CaveBiomeProvider();
+    @Unique
+    private static final FastNoiseLite caveBiomeDecoratorNoiseMap = new FastNoiseLite();
+    @Unique
     private int[] caveBiomeValues;
+    @Unique
     float pillarChance = 0.003F;
+    @Unique
     int bigPillarChance = 6;
+    @Final
     @Shadow
     private World world;
+    @Final
     @Shadow
     private PerlinNoise treeDensityNoise;
+    @Final
     @Shadow
     private int treeDensityOverride;
 
 
-    @Inject(method = "decorate", at = @At("HEAD"),cancellable = true)
+    @Inject(method = "decorate", at = @At("HEAD"))
     public void decorate(Chunk chunk, CallbackInfo ci)
     {
+        Profiler.methodStart(CaveUberhaul.MOD_ID,"decorate");
         int chunkX = chunk.xPosition;
         int chunkZ = chunk.zPosition;
 
@@ -74,7 +76,6 @@ public class ChunkDecoratorOverworldMixin {
         long l2 = (rand.nextLong() / 2L) * 2L + 1L;
         rand.setSeed((long) chunkX * l1 + (long) chunkZ * l2 ^ world.getRandomSeed());
         Random swampRand = new Random((long) chunkX * l1 + (long) chunkZ * l2 ^ world.getRandomSeed());
-        double d = 0.25D;
 
         caveBiomeValues = caveBiomeProvider.provideCaveBiomeValueChunk(chunk.xPosition,chunk.zPosition,world);
         short[] blocks = chunk.blocks;
@@ -299,7 +300,7 @@ public class ChunkDecoratorOverworldMixin {
             }
         }
 
-        d = 0.5D;
+        double d = 0.5D;
         int k4 = (int) ((treeDensityNoise.get((double) x * d, (double) z * d) / 8D + rand.nextDouble() * 4D + 4D) / 3D);
         int treeDensity = 0;
         if (rand.nextInt(10) == 0) {
@@ -598,12 +599,12 @@ public class ChunkDecoratorOverworldMixin {
             }
 
         }
-
         BlockSand.fallInstantly = false;
-
+        Profiler.methodEnd(CaveUberhaul.MOD_ID,"decorate");
     }
 
-    private void placePillars(int x,int y,int z,int xChunk, int zChunk, World worldObj,Random rand)
+    @Unique
+    private void placePillars(int x, int y, int z, int xChunk, int zChunk, World worldObj, Random rand)
     {
         int gx = x+xChunk;
         int gz = z+zChunk;
@@ -641,7 +642,8 @@ public class ChunkDecoratorOverworldMixin {
         }
     }
 
-    private void replaceBlocksForCaveBiome(Chunk chunk, short[] data, int x, int z, float[][] biomeDecNoise,World worldObj,Random rand)
+    @Unique
+    private void replaceBlocksForCaveBiome(Chunk chunk, short[] data, int x, int z, float[][] biomeDecNoise, World worldObj, Random rand)
     {
         boolean placeFlowstone;
         for(int lx = 0; lx<16; lx++)
@@ -653,31 +655,18 @@ public class ChunkDecoratorOverworldMixin {
                 placeFlowstone = biomeDecNoise[lx][lz]>-0.2f;
                 for(int ly = world.getHeightBlocks()-1; ly > 0; ly--)
                 {
-
-                    switch(caveBiomeValues[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly]) {
-                        case 1:
-                        {
-                            if (data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] !=0 && data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] != Block.bedrock.id && Block.getBlock(data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly]) instanceof BlockStone && placeFlowstone)
-                            {
-                                data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] = (short) CaveUberhaul.flowstone.id;
-                            }
-
-                            if(data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] !=0&&Block.getBlock(data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly]).blockMaterial==Material.stone&&rand.nextFloat()>=0.4f&&UberUtil.isSurroundedFreeAboveNoLava(x+lx,ly,z+lz,worldObj))
-                            {
-                                //worldObj.setBlock(x + lx, ly, z + lz, Block.fluidWaterStill.blockID);
-                                if(worldObj.isAirBlock(gx,ly-1,gz))
-                                {
-                                    data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly]=(short) Block.fluidWaterFlowing.id;
-                                }
-                                else {
-                                    data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] = (short) Block.fluidWaterStill.id;
-                                }
-                            }
-                            break;
+                    if (caveBiomeValues[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] == 1) {
+                        if (data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] != 0 && data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] != Block.bedrock.id && Block.getBlock(data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly]) instanceof BlockStone && placeFlowstone) {
+                            data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] = (short) CaveUberhaul.flowstone.id;
                         }
-                        default:
-                        {
-                            break;
+
+                        if (data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] != 0 && Block.getBlock(data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly]).blockMaterial == Material.stone && rand.nextFloat() >= 0.4f && UberUtil.isSurroundedFreeAboveNoLava(x + lx, ly, z + lz, worldObj)) {
+                            //worldObj.setBlock(x + lx, ly, z + lz, Block.fluidWaterStill.blockID);
+                            if (worldObj.isAirBlock(gx, ly - 1, gz)) {
+                                data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] = (short) Block.fluidWaterFlowing.id;
+                            } else {
+                                data[lx << world.getHeightBits() + 4 | lz << world.getHeightBits() | ly] = (short) Block.fluidWaterStill.id;
+                            }
                         }
                     }
                     placePillars(lx,ly,lz,x,z,worldObj,rand);
@@ -685,13 +674,5 @@ public class ChunkDecoratorOverworldMixin {
             }
         }
         chunk.blocks = data;
-    }
-
-    public Entity createEntity(Class<? extends Entity> entityClass, World world) {
-        try {
-            return (Entity)entityClass.getConstructor(World.class).newInstance(world);
-        } catch (Exception var3) {
-            throw new CommandError("Could not create Entity!");
-        }
     }
 }
