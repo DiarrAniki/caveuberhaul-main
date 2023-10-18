@@ -80,9 +80,17 @@ repositories {
 		}
 		metadataSources { artifact() }
 	}
+	ivy {
+		url = "https://github.com/UselessBullets"
+		patternLayout {
+			artifact "[organisation]/releases/download/b[revision]/[module]-[revision].jar"
+			m2compatible = true
+		}
+		metadataSources { artifact() }
+	}
 }
 
-dependencies {
+	dependencies {
 	minecraft "bta-download-repo:bta:${project.bta_version}"
 	mappings loom.layered() {}
 
@@ -94,6 +102,7 @@ dependencies {
 	modImplementation "com.github.Turnip-Labs:bta-halplibe:${project.halplibe_version}"
 
 	modImplementation "Useless-Profiler:profiler:1.0.0"
+	modImplementation "TerrainAPI:terrainapi-beta:${project.terrain_api_version}"
 	modImplementation "ModMenu:ModMenu:2.0.0"
 
 	implementation "org.slf4j:slf4j-api:1.8.0-beta4"
