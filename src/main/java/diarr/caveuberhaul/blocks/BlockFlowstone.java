@@ -1,10 +1,8 @@
 package diarr.caveuberhaul.blocks;
 
-import diarr.caveuberhaul.CaveUberhaul;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.material.Material;
 import net.minecraft.core.world.World;
-import useless.profiler.Profiler;
 
 import java.util.Random;
 
@@ -25,7 +23,6 @@ public class BlockFlowstone extends Block {
     }
 
     public void updateTick(World world, int x, int y, int z, Random rand){
-        Profiler.methodStart(CaveUberhaul.MOD_ID, "FlowstoneUpdate");
         Block b = Block.getBlock(world.getBlockId(x,y-1,z));
         if(b instanceof BlockStalagtite && !world.isAirBlock(x,y+1,z)&&(world.getBlockId(x,y+2,z) == Block.fluidWaterStill.id||world.getBlockId(x,y+2,z) == Block.fluidWaterFlowing.id)) {
             if (world.getBlockId(x, y + 1, z) == Block.gravel.id) {
@@ -38,6 +35,5 @@ public class BlockFlowstone extends Block {
                 world.setBlockWithNotify(x, y + 1, z, Block.blockClay.id);
             }
         }
-        Profiler.methodEnd(CaveUberhaul.MOD_ID, "FlowstoneUpdate");
     }
 }

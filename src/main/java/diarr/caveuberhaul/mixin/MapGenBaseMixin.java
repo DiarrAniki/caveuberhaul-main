@@ -1,7 +1,5 @@
 package diarr.caveuberhaul.mixin;
 
-
-import diarr.caveuberhaul.CaveUberhaul;
 import diarr.caveuberhaul.gen.FastNoiseLite;
 import diarr.caveuberhaul.UberUtil;
 import net.minecraft.core.block.Block;
@@ -14,7 +12,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import useless.profiler.Profiler;
 
 //Huge thanks to Worley and the Worley Caves mod https://www.curseforge.com/minecraft/mc-mods/worleys-caves for explaining how a lot of this works.
 //@Mixin(value= MapGenBase.class,remap = false)
@@ -50,11 +47,9 @@ public class MapGenBaseMixin {
     @Inject(method = "generate", at = @At("HEAD"),cancellable = true)
     public void doGeneration(World world, int baseChunkX, int baseChunkZ, short[] ashort0, CallbackInfo ci)
     {
-        Profiler.methodStart(CaveUberhaul.MOD_ID,"genNoiseCaves");
         this.worldObj = world;
         cutoffValues = new boolean[16][256][16];
         generateNoiseCaves(worldObj,baseChunkX, baseChunkZ, ashort0);
-        Profiler.methodEnd(CaveUberhaul.MOD_ID,"genNoiseCaves");
         ci.cancel();
     }
 

@@ -9,7 +9,6 @@ import net.minecraft.core.enums.EnumBlockSoundEffectType;
 import net.minecraft.core.enums.EnumDropCause;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.world.World;
-import useless.profiler.Profiler;
 
 import java.util.Random;
 
@@ -74,7 +73,6 @@ public class BlockStalagtite extends BlockConnectable {
     }
 
     public void updateTick(World world, int i, int j, int k, Random random) {
-        Profiler.methodStart(CaveUberhaul.MOD_ID, "StalagtiteUpdate");
         if(this.state==0) {
             int length = 0;
             while(world.getBlock(i,j+length,k)instanceof BlockStalagtite)
@@ -97,7 +95,6 @@ public class BlockStalagtite extends BlockConnectable {
                 }
             }
         }
-        Profiler.methodStart(CaveUberhaul.MOD_ID, "StalagtiteUpdate");
     }
 
     public void randomDisplayTick(World world, int x, int y, int z, Random rand)
