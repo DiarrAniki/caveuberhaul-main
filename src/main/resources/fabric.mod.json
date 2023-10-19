@@ -19,6 +19,9 @@
   "entrypoints": {
     "main": [
       "diarr.caveuberhaul.CaveUberhaul"
+    ],
+    "terrain-api": [
+      "diarr.caveuberhaul.TerrainAPIContainer"
     ]
   },
   "mixins": [
