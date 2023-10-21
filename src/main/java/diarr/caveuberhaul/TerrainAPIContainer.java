@@ -1,8 +1,11 @@
 package diarr.caveuberhaul;
 
 import diarr.caveuberhaul.features.*;
-import diarr.caveuberhaul.gen.CaveBiomeProvider;
+import diarr.caveuberhaul.gen.cavebiomes.CaveBiomeProvider;
 import diarr.caveuberhaul.gen.FastNoiseLite;
+import diarr.caveuberhaul.gen.cavebiomes.CaveBiome;
+import diarr.caveuberhaul.gen.cavebiomes.CaveBiomeChunkMap;
+import diarr.caveuberhaul.gen.cavebiomes.CaveBiomes;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockStone;
 import net.minecraft.core.block.material.Material;
@@ -11,6 +14,7 @@ import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.biome.Biomes;
 import net.minecraft.core.world.chunk.Chunk;
+import net.minecraft.core.world.chunk.ChunkPosition;
 import net.minecraft.core.world.generate.feature.WorldFeatureOre;
 import net.minecraft.core.world.generate.feature.WorldFeatureRichScorchedDirt;
 import useless.terrainapi.generation.overworld.ChunkDecoratorOverworldAPI;
@@ -49,14 +53,12 @@ public class TerrainAPIContainer {
         Chunk chunk = (Chunk) parameters[2];
         ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
 
-        CaveBiomeProvider caveBiomeProvider = new CaveBiomeProvider();
-        int[] caveBiomeValues = caveBiomeProvider.provideCaveBiomeValueChunk(chunk.xPosition,chunk.zPosition, decorator.world);
 
         int x = chunk.xPosition * 16;
         int z = chunk.zPosition * 16;
         short[] blocks = chunk.blocks;
         float[][] caveBiomeDecoratorNoise = UberUtil.getInterpolatedNoiseValue2D(UberUtil.sampleNoise2D(chunk.xPosition,chunk.zPosition,0.08f, decorator.world, caveBiomeDecoratorNoiseMap, FastNoiseLite.NoiseType.OpenSimplex2S));
-        replaceBlocksForCaveBiome(chunk,blocks,x,z,caveBiomeDecoratorNoise, decorator.world, rand, caveBiomeValues);
+        replaceBlocksForCaveBiome(chunk,blocks,x,z,caveBiomeDecoratorNoise, decorator.world, rand);
 
         // Generate Flowstone Pillar
         for(int lx = 0;lx<16;lx++)
@@ -82,7 +84,7 @@ public class TerrainAPIContainer {
     }
     public static Boolean generateLaveSwamp(Object[] parameters){
         Random rand = (Random) parameters[1];
-        if (rand.nextFloat() < 0.92f) {return true;}
+        if (rand.nextFloat() < 0.92f) {return false;}
         Chunk chunk = (Chunk) parameters[2];
         ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
         int x = chunk.xPosition * 16;
@@ -167,14 +169,14 @@ public class TerrainAPIContainer {
         return true;
     }
 
-    private static void placePillars(int x, int y, int z, int xChunk, int zChunk, World worldObj, Random rand, int[] caveBiomeValues)
+    private static void placePillars(int x, int y, int z, int xChunk, int zChunk, World worldObj, Random rand, CaveBiome cb)
     {
         int gx = x+xChunk;
         int gz = z+zChunk;
         if(worldObj.isBlockNormalCube(gx,y,gz)&&worldObj.isAirBlock(gx,y+1,gz)) {
             float pillarChance;
             int bigPillarChance;
-            if (caveBiomeValues[x << worldObj.getHeightBits() + 4 | z << worldObj.getHeightBits() | y] == 1) {
+            if (cb != null&&cb == CaveBiomes.CAVE_FLOWSTONE) {
 
                 pillarChance = 0.01F;
                 bigPillarChance = 2;
@@ -206,8 +208,13 @@ public class TerrainAPIContainer {
             }
         }
     }
-    private static void replaceBlocksForCaveBiome(Chunk chunk, short[] data, int x, int z, float[][] biomeDecNoise, World worldObj, Random rand, int[] caveBiomeValues)
+    private static void replaceBlocksForCaveBiome(Chunk chunk, short[] data, int x, int z, float[][] biomeDecNoise, World worldObj, Random rand)
     {
+        CaveBiomeProvider cbp = CaveBiomeChunkMap.map.get(new ChunkPosition(chunk.xPosition,0,chunk.zPosition));//new CaveBiomeProvider(worldObj,chunk);
+        if(cbp == null)
+        {
+            cbp = new CaveBiomeProvider(worldObj,chunk.xPosition,chunk.zPosition);
+        }
         boolean placeFlowstone;
         for(int lx = 0; lx<16; lx++)
         {
@@ -215,10 +222,10 @@ public class TerrainAPIContainer {
             for(int lz = 0; lz<16; lz++)
             {
                 int gz = lz+z;
-                placeFlowstone = biomeDecNoise[lx][lz]>-0.2f;
+                placeFlowstone = true;//biomeDecNoise[lx][lz]>-0.2f;
                 for(int ly = worldObj.getHeightBlocks()-1; ly > 0; ly--)
                 {
-                    if (caveBiomeValues[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly] == 1) {
+                    if (cbp.getCaveBiomeAt(lx,ly,lz,worldObj)!=null&&cbp.getCaveBiomeAt(lx,ly,lz,worldObj)==CaveBiomes.CAVE_FLOWSTONE) {
                         if (data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly] != 0 && data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly] != Block.bedrock.id && Block.getBlock(data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly]) instanceof BlockStone && placeFlowstone) {
                             data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly] = (short) CaveUberhaul.flowstone.id;
                         }
@@ -232,7 +239,7 @@ public class TerrainAPIContainer {
                             }
                         }
                     }
-                    placePillars(lx,ly,lz,x,z, worldObj, rand, caveBiomeValues);
+                    placePillars(lx,ly,lz,x,z, worldObj, rand, cbp.getCaveBiomeAt(lx,ly,lz,worldObj));
                 }
             }
         }

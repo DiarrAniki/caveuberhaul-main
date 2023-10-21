@@ -1,5 +1,6 @@
 package diarr.caveuberhaul.mixin;
 
+import diarr.caveuberhaul.gen.cavebiomes.CaveBiomeProvider;
 import diarr.caveuberhaul.gen.FastNoiseLite;
 import diarr.caveuberhaul.UberUtil;
 import net.minecraft.core.block.Block;
@@ -57,6 +58,7 @@ public class MapGenBaseMixin {
     private void generateNoiseCaves(World world, int baseChunkX, int baseChunkZ, short[]data)
     {
         int chunkMaxHeight = getMaxSurfaceHeight(data,world);
+        new CaveBiomeProvider(world, baseChunkX,baseChunkZ);
 
         //easeInDepth = chunkMaxHeight+4;
         float[][][] CheeseCave = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(baseChunkX,baseChunkZ,0,0,0,0.023f,1.2f,world, cavernNoise, FastNoiseLite.NoiseType.Perlin),world);

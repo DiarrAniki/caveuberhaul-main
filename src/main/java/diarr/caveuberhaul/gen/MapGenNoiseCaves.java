@@ -9,8 +9,6 @@ import net.minecraft.core.world.generate.MapGenBase;
 
 public class MapGenNoiseCaves extends MapGenBase {
 
-    public boolean[][][] cutoffValues;
-
 //    private static final float surfaceCutoff=1.2f;
     private static final int lavaDepth = 10;
 
@@ -35,7 +33,6 @@ public class MapGenNoiseCaves extends MapGenBase {
     public void generate(IChunkProvider ichunkprovider, World world, int baseChunkX, int baseChunkZ, short[] ashort0)
     {
         this.worldObj = world;
-        cutoffValues = new boolean[16][256][16];
         generateNoiseCaves(worldObj,baseChunkX, baseChunkZ, ashort0);
     }
 
@@ -43,7 +40,6 @@ public class MapGenNoiseCaves extends MapGenBase {
     {
         int chunkMaxHeight = getMaxSurfaceHeight(data,world);
 
-        //easeInDepth = chunkMaxHeight+4;
         float[][][] CheeseCave = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(baseChunkX,baseChunkZ,0,0,0,0.025f,1.2f,world, cavernNoise, FastNoiseLite.NoiseType.Perlin),world);
         float[][][] WormCave = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(baseChunkX,baseChunkZ,0,0,0,0.012f,1.2f,world, wormCaveNoise, FastNoiseLite.NoiseType.OpenSimplex2),world);
         float[][][] WormCaveOffset = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(baseChunkX,baseChunkZ,128,128,128,0.012f,1.2f,world, wormCaveNoise, FastNoiseLite.NoiseType.OpenSimplex2),world);
@@ -59,7 +55,8 @@ public class MapGenNoiseCaves extends MapGenBase {
             for (int z = 0; z <16; ++z) {
                 double modif = UberUtil.clamp((ModifierNoise[x][z]+modifOffset)*Math.pow(ModifierNoise[x][z]+modifOffset,4),0,1.05f);
                 int coreCavernBlockHeight = (int) (32+10*modif);
-                System.out.println(coreCavernBlockHeight);
+                //
+                // System.out.println(coreCavernBlockHeight);
                 for (int y = world.getHeightBlocks()-1; y >= 0; y--) {
 
                     float noiseValCheese = CheeseCave[x][y][z];
@@ -183,7 +180,6 @@ public class MapGenNoiseCaves extends MapGenBase {
         } else
         {
             data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY]=0;
-            this.cutoffValues[localX][localY][localZ] = true;
             if (data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY] == 0 && data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY-1] == Block.dirt.id)
             {
                 data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY-1] = (short) Block.grass.id;
