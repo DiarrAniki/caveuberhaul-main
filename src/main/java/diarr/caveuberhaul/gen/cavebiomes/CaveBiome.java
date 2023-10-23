@@ -7,6 +7,7 @@ import java.util.List;
 
 public class CaveBiome {
     public Block[] blockList;
+    public final int id;
     public final double minTemp;
     public final double maxTemp;
     public final double minWeird;
@@ -17,8 +18,9 @@ public class CaveBiome {
     protected List<SpawnListEntry> spawnableWaterCreatureList;
     protected List<SpawnListEntry> spawnableAmbientCreatureList;
 
-    public CaveBiome(double minT,double maxT,double minW, double maxW,int bpc,int spc)
+    public CaveBiome(int id,double minT,double maxT,double minW, double maxW,int bpc,int spc)
     {
+        this.id = id;
         minTemp = minT;
         maxTemp = maxT;
         minWeird = minW;

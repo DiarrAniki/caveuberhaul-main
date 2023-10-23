@@ -3,6 +3,8 @@ package diarr.caveuberhaul.gen.cavebiomes;
 import diarr.caveuberhaul.UberUtil;
 import diarr.caveuberhaul.gen.FastNoiseLite;
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.biome.Biome;
+import net.minecraft.core.world.biome.Biomes;
 import net.minecraft.core.world.chunk.ChunkPosition;
 
 public class CaveBiomeProvider
@@ -24,16 +26,23 @@ public class CaveBiomeProvider
         double weird;
         double temperature;
 
-        float[][][] tempVals = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(chunkX,chunkZ,0,0,0,0.04f,1.5f,world, temperatureNoise ,FastNoiseLite.NoiseType.Perlin),world);
-        float[][][] weirdVals = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(chunkX,chunkZ,0,0,0,0.06f,1.5f,world, weirdNoise ,FastNoiseLite.NoiseType.Perlin),world);
+        float[][][] tempVals = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(chunkX,chunkZ,0,0,0,0.04f,0.6f,world, temperatureNoise ,FastNoiseLite.NoiseType.Perlin),world);
+        float[][][] weirdVals = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(chunkX,chunkZ,0,0,0,0.06f,0.6f,world, weirdNoise ,FastNoiseLite.NoiseType.Perlin),world);
         for(int x = 0; x<16;x++)
         {
+            int gx = x+chunkX*16;
             for(int z = 0; z<16;z++)
             {
+                int gz = z+chunkZ*16;
+                Biome biome = world.getBlockBiome(gx,0,gz);
                 for(int y = world.getHeightBlocks()-1; y>0;y--)
                 {
                     weird = weirdVals[x][y][z];
                     temperature = tempVals[x][y][z];
+                    if(!(biome== Biomes.OVERWORLD_GLACIER||biome== Biomes.OVERWORLD_TAIGA||biome== Biomes.OVERWORLD_TUNDRA)&&y>((world.getHeightBlocks()/4)-world.rand.nextInt(4)))
+                    {
+                        caveBiomesInChunk[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y] = CaveBiomes.CAVE_FROST;
+                    }
                     for (int b = 0; b< CaveBiomes.caveBiomeList.size();b++)
                     {
                         CaveBiome cb = CaveBiomes.caveBiomeList.get(b);
