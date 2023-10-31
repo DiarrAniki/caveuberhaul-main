@@ -2,7 +2,6 @@ package diarr.caveuberhaul.blocks;
 
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.material.Material;
-import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
 
 public abstract class BlockConnectable extends Block {
@@ -17,10 +16,6 @@ public abstract class BlockConnectable extends Block {
         return state;
     }
     public abstract void doConnectLogic(World world, int x, int y, int z);
-
-    public int getRenderBlockPass() {
-        return 1;
-    }
 
     public boolean renderAsNormalBlock() {
         return false;

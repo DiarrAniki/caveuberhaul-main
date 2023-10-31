@@ -12,8 +12,7 @@
     "MinecraftMixin",
     "RenderBlocksMixin",
     "RenderGlobalMixin",
-    "RenderManagerMixin",
-    "Debug.GuiCreateWorldMixin"
+    "RenderManagerMixin"
   ],
   "client": [
   ],

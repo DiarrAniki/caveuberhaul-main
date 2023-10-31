@@ -1,11 +1,9 @@
 package diarr.caveuberhaul.features;
 
-import diarr.caveuberhaul.CaveUberhaul;
 import diarr.caveuberhaul.UberUtil;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.generate.feature.WorldFeature;
-import useless.profiler.Profiler;
 
 import java.util.Random;
 
@@ -28,7 +26,6 @@ public class WorldFeatureLavaSwamp extends WorldFeature {
                 }
             }
         }
-        Profiler.methodEnd(CaveUberhaul.MOD_ID,"lava-swamp");
         return true;
     }
 }

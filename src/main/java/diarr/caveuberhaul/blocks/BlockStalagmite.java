@@ -8,7 +8,6 @@ import net.minecraft.core.block.material.Material;
 import net.minecraft.core.enums.EnumDropCause;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.world.World;
-import useless.profiler.Profiler;
 
 import java.util.Random;
 
@@ -44,7 +43,6 @@ public class BlockStalagmite extends BlockConnectable {
     }
 
     public void updateTick(World world, int i, int j, int k, Random random) {
-        Profiler.methodStart(CaveUberhaul.MOD_ID, "StalagmiteUpdate");
         if (this.state == 0) {
             int length = 0;
             while (world.getBlock(i, j - length, k) instanceof BlockStalagmite) {
@@ -60,7 +58,6 @@ public class BlockStalagmite extends BlockConnectable {
                 }
             }
         }
-        Profiler.methodEnd(CaveUberhaul.MOD_ID, "StalagmiteUpdate");
     }
 
     public void onBlockAdded(World world, int x, int y, int z) {
