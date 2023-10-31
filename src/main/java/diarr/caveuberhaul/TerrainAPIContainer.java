@@ -16,36 +16,40 @@ import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.chunk.ChunkPosition;
 import net.minecraft.core.world.generate.feature.WorldFeatureOre;
 import net.minecraft.core.world.generate.feature.WorldFeatureRichScorchedDirt;
+import useless.terrainapi.api.TerrainAPI;
 import useless.terrainapi.generation.overworld.ChunkDecoratorOverworldAPI;
 
 import java.util.Random;
 
-public class TerrainAPIContainer {
+public class TerrainAPIContainer implements TerrainAPI {
     private static final FastNoiseLite caveBiomeDecoratorNoiseMap = new FastNoiseLite();
-
-    public static void initialize(){
+    @Override
+    public String getModID() {
+        return CaveUberhaul.MOD_ID;
+    }
+    public void onInitialize() {
         //TODO expand api to allow exact port of original system
-        ChunkDecoratorOverworldAPI.BiomeFeatures.addFeatureSurface(new WorldFeatureRichScorchedDirt(10), 1, new Biome[]{Biomes.OVERWORLD_OUTBACK_GRASSY});
+        ChunkDecoratorOverworldAPI.biomeFeatures.addFeatureSurface(new WorldFeatureRichScorchedDirt(10), 1, new Biome[]{Biomes.OVERWORLD_OUTBACK_GRASSY});
 
-        ChunkDecoratorOverworldAPI.OreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.blockClay.id, 32, 20, 1);
-        ChunkDecoratorOverworldAPI.OreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.dirt.id, 32, 20, 1);
-        ChunkDecoratorOverworldAPI.OreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.gravel.id, 32, 10, 1);
-        ChunkDecoratorOverworldAPI.OreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreCoalStone.id, 16, 20, (256-40)/256f);
-        ChunkDecoratorOverworldAPI.OreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreIronStone.id, 8, 20, (128-30)/256f);
-        ChunkDecoratorOverworldAPI.OreFeatures.setOreValues(CaveUberhaul.MOD_ID,Block.oreGoldStone.id, 8, 2, 1/4f);
-        ChunkDecoratorOverworldAPI.OreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreRedstoneStone.id, 7, 8, 1/8f);
-        ChunkDecoratorOverworldAPI.OreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreDiamondStone.id, 7, 1, 1/8f);
-        ChunkDecoratorOverworldAPI.OreFeatures.setOreValues(CaveUberhaul.MOD_ID,  Block.mossStone.id, 32, 1, (128-32)/256f);
-        ChunkDecoratorOverworldAPI.OreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreLapisStone.id, 6, 1, 1/4f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.blockClay, 32, 20, 1);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.dirt, 32, 20, 1);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.gravel, 32, 10, 1);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreCoalStone, 16, 20, (256-40)/256f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreIronStone, 8, 20, (128-30)/256f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID,Block.oreGoldStone, 8, 2, 1/4f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreRedstoneStone, 7, 8, 1/8f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreDiamondStone, 7, 1, 1/8f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID,  Block.mossStone, 32, 1, (128-32)/256f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreLapisStone, 6, 1, 1/4f);
 
-        ChunkDecoratorOverworldAPI.OreFeatures.addFeature(new WorldFeatureOre(Block.oreIronStone.id, 8, true), 5, 30/256f);
+        ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.oreIronStone.id, 8, true), 5, 30/256f);
 
-        ChunkDecoratorOverworldAPI.StructureFeature.addStructure(TerrainAPIContainer::func_01, null);
-        ChunkDecoratorOverworldAPI.StructureFeature.addStructure(TerrainAPIContainer::func_02, null);
-        ChunkDecoratorOverworldAPI.StructureFeature.addStructure(TerrainAPIContainer::func_03, null);
-        ChunkDecoratorOverworldAPI.StructureFeature.addStructure(TerrainAPIContainer::func_04, null);
-        ChunkDecoratorOverworldAPI.StructureFeature.addStructure(TerrainAPIContainer::generateLaveSwamp, null);
-        ChunkDecoratorOverworldAPI.StructureFeature.addStructure(TerrainAPIContainer::generateCaveBiomes, null);
+        ChunkDecoratorOverworldAPI.structureFeatures.addStructure(TerrainAPIContainer::func_01, null);
+        ChunkDecoratorOverworldAPI.structureFeatures.addStructure(TerrainAPIContainer::func_02, null);
+        ChunkDecoratorOverworldAPI.structureFeatures.addStructure(TerrainAPIContainer::func_03, null);
+        ChunkDecoratorOverworldAPI.structureFeatures.addStructure(TerrainAPIContainer::func_04, null);
+        ChunkDecoratorOverworldAPI.structureFeatures.addStructure(TerrainAPIContainer::generateLaveSwamp, null);
+        ChunkDecoratorOverworldAPI.structureFeatures.addStructure(TerrainAPIContainer::generateCaveBiomes, null);
     }
     public static Boolean generateCaveBiomes(Object[] parameters){
         Random rand = (Random) parameters[1];

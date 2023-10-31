@@ -7,11 +7,20 @@ import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.biome.Biomes;
 import net.minecraft.core.world.chunk.ChunkPosition;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CaveBiomeProvider
 {
     private final CaveBiome[] caveBiomesInChunk;
     private static final FastNoiseLite temperatureNoise = new FastNoiseLite();
     private static final FastNoiseLite weirdNoise = new FastNoiseLite();
+    public static final List<Biome> frostyBiomes = new ArrayList<>();
+    static {
+        frostyBiomes.add(Biomes.OVERWORLD_GLACIER);
+        frostyBiomes.add(Biomes.OVERWORLD_TAIGA);
+        frostyBiomes.add(Biomes.OVERWORLD_TUNDRA);
+    }
 
     public CaveBiomeProvider(World world,int chunkX, int chunkZ)
     {
@@ -39,7 +48,7 @@ public class CaveBiomeProvider
                 {
                     weird = weirdVals[x][y][z];
                     temperature = tempVals[x][y][z];
-                    if(!(biome== Biomes.OVERWORLD_GLACIER||biome== Biomes.OVERWORLD_TAIGA||biome== Biomes.OVERWORLD_TUNDRA)&&y>((world.getHeightBlocks()/4)-world.rand.nextInt(4)))
+                    if(frostyBiomes.contains(biome) && y>((world.getHeightBlocks()/4)-world.rand.nextInt(4)))
                     {
                         caveBiomesInChunk[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y] = CaveBiomes.CAVE_FROST;
                     }

@@ -143,7 +143,6 @@ public class CaveUberhaul implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        TerrainAPIContainer.initialize();
         LOGGER.info("Duct Tape applied, CaveUberhaul initialized.");
     }
 
