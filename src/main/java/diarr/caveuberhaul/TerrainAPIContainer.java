@@ -31,16 +31,16 @@ public class TerrainAPIContainer implements TerrainAPI {
         //TODO expand api to allow exact port of original system
         ChunkDecoratorOverworldAPI.biomeFeatures.addFeatureSurface(new WorldFeatureRichScorchedDirt(10), 1, new Biome[]{Biomes.OVERWORLD_OUTBACK_GRASSY});
 
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.blockClay.id, 32, 20, 1);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.dirt.id, 32, 20, 1);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.gravel.id, 32, 10, 1);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreCoalStone.id, 16, 20, (256-40)/256f);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreIronStone.id, 8, 20, (128-30)/256f);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID,Block.oreGoldStone.id, 8, 2, 1/4f);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreRedstoneStone.id, 7, 8, 1/8f);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreDiamondStone.id, 7, 1, 1/8f);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID,  Block.mossStone.id, 32, 1, (128-32)/256f);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreLapisStone.id, 6, 1, 1/4f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.blockClay, 32, 20, 1);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.dirt, 32, 20, 1);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.gravel, 32, 10, 1);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreCoalStone, 16, 20, (256-40)/256f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreIronStone, 8, 20, (128-30)/256f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID,Block.oreGoldStone, 8, 2, 1/4f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreRedstoneStone, 7, 8, 1/8f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreDiamondStone, 7, 1, 1/8f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID,  Block.mossStone, 32, 1, (128-32)/256f);
+        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreLapisStone, 6, 1, 1/4f);
 
         ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.oreIronStone.id, 8, true), 5, 30/256f);
 
