@@ -10,9 +10,7 @@ import java.util.Random;
 
 
 public class WorldFeatureLavaSwamp extends WorldFeature {
-    //private UberUtil uberUtil = new UberUtil();
-    private static FastNoiseLite swampNoise = new FastNoiseLite();
-    public boolean generate(World world, Random random, int i, int j, int k) {
+    public boolean generate(World world, Random random, int x, int y, int z) {
         int radius = random.nextInt(20)+6;
         int height = random.nextInt(5)+1;
         //System.out.println("Swamp Center at x: "+rx+" z: "+rz);
