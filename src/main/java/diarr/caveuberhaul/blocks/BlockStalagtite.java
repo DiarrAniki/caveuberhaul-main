@@ -2,18 +2,14 @@ package diarr.caveuberhaul.blocks;
 
 import diarr.caveuberhaul.CaveUberhaul;
 import diarr.caveuberhaul.UberUtil;
-import net.minecraft.core.achievement.AchievementList;
-import net.minecraft.core.achievement.stat.StatList;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.entity.TileEntity;
 import net.minecraft.core.block.material.Material;
-import net.minecraft.core.entity.Entity;
-import net.minecraft.core.entity.player.EntityPlayer;
 import net.minecraft.core.enums.EnumBlockSoundEffectType;
 import net.minecraft.core.enums.EnumDropCause;
-import net.minecraft.core.item.Item;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.world.World;
+import useless.profiler.Profiler;
 
 import java.util.Random;
 
@@ -78,6 +74,7 @@ public class BlockStalagtite extends BlockConnectable {
     }
 
     public void updateTick(World world, int i, int j, int k, Random random) {
+        Profiler.methodStart(CaveUberhaul.MOD_ID, "StalagtiteUpdate");
         if(this.state==0) {
             int length = 0;
             while(world.getBlock(i,j+length,k)instanceof BlockStalagtite)
@@ -100,6 +97,7 @@ public class BlockStalagtite extends BlockConnectable {
                 }
             }
         }
+        Profiler.methodStart(CaveUberhaul.MOD_ID, "StalagtiteUpdate");
     }
 
     public void randomDisplayTick(World world, int x, int y, int z, Random rand)
@@ -126,8 +124,8 @@ public class BlockStalagtite extends BlockConnectable {
         world.playBlockSoundEffect(i,j,k,Block.stone, EnumBlockSoundEffectType.MINE);
         while(Block.getBlock(world.getBlockId(i,j,k))instanceof BlockStalagtite)
         {
-            EntityFallingStalagtite entityfallingStalagtite = new EntityFallingStalagtite(world, (double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), this.id);
-            world.entityJoinedWorld(entityfallingStalagtite);
+            EntityFallingStalactite entityfallingStalactite = new EntityFallingStalactite(world, (double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), this.id);
+            world.entityJoinedWorld(entityfallingStalactite);
             world.setBlockWithNotify(i, j, k, 0);
             j--;
         }

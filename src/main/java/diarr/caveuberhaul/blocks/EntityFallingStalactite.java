@@ -2,7 +2,6 @@ package diarr.caveuberhaul.blocks;
 
 import com.mojang.nbt.CompoundTag;
 import diarr.caveuberhaul.CaveUberhaul;
-import diarr.caveuberhaul.blocks.BlockStalagtite;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.entity.Entity;
 import net.minecraft.core.entity.EntityLiving;
@@ -13,11 +12,11 @@ import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
 
-public class EntityFallingStalagtite extends Entity {
+public class EntityFallingStalactite extends Entity {
     public int blockID;
     public int fallTime;
 
-    public EntityFallingStalagtite(World world) {
+    public EntityFallingStalactite(World world) {
         super(world);
         this.blockID = CaveUberhaul.flowstoneStalagtite1.id;
         this.fallTime = 0;
@@ -38,7 +37,7 @@ public class EntityFallingStalagtite extends Entity {
 
     }
 
-    public EntityFallingStalagtite(World world, double d, double d1, double d2, int i) {
+    public EntityFallingStalactite(World world, double d, double d1, double d2, int i) {
         super(world);
         this.fallTime = 0;
         this.blockID = i;
@@ -53,12 +52,12 @@ public class EntityFallingStalagtite extends Entity {
         this.yo = d1;
         this.zo = d2;
     }
-    protected boolean canTriggerWalking() {
+    protected boolean makeStepSound() {
         return false;
     }
 
 
-    public boolean canBeCollidedWith() {
+    public boolean isPickable() {
         return !this.removed;
     }
 
@@ -102,16 +101,7 @@ public class EntityFallingStalagtite extends Entity {
             }
         }
     }
-
-    /*protected void writeEntityToNBT(NBTTagCompound nbttagcompound) {
-        nbttagcompound.setShort("Tile", (short)this.blockID);
-    }
-
-    protected void readEntityFromNBT(NBTTagCompound nbttagcompound) {
-        this.blockID = nbttagcompound.getShort("Tile") & 16383;
-    }*/
-
-    public float getShadowSize() {
+    public float getShadowHeightOffs() {
         return 0.0F;
     }
 

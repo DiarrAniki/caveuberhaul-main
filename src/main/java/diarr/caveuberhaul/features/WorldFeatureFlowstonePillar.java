@@ -8,8 +8,8 @@ import net.minecraft.core.world.generate.feature.WorldFeature;
 import java.util.Random;
 
 public class WorldFeatureFlowstonePillar extends WorldFeature {
-    private int perPillarLength;
-    private int perPillarFlowstonePillarLength;
+    private final int perPillarLength;
+    private final int perPillarFlowstonePillarLength;
     public WorldFeatureFlowstonePillar(int length,int perPillarFlowstonePillarLength)
     {
         this.perPillarLength = length;
