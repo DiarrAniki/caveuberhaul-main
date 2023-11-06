@@ -1,6 +1,8 @@
 package diarr.caveuberhaul.mixin;
 
+import diarr.caveuberhaul.blocks.EntityFallingIcicle;
 import diarr.caveuberhaul.blocks.EntityFallingStalactite;
+import diarr.caveuberhaul.blocks.RenderFallingIcicle;
 import diarr.caveuberhaul.blocks.RenderFallingStalactite;
 import net.minecraft.client.render.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -22,7 +24,10 @@ public class RenderManagerMixin {
     private void RenderManager(CallbackInfo ci)
     {
         RenderFallingStalactite fallingStalactite = new RenderFallingStalactite();
+        RenderFallingIcicle fallingIcicle = new RenderFallingIcicle();
         renderers.put(EntityFallingStalactite.class, fallingStalactite);
+        renderers.put(EntityFallingIcicle.class, fallingIcicle);
         fallingStalactite.setRenderDispatcher((EntityRenderDispatcher) (Object)this);
+        fallingIcicle.setRenderDispatcher((EntityRenderDispatcher) (Object)this);
     }
 }

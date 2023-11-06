@@ -66,7 +66,7 @@ public class MapGenBaseMixin {
         float[][][] WormCaveOffset = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(baseChunkX,baseChunkZ,128,128,128,0.012f,1.2f,world, wormCaveNoise, FastNoiseLite.NoiseType.OpenSimplex2),world);
         float[][][] NoodleCave = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(baseChunkX,baseChunkZ,0,0,0,0.021f,1.5f,world, cavernNoise, FastNoiseLite.NoiseType.Perlin),world);
         float[][][] NoodleCaveOffset = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(baseChunkX,baseChunkZ,128,8,128,0.021f,1.5f,world, cavernNoise, FastNoiseLite.NoiseType.Perlin),world);
-        float[][] ModifierNoise = UberUtil.getInterpolatedNoiseValue2D(UberUtil.sampleNoise2D(baseChunkX,baseChunkZ,0.009f,world, caveModifierNoise, FastNoiseLite.NoiseType.OpenSimplex2));
+        float[][] ModifierNoise = UberUtil.getInterpolatedNoiseValue2D(UberUtil.sampleNoise2D(baseChunkX,baseChunkZ,0.01f,world, caveModifierNoise, FastNoiseLite.NoiseType.OpenSimplex2));
 
         double modifOffset = 0.6f;
         int depth = 0;
@@ -74,18 +74,16 @@ public class MapGenBaseMixin {
 
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z <16; ++z) {
-                double modif = UberUtil.clamp((ModifierNoise[x][z]+modifOffset)*Math.pow(ModifierNoise[x][z]+modifOffset,4),0,1.05f);
+                //double modif = UberUtil.clamp((ModifierNoise[x][z]+modifOffset)*Math.pow(ModifierNoise[x][z]+modifOffset,2),0,1.1f);
+                double modif = UberUtil.clamp((ModifierNoise[x][z]+1)/2,0,1.05f);
                 for (int y = world.getHeightBlocks()-1; y >= 0; y--) {
 
                     float noiseValCheese = CheeseCave[x][y][z];
 
                     float noiseValWormCave = Math.abs(WormCave[x][y][z])*-1;
-
                     float noiseValWormCaveOffset = Math.abs(WormCaveOffset[x][y][z])*-1;
 
                     float noiseValNoodleCave = Math.abs(NoodleCave[x][y][z])*-1;
-                    //float noiseValNoodleCave = Math.abs(noiseValCheese)*-1;
-
                     float noiseValNoodleCaveOffset = Math.abs(NoodleCaveOffset[x][y][z])*-1;
 
                     float coreCavernNoiseCutoff = coreThresCheese;
@@ -98,15 +96,12 @@ public class MapGenBaseMixin {
                     {
                         // only checks depth once per 4x4 subchunk
                         currentBlock = Block.getBlock(data[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y]);
-                        //currentBiome =
-                        // use isDigable to skip leaves/wood getting counted as surface
                         if (UberUtil.isRockBlock(currentBlock))
                         {
                             depth++;
                         }
                     } else
                     {
-                        // already hit surface, simply increment depth counter
                         depth++;
                     }
 

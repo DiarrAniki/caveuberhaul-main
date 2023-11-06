@@ -14,7 +14,6 @@ import java.util.Random;
 
 public class BlockStalagtite extends BlockConnectable {
 
-    public static boolean fallInstantly = false;
     public BlockStalagtite(String s,int i, Material material,  int state) {
         super(s,i, Material.stone,state);
         this.setTickOnLoad(true);
@@ -110,9 +109,7 @@ public class BlockStalagtite extends BlockConnectable {
 
     private void tryToFall(World world, int i, int j, int k) {
         if (!(world.getBlock(i, j + 1, k) instanceof BlockFlowstone)|| !(world.getBlock(i, j + 1, k) instanceof BlockStalagtite)) {
-            if (!fallInstantly ) {
                 doFall(world,i,j,k);
-            }
         }
     }
 
@@ -121,7 +118,7 @@ public class BlockStalagtite extends BlockConnectable {
         world.playBlockSoundEffect(i,j,k,Block.stone, EnumBlockSoundEffectType.MINE);
         while(Block.getBlock(world.getBlockId(i,j,k))instanceof BlockStalagtite)
         {
-            EntityFallingStalactite entityfallingStalactite = new EntityFallingStalactite(world, (double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), this.id);
+            EntityFallingStalactite entityfallingStalactite = new EntityFallingStalactite(world, ((float) i + 0.5F), ((float) j + 0.5F),  ((float) k + 0.5F), this.id);
             world.entityJoinedWorld(entityfallingStalactite);
             world.setBlockWithNotify(i, j, k, 0);
             j--;

@@ -35,8 +35,8 @@ public class CaveBiomeProvider
         double weird;
         double temperature;
 
-        float[][][] tempVals = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(chunkX,chunkZ,0,0,0,0.04f,0.6f,world, temperatureNoise ,FastNoiseLite.NoiseType.Perlin),world);
-        float[][][] weirdVals = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(chunkX,chunkZ,0,0,0,0.06f,0.6f,world, weirdNoise ,FastNoiseLite.NoiseType.Perlin),world);
+        float[][] tempVals = UberUtil.getInterpolatedNoiseValue2D(UberUtil.sampleNoise2D(chunkX,chunkZ,0.002f,world, temperatureNoise ,FastNoiseLite.NoiseType.Perlin));
+        float[][] weirdVals = UberUtil.getInterpolatedNoiseValue2D(UberUtil.sampleNoise2D(chunkX,chunkZ,0.004f,world, weirdNoise ,FastNoiseLite.NoiseType.OpenSimplex2S));
         for(int x = 0; x<16;x++)
         {
             int gx = x+chunkX*16;
@@ -44,10 +44,10 @@ public class CaveBiomeProvider
             {
                 int gz = z+chunkZ*16;
                 Biome biome = world.getBlockBiome(gx,0,gz);
+                weird = (1+weirdVals[x][z])/2;
+                temperature = (1+tempVals[x][z])/2;
                 for(int y = world.getHeightBlocks()-1; y>0;y--)
                 {
-                    weird = weirdVals[x][y][z];
-                    temperature = tempVals[x][y][z];
                     if(frostyBiomes.contains(biome) && y>((world.getHeightBlocks()/4)-world.rand.nextInt(4)))
                     {
                         caveBiomesInChunk[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y] = CaveBiomes.CAVE_FROST;
@@ -77,6 +77,6 @@ public class CaveBiomeProvider
 
     private boolean inRange(double val,double min, double max)
     {
-        return val>=min&&val<=max;
+        return min<val&&max>val;
     }
 }

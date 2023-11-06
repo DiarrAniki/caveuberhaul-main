@@ -1,6 +1,7 @@
 package diarr.caveuberhaul;
 
 import diarr.caveuberhaul.blocks.BlockFlowstone;
+import diarr.caveuberhaul.blocks.BlockIcicle;
 import diarr.caveuberhaul.blocks.BlockStalagmite;
 import diarr.caveuberhaul.blocks.BlockStalagtite;
 import diarr.caveuberhaul.items.ItemFlowstoneItem;
@@ -140,6 +141,39 @@ public class CaveUberhaul implements ModInitializer {
             .setBlockModel(new BlockModelRenderBlocks(1))
             .setTickOnLoad()
             .build(new BlockStalagmite("cu.flowstone.sm1c",config.getInt("BlockStartId")+11,0));
+
+    public static final Block icicle1 = new BlockBuilder(MOD_ID)
+            .setHardness(0.8f)
+            .setResistance(4f)
+            .setTextures("ist1.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockIcicle("cu.icicle1",config.getInt("BlockStartId")+12,Material.ice,0));
+    public static final Block icicle2 = new BlockBuilder(MOD_ID)
+            .setHardness(0.8f)
+            .setResistance(4f)
+            .setTextures("ist2.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockIcicle("cu.icicle2",config.getInt("BlockStartId")+13,Material.ice,1));
+    public static final Block icicle3 = new BlockBuilder(MOD_ID)
+            .setHardness(0.8f)
+            .setResistance(4f)
+            .setTextures("ist3.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockIcicle("cu.icicle3",config.getInt("BlockStartId")+14,Material.ice,2));
+    public static final Block icicle4 = new BlockBuilder(MOD_ID)
+            .setHardness(0.8f)
+            .setResistance(4f)
+            .setTextures("ist4.png")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE,BlockTags.NOT_IN_CREATIVE_MENU)
+            .setBlockModel(new BlockModelRenderBlocks(1))
+            .setTickOnLoad()
+            .build(new BlockIcicle("cu.icicle4",config.getInt("BlockStartId")+15,Material.ice,3));
 
     @Override
     public void onInitialize() {

@@ -12,6 +12,8 @@
     "MinecraftMixin",
     "RenderBlocksMixin",
     "RenderGlobalMixin",
+    "WorldRendererMixin",
+    "WorldMixin",
     "RenderManagerMixin"
   ],
   "client": [

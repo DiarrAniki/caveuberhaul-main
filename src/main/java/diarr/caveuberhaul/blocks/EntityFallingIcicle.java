@@ -12,11 +12,11 @@ import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.util.phys.AABB;
 import net.minecraft.core.world.World;
 
-public class EntityFallingStalactite extends Entity {
+public class EntityFallingIcicle extends Entity {
     public int blockID;
     public int fallTime;
 
-    public EntityFallingStalactite(World world) {
+    public EntityFallingIcicle(World world) {
         super(world);
         this.blockID = CaveUberhaul.flowstoneStalagtite1.id;
         this.fallTime = 0;
@@ -37,7 +37,7 @@ public class EntityFallingStalactite extends Entity {
 
     }
 
-    public EntityFallingStalactite(World world, double d, double d1, double d2, int i) {
+    public EntityFallingIcicle(World world, double d, double d1, double d2, int i) {
         super(world);
         this.fallTime = 0;
         this.blockID = i;
@@ -86,12 +86,11 @@ public class EntityFallingStalactite extends Entity {
                 this.zd *= 0.699999988079071;
                 this.yd *= -0.5;
                 this.remove();
-                if ((!this.world.canBlockBePlacedAt(this.blockID, i, j, k, true, Side.BOTTOM) || BlockStalagtite.canFallBelow(this.world, i, j - 1, k) || !this.world.setBlockWithNotify(i, j, k, this.blockID)) && !this.world.isClientSide) {
-                    this.spawnAtLocation(CaveUberhaul.flowstoneStalagtiteItem.id, 1);
-                    world.playBlockSoundEffect(i,j,k, Block.stone, EnumBlockSoundEffectType.MINE);
+                if ((!this.world.canBlockBePlacedAt(this.blockID, i, j, k, true, Side.BOTTOM) || BlockIcicle.canFallBelow(this.world, i, j - 1, k) || !this.world.setBlockWithNotify(i, j, k, this.blockID)) && !this.world.isClientSide) {
+                    world.playBlockSoundEffect(i,j,k, Block.ice, EnumBlockSoundEffectType.MINE);
                     for (Entity e:world.getEntitiesWithinAABB(EntityLiving.class, AABB.getBoundingBox(i-0.5F,j-0.5F,k-0.5F,i+0.5F,j+0.5F,k+0.5F)))
                     {
-                        e.hurt(null,this.fallTime, DamageType.COMBAT);
+                        e.hurt(null,this.fallTime/4, DamageType.COMBAT);
                     }
                 }
             } else if (this.fallTime > 100 && !this.world.isClientSide) {

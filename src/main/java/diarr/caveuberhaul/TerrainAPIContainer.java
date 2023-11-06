@@ -172,11 +172,9 @@ public class TerrainAPIContainer implements TerrainAPI {
         return true;
     }
 
-    private static void placePillars(int x, int y, int z, int xChunk, int zChunk, World worldObj, Random rand, CaveBiome cb)
+    private static void placePillars(int x, int y, int z, World worldObj, Random rand, CaveBiome cb)
     {
-        int gx = x+xChunk;
-        int gz = z+zChunk;
-        if(worldObj.isBlockNormalCube(gx,y,gz)&&worldObj.isAirBlock(gx,y+1,gz)) {
+        if(worldObj.isBlockNormalCube(x,y,z)&&worldObj.isAirBlock(x,y+1,z)) {
             if(cb !=null)
             {
                 switch(cb.id)
@@ -185,9 +183,9 @@ public class TerrainAPIContainer implements TerrainAPI {
                     {
                         if(rand.nextInt(cb.smallPillarChance)==0) {
                             if (rand.nextInt(cb.bigPillarChance) == 0) {
-                                new WorldFeatureCavePillar(y, UberUtil.getCeiling(gx, y + 1, gz, 40, worldObj), cb.blockList[1].id, cb.blockList[1].id).generate(worldObj, rand, gx, y + 1, gz);
+                                new WorldFeatureCavePillar(y, UberUtil.getCeiling(x, y + 1, z, 40, worldObj), cb.blockList[1].id, cb.blockList[1].id).generate(worldObj, rand, x, y + 1, z);
                             } else {
-                                new WorldFeatureSmallCavePillar(y, UberUtil.getCeiling(gx, y + 1, gz, 18, worldObj), cb.blockList[1].id, cb.blockList[1].id).generate(worldObj, rand, gx, y + 1, gz);
+                                new WorldFeatureSmallCavePillar(y, UberUtil.getCeiling(x, y + 1, z, 18, worldObj), cb.blockList[1].id, cb.blockList[1].id).generate(worldObj, rand, x, y + 1, z);
                             }
                         }
                         break;
@@ -197,23 +195,35 @@ public class TerrainAPIContainer implements TerrainAPI {
                         if(rand.nextInt(cb.smallPillarChance)==0) {
                             if (rand.nextInt(cb.bigPillarChance) == 0) {
                                 if(rand.nextInt(2)==0) {
-                                    new WorldFeatureCavePillar(y, UberUtil.getCeiling(gx, y + 1, gz, 40, worldObj), cb.blockList[1].id, cb.blockList[1].id).generate(worldObj, rand, gx, y + 1, gz);
+                                    new WorldFeatureCavePillar(y, UberUtil.getCeiling(x, y + 1, z, 40, worldObj), cb.blockList[1].id, cb.blockList[1].id).generate(worldObj, rand, x, y + 1, z);
                                 }
                                 else
                                 {
-                                    new WorldFeatureCavePillar(y, UberUtil.getCeiling(gx, y + 1, gz, 40, worldObj), cb.blockList[2].id, cb.blockList[2].id).generate(worldObj, rand, gx, y + 1, gz);
+                                    new WorldFeatureCavePillar(y, UberUtil.getCeiling(x, y + 1, z, 40, worldObj), cb.blockList[2].id, cb.blockList[2].id).generate(worldObj, rand, x, y + 1, z);
                                 }
                             } else {
                                 if(rand.nextInt(2)==0) {
-                                    new WorldFeatureSmallCavePillar(y, UberUtil.getCeiling(gx, y + 1, gz, 18, worldObj), cb.blockList[1].id, cb.blockList[1].id).generate(worldObj, rand, gx, y + 1, gz);
+                                    new WorldFeatureSmallCavePillar(y, UberUtil.getCeiling(x, y + 1, z, 18, worldObj), cb.blockList[1].id, cb.blockList[1].id).generate(worldObj, rand, x, y + 1, z);
                                 }
                                 else
                                 {
-                                    new WorldFeatureSmallCavePillar(y, UberUtil.getCeiling(gx, y + 1, gz, 18, worldObj), cb.blockList[2].id, cb.blockList[2].id).generate(worldObj, rand, gx, y + 1, gz);
+                                    new WorldFeatureSmallCavePillar(y, UberUtil.getCeiling(x, y + 1, z, 18, worldObj), cb.blockList[2].id, cb.blockList[2].id).generate(worldObj, rand, x, y + 1, z);
                                 }
                             }
                         }
                         break;
+                    }
+                }
+            }
+            else
+            {
+                if(rand.nextInt(500)==0) {
+                    if (rand.nextInt(5) == 0) {
+                        int top = UberUtil.getCeiling(x, y + 1, z, 40, worldObj);
+                        new WorldFeatureCavePillar(y, top, UberUtil.getPillarBlock(x,y,z,worldObj), UberUtil.getPillarBlock(x,top,z,worldObj)).generate(worldObj, rand, x, y + 1, z);
+                    } else {
+                        int top = UberUtil.getCeiling(x, y + 1, z, 18, worldObj);
+                        new WorldFeatureSmallCavePillar(y, top, UberUtil.getPillarBlock(x,y,z,worldObj), UberUtil.getPillarBlock(x,top,z,worldObj)).generate(worldObj, rand, x, y + 1, z);
                     }
                 }
             }
@@ -303,7 +313,7 @@ public class TerrainAPIContainer implements TerrainAPI {
                             }
                         }
                     }
-                    placePillars(lx,ly,lz,x,z, worldObj, rand, cbp.getCaveBiomeAt(lx,ly,lz,worldObj));
+                    placePillars(gx,ly,gz,worldObj, rand, cbp.getCaveBiomeAt(lx,ly,lz,worldObj));
                 }
             }
         }

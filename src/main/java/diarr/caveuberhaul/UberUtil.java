@@ -275,6 +275,10 @@ public class UberUtil
     {
         return clamp(lerp(a,b,t),min,max);
     }
+    public  static float clampedLerp(float a, float b, float t,float min, float max)
+    {
+        return clamp(lerp(a,b,t),min,max);
+    }
     public static float clampedLerp(int a, int b, double t,int min, int max)
     {
         return clamp(lerp(a,b,t),min,max);
