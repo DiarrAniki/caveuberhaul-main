@@ -4,8 +4,6 @@ import diarr.caveuberhaul.CaveUberhaul;
 import diarr.caveuberhaul.UberUtil;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.material.Material;
-import net.minecraft.core.entity.Entity;
-import net.minecraft.core.entity.projectile.EntityArrow;
 import net.minecraft.core.enums.EnumBlockSoundEffectType;
 import net.minecraft.core.world.World;
 
@@ -85,13 +83,13 @@ public class BlockIcicle extends BlockConnectable{
     }
 
     //TODO Icicle should fall down when hit with projectiles
-    public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
+    /*public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
         System.out.println("hit");
         if (entity instanceof EntityArrow) {
             //doFall(world,x,y,z);
             world.setBlockWithNotify(x,y,z,0);
         }
-    }
+    }*/
 
     public void onBlockRemoval(World world, int x, int y, int z) {
         if(Block.getBlock(world.getBlockId(x,y+1,z)) instanceof BlockIcicle)
@@ -153,6 +151,6 @@ public class BlockIcicle extends BlockConnectable{
     public boolean canPlaceBlockAt(World world, int i, int j, int k) {
         int l = world.getBlockId(i, j, k);
         Block u = Block.getBlock(world.getBlockId(i, j+1, k));
-        return l == 0 && (u == Block.ice || u == Block.permaice || u == Block.permafrost || u == Block.blockSnow || u instanceof BlockIcicle);
+        return (l == 0 && (u == Block.ice || u == Block.permaice || u == Block.permafrost || u instanceof BlockIcicle));
     }
 }

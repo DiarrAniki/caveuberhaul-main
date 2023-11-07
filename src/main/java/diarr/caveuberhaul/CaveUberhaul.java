@@ -41,6 +41,7 @@ public class CaveUberhaul implements ModInitializer {
         Properties prop = new Properties();
         prop.setProperty("ItemStartId","20000");
         prop.setProperty("BlockStartId","1000");
+        prop.setProperty("Additional_Old_Caves","true");
         config = new ConfigHandler(MOD_ID,prop);
     }
 

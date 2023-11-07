@@ -56,7 +56,6 @@ public class TerrainAPIContainer implements TerrainAPI {
         Chunk chunk = (Chunk) parameters[2];
         ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
 
-
         int x = chunk.xPosition * 16;
         int z = chunk.zPosition * 16;
         short[] blocks = chunk.blocks;
@@ -70,15 +69,19 @@ public class TerrainAPIContainer implements TerrainAPI {
             {
                 for(int ly = decorator.world.getHeightBlocks();ly>0;ly--)
                 {
-                    if((decorator.world.getBlockId(lx+x,ly,lz+z) == CaveUberhaul.flowstone.id|| decorator.world.getBlockId(lx+x,ly,lz+z) == CaveUberhaul.flowstonePillar.id) && decorator.world.isAirBlock(lx+x,ly-1,lz+z) && caveBiomeDecoratorNoise[lx][lz]>0f && caveBiomeDecoratorNoise[lx][lz]<0.5f)
+                    if((rand.nextInt(3)==0&&(decorator.world.getBlockId(lx+x,ly,lz+z) == CaveUberhaul.flowstone.id|| decorator.world.getBlockId(lx+x,ly,lz+z) == CaveUberhaul.flowstonePillar.id) && decorator.world.isAirBlock(lx+x,ly-1,lz+z) && caveBiomeDecoratorNoise[lx][lz]>0f && caveBiomeDecoratorNoise[lx][lz]<0.5f))
                     {
-                        int length =Math.round(Math.abs(8*caveBiomeDecoratorNoise[lx][lz]))+ rand.nextInt(3);
+                        int length =Math.round(Math.abs(8*caveBiomeDecoratorNoise[lx][lz]))+ rand.nextInt(2);
                         int plength = rand.nextInt(length/2+1);
-                        if(rand.nextInt(3)==1&&UberUtil.isSurrounded(lx+x,ly+1,lz+z,decorator.world))
+                        if(rand.nextInt(4)==1&&UberUtil.isSurrounded(lx+x,ly+1,lz+z,decorator.world))
                         {
                             decorator.world.setBlock(lx+x,ly+1,lz+z,Block.fluidWaterStill.id);
                         }
                         new WorldFeatureFlowstonePillar(length,plength).generate(decorator.world,rand,lx+x,ly-1,lz+z);
+                    }
+                    if(rand.nextInt(8)==0&&caveBiomeDecoratorNoise[lx][lz]>0f && caveBiomeDecoratorNoise[lx][lz]<0.5f)
+                    {
+                        new WorldFeatureBigIcicle().generate(decorator.world,rand,lx+x,ly,lz+z);
                     }
                 }
             }

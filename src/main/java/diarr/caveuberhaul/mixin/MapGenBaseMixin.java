@@ -140,12 +140,12 @@ public class MapGenBaseMixin {
                     noiseValNoodleCaveOffset *=modif;*/
 
                     boolean bedrockFlag = data[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y] == (short) Block.bedrock.id;
-                    //boolean caveFlagWorm = (caveThresWorm > noiseValWormCave && noiseValWormCave > -caveThresWorm)&&(caveThresWorm > noiseValWormCaveOffset && noiseValWormCaveOffset > -caveThresWorm);
-                    //boolean caveFlagNoodle = (caveThresNoodle  > noiseValNoodleCave && noiseValNoodleCave > -caveThresNoodle )&&(caveThresNoodle > noiseValNoodleCaveOffset && noiseValNoodleCaveOffset > -caveThresNoodle );
+
                     boolean caveFlagWorm =noiseValWormCave > wormCavernNoiseCutoff && noiseValWormCaveOffset > wormCavernNoiseCutoff;
                     boolean caveFlagNoodle = noiseValNoodleCave > noodleCavernNoiseCutoff && noiseValNoodleCaveOffset > noodleCavernNoiseCutoff;
                     boolean caveFlagChambers = noiseValCheese > adjustedCheeseNoiseCutoffBetween;
                     boolean caveFlagCoreCavern = noiseValCheese > coreCavernNoiseCutoff;
+
                     boolean waterFlag = Block.getBlock(data[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y]) instanceof BlockFluid;
 
                     //System.out.println(noiseValCheese+" "+adjustedCheeseNoiseCutoffBetween);

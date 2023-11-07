@@ -8,7 +8,6 @@
     "ChunkGeneratorPerlinMixin",
     "EntityLivingMixin",
     "ExplosionMixin",
-    "MapGenBaseMixin",
     "MinecraftMixin",
     "RenderBlocksMixin",
     "RenderGlobalMixin",
