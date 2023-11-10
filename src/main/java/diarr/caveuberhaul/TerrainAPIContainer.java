@@ -1,10 +1,10 @@
 package diarr.caveuberhaul;
 
 import diarr.caveuberhaul.features.*;
-import diarr.caveuberhaul.gen.cavebiomes.CaveBiomeProvider;
 import diarr.caveuberhaul.gen.FastNoiseLite;
 import diarr.caveuberhaul.gen.cavebiomes.CaveBiome;
 import diarr.caveuberhaul.gen.cavebiomes.CaveBiomeChunkMap;
+import diarr.caveuberhaul.gen.cavebiomes.CaveBiomeProvider;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockStone;
 import net.minecraft.core.block.material.Material;
@@ -17,44 +17,47 @@ import net.minecraft.core.world.chunk.ChunkPosition;
 import net.minecraft.core.world.generate.feature.WorldFeatureOre;
 import net.minecraft.core.world.generate.feature.WorldFeatureRichScorchedDirt;
 import useless.terrainapi.api.TerrainAPI;
-import useless.terrainapi.generation.overworld.ChunkDecoratorOverworldAPI;
+import useless.terrainapi.generation.ChunkDecoratorAPI;
+import useless.terrainapi.generation.Parameters;
+import useless.terrainapi.generation.overworld.OverworldConfig;
+import useless.terrainapi.generation.overworld.api.ChunkDecoratorOverworldAPI;
 
 import java.util.Random;
 
 public class TerrainAPIContainer implements TerrainAPI {
     private static final FastNoiseLite caveBiomeDecoratorNoiseMap = new FastNoiseLite();
+    public static final OverworldConfig overworldConfig = ChunkDecoratorOverworldAPI.overworldConfig;
     @Override
     public String getModID() {
         return CaveUberhaul.MOD_ID;
     }
     public void onInitialize() {
-        //TODO expand api to allow exact port of original system
         ChunkDecoratorOverworldAPI.biomeFeatures.addFeatureSurface(new WorldFeatureRichScorchedDirt(10), 1, new Biome[]{Biomes.OVERWORLD_OUTBACK_GRASSY});
 
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.blockClay, 32, 20, 1);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.dirt, 32, 20, 1);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.gravel, 32, 10, 1);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreCoalStone, 16, 20, (256-40)/256f);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreIronStone, 8, 20, (128-30)/256f);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID,Block.oreGoldStone, 8, 2, 1/4f);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreRedstoneStone, 7, 8, 1/8f);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreDiamondStone, 7, 1, 1/8f);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID,  Block.mossStone, 32, 1, (128-32)/256f);
-        ChunkDecoratorOverworldAPI.oreFeatures.setOreValues(CaveUberhaul.MOD_ID, Block.oreLapisStone, 6, 1, 1/4f);
+        overworldConfig.setOreValues(CaveUberhaul.MOD_ID, Block.blockClay, 32, 20, 1);
+        overworldConfig.setOreValues(CaveUberhaul.MOD_ID, Block.dirt, 32, 20, 1);
+        overworldConfig.setOreValues(CaveUberhaul.MOD_ID, Block.gravel, 32, 10, 1);
+        overworldConfig.setOreValues(CaveUberhaul.MOD_ID, Block.oreCoalStone, 16, 20, (256-40)/256f);
+        overworldConfig.setOreValues(CaveUberhaul.MOD_ID, Block.oreIronStone, 8, 20, (128-30)/256f);
+        overworldConfig.setOreValues(CaveUberhaul.MOD_ID,Block.oreGoldStone, 8, 2, 1/4f);
+        overworldConfig.setOreValues(CaveUberhaul.MOD_ID, Block.oreRedstoneStone, 7, 8, 1/8f);
+        overworldConfig.setOreValues(CaveUberhaul.MOD_ID, Block.oreDiamondStone, 7, 1, 1/8f);
+        overworldConfig.setOreValues(CaveUberhaul.MOD_ID,  Block.mossStone, 32, 1, (128-32)/256f);
+        overworldConfig.setOreValues(CaveUberhaul.MOD_ID, Block.oreLapisStone, 6, 1, 1/4f);
 
         ChunkDecoratorOverworldAPI.oreFeatures.addFeature(new WorldFeatureOre(Block.oreIronStone.id, 8, true), 5, 30/256f);
 
-        ChunkDecoratorOverworldAPI.structureFeatures.addStructure(TerrainAPIContainer::func_01, null);
-        ChunkDecoratorOverworldAPI.structureFeatures.addStructure(TerrainAPIContainer::func_02, null);
-        ChunkDecoratorOverworldAPI.structureFeatures.addStructure(TerrainAPIContainer::func_03, null);
-        ChunkDecoratorOverworldAPI.structureFeatures.addStructure(TerrainAPIContainer::func_04, null);
-        ChunkDecoratorOverworldAPI.structureFeatures.addStructure(TerrainAPIContainer::generateLaveSwamp, null);
-        ChunkDecoratorOverworldAPI.structureFeatures.addStructure(TerrainAPIContainer::generateCaveBiomes, null);
+        ChunkDecoratorOverworldAPI.structureFeatures.addFeature(TerrainAPIContainer::func_01, null);
+        ChunkDecoratorOverworldAPI.structureFeatures.addFeature(TerrainAPIContainer::func_02, null);
+        ChunkDecoratorOverworldAPI.structureFeatures.addFeature(TerrainAPIContainer::func_03, null);
+        ChunkDecoratorOverworldAPI.structureFeatures.addFeature(TerrainAPIContainer::func_04, null);
+        ChunkDecoratorOverworldAPI.structureFeatures.addFeature(TerrainAPIContainer::generateLaveSwamp, null);
+        ChunkDecoratorOverworldAPI.structureFeatures.addFeature(TerrainAPIContainer::generateCaveBiomes, null);
     }
-    public static Boolean generateCaveBiomes(Object[] parameters){
-        Random rand = (Random) parameters[1];
-        Chunk chunk = (Chunk) parameters[2];
-        ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
+    public static Void generateCaveBiomes(Parameters parameters){
+        Random rand = parameters.random;
+        Chunk chunk = parameters.chunk;
+        ChunkDecoratorAPI decorator = parameters.decorator;
 
         int x = chunk.xPosition * 16;
         int z = chunk.zPosition * 16;
@@ -86,93 +89,78 @@ public class TerrainAPIContainer implements TerrainAPI {
                 }
             }
         }
-        return true;
+        return null;
     }
-    public static Boolean generateLaveSwamp(Object[] parameters){
-        Random rand = (Random) parameters[1];
-        if (rand.nextFloat() < 0.92f) {return false;}
-        Chunk chunk = (Chunk) parameters[2];
-        ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
-        int x = chunk.xPosition * 16;
-        int z = chunk.zPosition * 16;
+    public static Void generateLaveSwamp(Parameters parameters){
+        if (parameters.random.nextFloat() < 0.92f) {return null;}
+        int x = parameters.chunk.xPosition * 16;
+        int z = parameters.chunk.zPosition * 16;
         // Generate Lava Swamp
-        int lsx = x + rand.nextInt(16);
-        int lsz = z + rand.nextInt(16);
-        new WorldFeatureLavaSwamp().generate(decorator.world, rand, lsx, 10, lsz);
-        return true;
+        int lsx = x + parameters.random.nextInt(16);
+        int lsz = z + parameters.random.nextInt(16);
+        new WorldFeatureLavaSwamp().generate(parameters.decorator.world, parameters.random, lsx, 10, lsz);
+        return null;
     }
-    public static Boolean func_01(Object[] parameters){
-        Random rand = (Random) parameters[1];
-        if(rand.nextFloat()>0.0001f) {return true;}
-        Chunk chunk = (Chunk) parameters[2];
-        ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
-        int x = chunk.xPosition * 16;
-        int z = chunk.zPosition * 16;
-        int px = x + rand.nextInt(16);
-        int pz = z + rand.nextInt(16);
-        int py = rand.nextInt(decorator.rangeY/2);
-        if(decorator.world.isAirBlock(px,py,pz) && decorator.world.isBlockNormalCube(px, py, pz + 1)) {
-            decorator.world.setBlock(px, py, pz, Block.torchCoal.id);
-            decorator.world.setBlockMetadataWithNotify(px, py, pz, 4);
+    public static Void func_01(Parameters parameters){
+        if(parameters.random.nextFloat()>0.0001f) {return null;}
+        int x = parameters.chunk.xPosition * 16;
+        int z = parameters.chunk.zPosition * 16;
+        int px = x + parameters.random.nextInt(16);
+        int pz = z + parameters.random.nextInt(16);
+        int py = parameters.random.nextInt(parameters.decorator.rangeY/2);
+        if(parameters.decorator.world.isAirBlock(px,py,pz) && parameters.decorator.world.isBlockNormalCube(px, py, pz + 1)) {
+            parameters.decorator.world.setBlock(px, py, pz, Block.torchCoal.id);
+            parameters.decorator.world.setBlockMetadataWithNotify(px, py, pz, 4);
         }
-        return true;
+        return null;
     }
-    public static Boolean func_02(Object[] parameters){
-        Random rand = (Random) parameters[1];
-        if(rand.nextFloat()>0.01f) {return true;}
-        Chunk chunk = (Chunk) parameters[2];
-        ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
-        int x = chunk.xPosition * 16;
-        int z = chunk.zPosition * 16;
-        int rx = x + rand.nextInt(16);
-        int ry = rand.nextInt(decorator.rangeY);
-        int rz = z + rand.nextInt(16);
-        if(decorator.world.isAirBlock(rx,ry,rz)&& !decorator.world.isAirBlock(rx,ry-1,rz)&&Block.getBlock(decorator.world.getBlockId(rx,ry-1,rz)).blockMaterial.isSolid()) {
-            EntityWolf entityWolf = new EntityWolf(decorator.world);
-            decorator.world.entityJoinedWorld(entityWolf);
+    public static Void func_02(Parameters parameters){
+        if(parameters.random.nextFloat()>0.01f) {return null;}
+        int x = parameters.chunk.xPosition * 16;
+        int z = parameters.chunk.zPosition * 16;
+        int rx = x + parameters.random.nextInt(16);
+        int ry = parameters.random.nextInt(parameters.decorator.rangeY);
+        int rz = z + parameters.random.nextInt(16);
+        if(parameters.decorator.world.isAirBlock(rx,ry,rz)&& !parameters.decorator.world.isAirBlock(rx,ry-1,rz)&&Block.getBlock(parameters.decorator.world.getBlockId(rx,ry-1,rz)).blockMaterial.isSolid()) {
+            EntityWolf entityWolf = new EntityWolf(parameters.decorator.world);
+            parameters.decorator.world.entityJoinedWorld(entityWolf);
             entityWolf.setPos(rx,ry,rz);
-            entityWolf.setRot(decorator.world.rand.nextFloat() * 360.0F, 0.0F);
+            entityWolf.setRot(parameters.decorator.world.rand.nextFloat() * 360.0F, 0.0F);
             entityWolf.setWolfTamed(true);
             entityWolf.setWolfOwner("");
             entityWolf.setWolfAngry(true);
         }
-        return true;
+        return null;
     }
-    public static Boolean func_03(Object[] parameters){
-        Random rand = (Random) parameters[1];
-        if(rand.nextFloat()>0.00001f){return true;}
-        Chunk chunk = (Chunk) parameters[2];
-        ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
-        int x = chunk.xPosition * 16;
-        int z = chunk.zPosition * 16;
-        int px = x + rand.nextInt(16);
-        int pz = z + rand.nextInt(16);
-        int py = rand.nextInt(decorator.rangeY/3);
-        for(int i=0;i<=rand.nextInt(39)+11;i++) {
-            decorator.world.setBlock(px+i, py, pz, 0);
-            decorator.world.setBlock(px+i, py+1, pz, 0);
-            if(i%6==0&& Block.torchRedstoneActive.canPlaceBlockAt(decorator.world,px+i,py+1,pz))
+    public static Void func_03(Parameters parameters){
+        if(parameters.random.nextFloat()>0.00001f){return null;}
+        int x = parameters.chunk.xPosition * 16;
+        int z = parameters.chunk.zPosition * 16;
+        int px = x + parameters.random.nextInt(16);
+        int pz = z + parameters.random.nextInt(16);
+        int py = parameters.random.nextInt(parameters.decorator.rangeY/3);
+        for(int i=0;i<= parameters.random.nextInt(39)+11;i++) {
+            parameters.decorator.world.setBlock(px+i, py, pz, 0);
+            parameters.decorator.world.setBlock(px+i, py+1, pz, 0);
+            if(i%6==0&& Block.torchRedstoneActive.canPlaceBlockAt(parameters.decorator.world,px+i,py+1,pz))
             {
-                decorator.world.setBlock(px+i, py+1, pz, Block.torchRedstoneActive.id);
-                decorator.world.setBlockMetadataWithNotify(px+i,py+1,pz,3);
+                parameters.decorator.world.setBlock(px+i, py+1, pz, Block.torchRedstoneActive.id);
+                parameters.decorator.world.setBlockMetadataWithNotify(px+i,py+1,pz,3);
             }
         }
-        return true;
+        return null;
     }
-    public static Boolean func_04(Object[] parameters){
-        Random rand = (Random) parameters[1];
-        Chunk chunk = (Chunk) parameters[2];
-        ChunkDecoratorOverworldAPI decorator = (ChunkDecoratorOverworldAPI) parameters[3];
-        int x = chunk.xPosition * 16;
-        int z = chunk.zPosition * 16;
-        for (int k1 = 0; k1 < (8 * decorator.oreHeightModifier); k1++) {
-            if(rand.nextInt(100000)!=0) {continue;}
-            int j5 = x + rand.nextInt(16) + 8;
-            int k8 = decorator.minY + rand.nextInt(decorator.rangeY);
-            int j11 = z + rand.nextInt(16) + 8;
-            new WorldFeatureDungeoni(Block.cobbleStone.id, Block.cobbleStoneMossy.id, null).generate(decorator.world, rand, j5, k8, j11);
+    public static Void func_04(Parameters parameters){
+        int x = parameters.chunk.xPosition * 16;
+        int z = parameters.chunk.zPosition * 16;
+        for (int k1 = 0; k1 < (8 * parameters.decorator.oreHeightModifier); k1++) {
+            if(parameters.random.nextInt(100000)!=0) {continue;}
+            int j5 = x + parameters.random.nextInt(16) + 8;
+            int k8 = parameters.decorator.minY + parameters.random.nextInt(parameters.decorator.rangeY);
+            int j11 = z + parameters.random.nextInt(16) + 8;
+            new WorldFeatureDungeoni(Block.cobbleStone.id, Block.cobbleStoneMossy.id, null).generate(parameters.decorator.world, parameters.random, j5, k8, j11);
         }
-        return true;
+        return null;
     }
 
     private static void placePillars(int x, int y, int z, World worldObj, Random rand, CaveBiome cb)
