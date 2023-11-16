@@ -1,20 +1,14 @@
 package diarr.caveuberhaul.features;
 
 import diarr.caveuberhaul.UberUtil;
-import net.fabricmc.loader.impl.lib.sat4j.core.Vec;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.HitResult;
 import net.minecraft.core.block.Block;
-import net.minecraft.core.block.BlockGlowStone;
 import net.minecraft.core.block.material.Material;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.util.phys.Vec3d;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.generate.feature.WorldFeature;
-import org.lwjgl.Sys;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 public class WorldFeatureSmallCavePillar extends WorldFeature

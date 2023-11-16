@@ -1,8 +1,6 @@
 package diarr.caveuberhaul.mixin;
 
-import diarr.caveuberhaul.blocks.BlockIcicle;
 import diarr.caveuberhaul.blocks.BlockStalactiteBase;
-import diarr.caveuberhaul.blocks.BlockStalagtite;
 import net.minecraft.core.entity.projectile.EntityArrow;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

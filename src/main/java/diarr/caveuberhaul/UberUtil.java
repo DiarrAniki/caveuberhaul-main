@@ -8,7 +8,6 @@ import net.minecraft.core.block.BlockFluid;
 import net.minecraft.core.block.BlockLeavesBase;
 import net.minecraft.core.block.BlockLog;
 import net.minecraft.core.block.material.Material;
-import net.minecraft.core.util.phys.Vec3d;
 import net.minecraft.core.world.World;
 
 public class UberUtil {
