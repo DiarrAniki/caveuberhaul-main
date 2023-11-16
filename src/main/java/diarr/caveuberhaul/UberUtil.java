@@ -8,12 +8,11 @@ import net.minecraft.core.block.BlockFluid;
 import net.minecraft.core.block.BlockLeavesBase;
 import net.minecraft.core.block.BlockLog;
 import net.minecraft.core.block.material.Material;
+import net.minecraft.core.util.phys.Vec3d;
 import net.minecraft.core.world.World;
 
-public class UberUtil
-{
-    public static float[][][] getInterpolatedNoiseValue(float[][][] NoiseSamples, World world)
-    {
+public class UberUtil {
+    public static float[][][] getInterpolatedNoiseValue(float[][][] NoiseSamples, World world) {
         //Issues seem to come from the y coordinate just leave it hard coded I guess lol. Also freezing caused by too inefficient code
         float[][][] vals = new float[16][world.getHeightBlocks()][16];
         int xzScale = 4;
@@ -24,7 +23,7 @@ public class UberUtil
             for (int z = 0; z < xzScale; ++z) {
                 //int depth =0;
 
-                for (int y = world.getHeightBlocks()/2-1; y >= 0; y--) {
+                for (int y = world.getHeightBlocks() / 2 - 1; y >= 0; y--) {
 
                     float x0y0z0 = NoiseSamples[x][y][z];
                     float x0y0z1 = NoiseSamples[x][y][z + 1];
@@ -47,7 +46,7 @@ public class UberUtil
                     float noiseEndX0 = x1y0z0;
                     float noiseEndX1 = x1y0z1;
 
-                    for (int suby=1; suby>=0;suby--) {
+                    for (int suby = 1; suby >= 0; suby--) {
                         int localY = suby + y * 2;
 
                         float noiseStartZ = noiseStartX0;
@@ -58,7 +57,7 @@ public class UberUtil
                         float noiseStepX1 = (noiseEndX1 - noiseStartX1) * quarter;
 
                         for (int subx = 0; subx < 4; subx++) {
-                            int localX = subx+x*4;
+                            int localX = subx + x * 4;
 
                             // how much to increment Z values, linear interpolation
                             float noiseStepZ = (noiseEndZ - noiseStartZ) * quarter;
@@ -88,8 +87,7 @@ public class UberUtil
         return vals;
     }
 
-    public static float[][] getInterpolatedNoiseValue2D(float[][] NoiseSamples)
-    {
+    public static float[][] getInterpolatedNoiseValue2D(float[][] NoiseSamples) {
         //Issues seem to come from the y coordinate just leave it hard coded I guess lol. Also freezing caused by too inefficient code
         float[][] vals = new float[16][16];
         int xzScale = 4;
@@ -113,7 +111,7 @@ public class UberUtil
                 float noiseStepX1 = (noiseEndX1 - x0y0z1) * quarter;
 
                 for (int subx = 0; subx < 4; subx++) {
-                    int localX = subx+x*4;
+                    int localX = subx + x * 4;
 
                     // how much to increment Z values, linear interpolation
                     float noiseStepZ = (noiseEndZ - noiseStartZ) * quarter;
@@ -121,8 +119,7 @@ public class UberUtil
                     // Y and X already interpolated, just need to interpolate final 4 Z block to get final noise value
                     float noiseValue = noiseStartZ;
 
-                    for (int subz = 0; subz < 4; subz++)
-                    {
+                    for (int subz = 0; subz < 4; subz++) {
                         int localZ = subz + z * 4;
 
                         noiseValue += noiseStepZ;
@@ -138,8 +135,7 @@ public class UberUtil
         return vals;
     }
 
-    public static float[][][] sampleNoise(int chunkX, int chunkZ, int offX, int offY, int offZ, float freq, float yCrunch, World world, FastNoiseLite tNoise, FastNoiseLite.NoiseType nType)
-    {
+    public static float[][][] sampleNoise(int chunkX, int chunkZ, int offX, int offY, int offZ, float freq, float yCrunch, World world, FastNoiseLite tNoise, FastNoiseLite.NoiseType nType) {
         float[][][] noiseSamples = new float[5][130][5];
         float noise;
 
@@ -147,19 +143,16 @@ public class UberUtil
         tNoise.SetNoiseType(nType);
         tNoise.SetFrequency(freq);
 
-        for (int x = 0; x < 5; x++)
-        {
+        for (int x = 0; x < 5; x++) {
             int realX = x * 4 + chunkX * 16;
-            for (int z = 0; z < 5; z++)
-            {
+            for (int z = 0; z < 5; z++) {
                 int realZ = z * 4 + chunkZ * 16;
 
                 // loop from top down for y values so we can adjust noise above current y later on
-                for (int y = world.getHeightBlocks()/2; y >= 0; y--)
-                {
+                for (int y = world.getHeightBlocks() / 2; y >= 0; y--) {
                     float realY = y * 2;
 
-                    noise = tNoise.GetNoise(realX+offX,(realY+offY)*yCrunch,realZ+offZ);
+                    noise = tNoise.GetNoise(realX + offX, (realY + offY) * yCrunch, realZ + offZ);
                     noiseSamples[x][y][z] = noise;
                     /*if (noise < coreThresCheese||noise < caveThresLowerNoodle)
                     {
@@ -188,8 +181,7 @@ public class UberUtil
         return noiseSamples;
     }
 
-    public static float[][] sampleNoise2D(int chunkX, int chunkZ, float freq, World world, FastNoiseLite tNoise,FastNoiseLite.NoiseType nType)
-    {
+    public static float[][] sampleNoise2D(int chunkX, int chunkZ, float freq, World world, FastNoiseLite tNoise, FastNoiseLite.NoiseType nType) {
         float[][] noiseSamples = new float[5][5];
         float noise;
 
@@ -198,15 +190,13 @@ public class UberUtil
         tNoise.SetFrequency(freq);
         //tNoise.SetFrequency(freq);
 
-        for (int x = 0; x < 5; x++)
-        {
+        for (int x = 0; x < 5; x++) {
             int realX = x * 4 + chunkX * 16;
-            for (int z = 0; z < 5; z++)
-            {
+            for (int z = 0; z < 5; z++) {
                 int realZ = z * 4 + chunkZ * 16;
 
                 // loop from top down for y values so we can adjust noise above current y later on
-                noise = tNoise.GetNoise(realX,realZ);
+                noise = tNoise.GetNoise(realX, realZ);
                 noiseSamples[x][z] = noise;
             }
         }
@@ -214,58 +204,53 @@ public class UberUtil
     }
 
     // Recursive binary search, this search always converges on the surface in 8 in cycles for the range 255 >= y >= 0
-    public static int recursiveBinarySurfaceSearchUp(int localX, int localZ, int searchTop, int searchBottom, short[] data,World world)
-    {
+    public static int recursiveBinarySurfaceSearchUp(int localX, int localZ, int searchTop, int searchBottom, short[] data, World world) {
         int top = searchTop;
-        if (searchTop > searchBottom)
-        {
+        if (searchTop > searchBottom) {
             int searchMid = (searchBottom + searchTop) / 2;
-            if (isRockBlock(Block.getBlock(data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | searchMid])))
-            {
-                top = recursiveBinarySurfaceSearchUp(localX, localZ, searchTop, searchMid + 1,data,world);
-            } else
-            {
-                top = recursiveBinarySurfaceSearchUp(localX, localZ, searchMid, searchBottom,data,world);
+            if (isRockBlock(Block.getBlock(data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | searchMid]))) {
+                top = recursiveBinarySurfaceSearchUp(localX, localZ, searchTop, searchMid + 1, data, world);
+            } else {
+                top = recursiveBinarySurfaceSearchUp(localX, localZ, searchMid, searchBottom, data, world);
             }
         }
         return top;
     }
 
-    public static boolean isRockBlock(Block block)
-    {
+    public static boolean isRockBlock(Block block) {
         // Replace anything that's made of rock which should hopefully work for most modded type stones (and maybe not break everything)
-        if(block == null)
-        {
+        if (block == null) {
             return false;
-        }
-        else {
+        } else {
             return block.blockMaterial == Material.stone;
         }
     }
 
-    public static boolean solidBlockExists(int x,int y,int z, World world)
-    {
-        return !world.isAirBlock(x,y,z) && !(world.getBlock(x,y,z) instanceof BlockFluid);
+    public static boolean solidBlockExists(int x, int y, int z, World world) {
+        return !world.isAirBlock(x, y, z) && !(world.getBlock(x, y, z) instanceof BlockFluid);
     }
-    public static boolean solidBlockExistsNoBedrock(int x,int y,int z, World world)
-    {
-        return solidBlockExists(x,y,z,world) && world.getBlock(x,y,z).blockMaterial == Material.stone;
+
+    public static boolean solidBlockExistsNoBedrock(int x, int y, int z, World world) {
+        return solidBlockExists(x, y, z, world) && world.getBlock(x, y, z).blockMaterial == Material.stone;
     }
-    public static float lerp(float a, float b, float t)
-    {
-        return a+(b-a)*t;
+
+    public static float lerp(float a, float b, float t) {
+        return a + (b - a) * t;
     }
-    public static float lerp(float a, float b, double t)
-    {
-        return (float) (a+(b-a)*t);
+
+    public static float lerp(float a, float b, double t) {
+        return (float) (a + (b - a) * t);
     }
-    public static float lerp(int a, int b, float t)
-    {
-        return (a+(b-a)*t);
+
+    public static float lerp(int a, int b, float t) {
+        return (a + (b - a) * t);
     }
-    public static float lerp(int a, int b, double t)
-    {
-        return (float)(a+(b-a)*t);
+    public static float lerp(double a, double b, float t) {
+        return (float) (a + (b - a) * t);
+    }
+
+    public static float lerp(int a, int b, double t) {
+        return (float) (a + (b - a) * t);
     }
     public static int clampedLerp(int a, int b, int t,int min, int max)
     {

@@ -12,7 +12,7 @@ import net.minecraft.core.world.World;
 
 import java.util.Random;
 
-public class BlockStalagtite extends BlockConnectable {
+public class BlockStalagtite extends BlockStalactiteBase {
 
     public BlockStalagtite(String s,int i, Material material,  int state) {
         super(s,i, Material.stone,state);
@@ -113,6 +113,7 @@ public class BlockStalagtite extends BlockConnectable {
         }
     }
 
+    @Override
     public void doFall(World world, int i,int j,int k)
     {
         world.playBlockSoundEffect(i,j,k,Block.stone, EnumBlockSoundEffectType.MINE);

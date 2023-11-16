@@ -11,7 +11,7 @@ import net.minecraft.core.world.World;
 
 import java.util.Random;
 
-public class BlockStalagmite extends BlockConnectable {
+public class BlockStalagmite extends BlockStalactiteBase {
     public BlockStalagmite(String s, int i, int state) {
         super(s,i, Material.stone, state);
         this.setTickOnLoad(true);
@@ -87,7 +87,7 @@ public class BlockStalagmite extends BlockConnectable {
     {
         int connectState;
 
-        if (!(Block.getBlock(world.getBlockId(x, y - 1, z)) instanceof BlockConnectable)&&Block.getBlock(world.getBlockId(x, y + 1, z)) instanceof BlockStalagmite&&((BlockStalagmite) Block.getBlock(world.getBlockId(x, y + 1, z))).getConnectedState()==2) {
+        if (!(Block.getBlock(world.getBlockId(x, y - 1, z)) instanceof BlockStalactiteBase)&&Block.getBlock(world.getBlockId(x, y + 1, z)) instanceof BlockStalagmite&&((BlockStalagmite) Block.getBlock(world.getBlockId(x, y + 1, z))).getConnectedState()==2) {
             connectState = 3;
         }
         else if (Block.getBlock(world.getBlockId(x, y + 1, z)) instanceof BlockStalagmite) {

@@ -7,7 +7,7 @@ import net.minecraft.core.block.material.Material;
 import net.minecraft.core.enums.EnumBlockSoundEffectType;
 import net.minecraft.core.world.World;
 
-public class BlockIcicle extends BlockConnectable{
+public class BlockIcicle extends BlockStalactiteBase {
     public BlockIcicle(String s, int i, Material material, int state) {
         super(s, i, material, state);
 
@@ -54,6 +54,7 @@ public class BlockIcicle extends BlockConnectable{
         }
     }
 
+    @Override
     public void doFall(World world, int i,int j,int k)
     {
         world.playBlockSoundEffect(i,j,k,Block.ice, EnumBlockSoundEffectType.MINE);
@@ -81,15 +82,6 @@ public class BlockIcicle extends BlockConnectable{
             }
         }
     }
-
-    //TODO Icicle should fall down when hit with projectiles
-    /*public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-        System.out.println("hit");
-        if (entity instanceof EntityArrow) {
-            //doFall(world,x,y,z);
-            world.setBlockWithNotify(x,y,z,0);
-        }
-    }*/
 
     public void onBlockRemoval(World world, int x, int y, int z) {
         if(Block.getBlock(world.getBlockId(x,y+1,z)) instanceof BlockIcicle)

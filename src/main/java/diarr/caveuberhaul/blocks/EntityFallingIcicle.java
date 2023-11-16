@@ -88,6 +88,10 @@ public class EntityFallingIcicle extends Entity {
                 this.remove();
                 if ((!this.world.canBlockBePlacedAt(this.blockID, i, j, k, true, Side.BOTTOM) || BlockIcicle.canFallBelow(this.world, i, j - 1, k) || !this.world.setBlockWithNotify(i, j, k, this.blockID)) && !this.world.isClientSide) {
                     world.playBlockSoundEffect(i,j,k, Block.ice, EnumBlockSoundEffectType.MINE);
+                    if(world.isAirBlock(i,j,k))
+                    {
+                        world.setBlockWithNotify(i,j,k,Block.layerSnow.id);
+                    }
                     for (Entity e:world.getEntitiesWithinAABB(EntityLiving.class, AABB.getBoundingBox(i-0.5F,j-0.5F,k-0.5F,i+0.5F,j+0.5F,k+0.5F)))
                     {
                         e.hurt(null,this.fallTime/4, DamageType.COMBAT);

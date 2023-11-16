@@ -45,7 +45,7 @@ public class MapGenNoiseCaves extends MapGenBase {
 
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z <16; ++z) {
-                double modif = UberUtil.clamp(ModifierNoise[x][z],0,1f);
+                double modif = UberUtil.clamp(ModifierNoise[x][z],-0.015f,1f);
                 int coreCavernBlockHeight = (int) (32+6*modif);
 
                 for (int y = world.getHeightBlocks()-1; y >= 0; y--) {

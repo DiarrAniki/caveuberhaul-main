@@ -13,6 +13,8 @@
     "RenderGlobalMixin",
     "WorldRendererMixin",
     "WorldMixin",
+    "EntityArrowMixin",
+    "EntitySnowballMixin",
     "RenderManagerMixin"
   ],
   "client": [

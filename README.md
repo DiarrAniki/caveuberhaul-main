@@ -1,16 +1,27 @@
 # Caveuberhaul
  Make your caves go UBER
 
- ## Version 1.2.0
-### Added Cave Biomes
-    Added Flowstone Caves
-### Added Flowstone 
-    Added Pointed Flowstone
-       -Damages when jumped upon
-       -Damages when it falls on your head
-       -Converts certain stones when placed upon any flowstone block with water above it and a stalagtite beneath it(Gravel>Sand>Mud>Clay)
+It seems there used to be Duct Tape™ here
+
+ ## Version 1.3.0
+### Cave Biomes
+    Added Frost caves
+    Frost caves generate beneath Taiga, Tundra and Glacier biomes
+    Adjusted pointy flowstone generation
+    Adjusted cave biome distribution.
 ### Various cave generation tweaks
-    Added Cave Pillars
+    Reworked cave pillars
+    Old caves generate alongside new caves (toggleable, default on)
     Cave sizes tweaked
- 
-Requires Babric
+    Performance improvements thanks to UselessBullets
+### Misc
+    Added cave fog and particles
+
+**Requires Babric**
+
+**Requires Halplibe 2.1.6 or higher**  
+https://github.com/Turnip-Labs/bta-halplibe/releases/tag/2.7.0
+
+**Requires Terrain Api 1.3.0 or higher**
+https://github.com/UselessBullets/TerrainAPI/releases/tag/r1.3.1
+
