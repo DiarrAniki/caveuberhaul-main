@@ -9,7 +9,7 @@ import java.util.Random;
 public class BlockFlowstone extends Block {
     public BlockFlowstone(String s, int i, Material material) {
         super(s,i, material);
-        this.setTickOnLoad(true);
+        this.setTicking(true);
     }
 
     public int tickRate() {

@@ -95,7 +95,7 @@ public class MapGenBaseMixin {
                     if (depth == 0)
                     {
                         // only checks depth once per 4x4 subchunk
-                        currentBlock = Block.getBlock(data[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y]);
+                        currentBlock = Block.getBlock(data[x << UberUtil.getHeightBits() + 4 | z << UberUtil.getHeightBits() | y]);
                         if (UberUtil.isRockBlock(currentBlock))
                         {
                             depth++;
@@ -139,37 +139,37 @@ public class MapGenBaseMixin {
                     noiseValNoodleCave *=modif;
                     noiseValNoodleCaveOffset *=modif;*/
 
-                    boolean bedrockFlag = data[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y] == (short) Block.bedrock.id;
+                    boolean bedrockFlag = data[x << UberUtil.getHeightBits() + 4 | z << UberUtil.getHeightBits() | y] == (short) Block.bedrock.id;
 
                     boolean caveFlagWorm =noiseValWormCave > wormCavernNoiseCutoff && noiseValWormCaveOffset > wormCavernNoiseCutoff;
                     boolean caveFlagNoodle = noiseValNoodleCave > noodleCavernNoiseCutoff && noiseValNoodleCaveOffset > noodleCavernNoiseCutoff;
                     boolean caveFlagChambers = noiseValCheese > adjustedCheeseNoiseCutoffBetween;
                     boolean caveFlagCoreCavern = noiseValCheese > coreCavernNoiseCutoff;
 
-                    boolean waterFlag = Block.getBlock(data[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y]) instanceof BlockFluid;
+                    boolean waterFlag = Block.getBlock(data[x << UberUtil.getHeightBits() + 4 | z << UberUtil.getHeightBits() | y]) instanceof BlockFluid;
 
                     //System.out.println(noiseValCheese+" "+adjustedCheeseNoiseCutoffBetween);
                     if ((caveFlagCoreCavern||caveFlagChambers||caveFlagNoodle||caveFlagWorm)&&!bedrockFlag&&!waterFlag)
                     {
-                        if (!isFluidBlock(Block.getBlock(data[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y+1]))|| y <= lavaDepth)
+                        if (!isFluidBlock(Block.getBlock(data[x << UberUtil.getHeightBits() + 4 | z << UberUtil.getHeightBits() | y+1]))|| y <= lavaDepth)
                         {
                             // if we are in the easeInDepth range or near sea level, do some extra checks for water before digging
                             if ((y > (world.getHeightBlocks()/2 - 8) ) && y > lavaDepth)
                             {
                                 if (x < 15)
-                                    if (isFluidBlock(Block.getBlock(data[x+1 << world.getHeightBits() + 4 | z << world.getHeightBits() | y]))) {
+                                    if (isFluidBlock(Block.getBlock(data[x+1 << UberUtil.getHeightBits() + 4 | z << UberUtil.getHeightBits() | y]))) {
                                         continue;
                                     }
                                 if (x > 0)
-                                    if (isFluidBlock(Block.getBlock(data[x-1 << world.getHeightBits() + 4 | z << world.getHeightBits() | y]))){
+                                    if (isFluidBlock(Block.getBlock(data[x-1 << UberUtil.getHeightBits() + 4 | z << UberUtil.getHeightBits() | y]))){
                                         continue;
                                     }
                                 if (z < 15)
-                                    if (isFluidBlock(Block.getBlock(data[x << world.getHeightBits() + 4 | z+1 << world.getHeightBits() | y]))){
+                                    if (isFluidBlock(Block.getBlock(data[x << UberUtil.getHeightBits() + 4 | z+1 << UberUtil.getHeightBits() | y]))){
                                         continue;
                                     }
                                 if (z > 0)
-                                    if (isFluidBlock(Block.getBlock(data[x << world.getHeightBits() + 4 | z-1 << world.getHeightBits() | y]))){
+                                    if (isFluidBlock(Block.getBlock(data[x << UberUtil.getHeightBits() + 4 | z-1 << UberUtil.getHeightBits() | y]))){
                                         continue;
                                     }
                             }
@@ -187,14 +187,14 @@ public class MapGenBaseMixin {
     {
             if(localY<= lavaDepth)
             {
-                data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY] = (short)Block.fluidLavaStill.id;
+                data[localX << UberUtil.getHeightBits() + 4 | localZ << UberUtil.getHeightBits() | localY] = (short)Block.fluidLavaStill.id;
             } else
             {
-                data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY]=0;
+                data[localX << UberUtil.getHeightBits() + 4 | localZ << UberUtil.getHeightBits() | localY]=0;
 
-                if (data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY] == 0 && data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY-1] == Block.dirt.id)
+                if (data[localX << UberUtil.getHeightBits() + 4 | localZ << UberUtil.getHeightBits() | localY] == 0 && data[localX << UberUtil.getHeightBits() + 4 | localZ << UberUtil.getHeightBits() | localY-1] == Block.dirt.id)
                 {
-                    data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY-1] = (short) Block.grass.id;
+                    data[localX << UberUtil.getHeightBits() + 4 | localZ << UberUtil.getHeightBits() | localY-1] = (short) Block.grass.id;
                 }
             }
             this.cutoffValues[localX][localY][localZ] = true;

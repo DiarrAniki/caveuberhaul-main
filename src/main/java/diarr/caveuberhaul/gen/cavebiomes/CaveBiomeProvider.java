@@ -50,14 +50,14 @@ public class CaveBiomeProvider
                 {
                     if(frostyBiomes.contains(biome) && y>((world.getHeightBlocks()/4)-world.rand.nextInt(4)))
                     {
-                        caveBiomesInChunk[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y] = CaveBiomes.CAVE_FROST;
+                        caveBiomesInChunk[x << UberUtil.getHeightBits() + 4 | z << UberUtil.getHeightBits() | y] = CaveBiomes.CAVE_FROST;
                     }
                     for (int b = 0; b< CaveBiomes.caveBiomeList.size();b++)
                     {
                         CaveBiome cb = CaveBiomes.caveBiomeList.get(b);
                         if(checkIfIsBiome(cb,temperature,weird))
                         {
-                            caveBiomesInChunk[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y] = cb;
+                            caveBiomesInChunk[x << UberUtil.getHeightBits() + 4 | z << UberUtil.getHeightBits() | y] = cb;
                         }
                     }
                 }
@@ -67,7 +67,7 @@ public class CaveBiomeProvider
 
     public CaveBiome getCaveBiomeAt(int x,int y,int z,World world)
     {
-        return caveBiomesInChunk[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y];
+        return caveBiomesInChunk[x << UberUtil.getHeightBits() + 4 | z << UberUtil.getHeightBits() | y];
     }
 
     private boolean checkIfIsBiome(CaveBiome b,double t, double w)

@@ -207,7 +207,7 @@ public class UberUtil {
         int top = searchTop;
         if (searchTop > searchBottom) {
             int searchMid = (searchBottom + searchTop) / 2;
-            if (isRockBlock(Block.getBlock(data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | searchMid]))) {
+            if (isRockBlock(Block.getBlock(data[localX << UberUtil.getHeightBits() + 4 | localZ << UberUtil.getHeightBits() | searchMid]))) {
                 top = recursiveBinarySurfaceSearchUp(localX, localZ, searchTop, searchMid + 1, data, world);
             } else {
                 top = recursiveBinarySurfaceSearchUp(localX, localZ, searchMid, searchBottom, data, world);
@@ -391,5 +391,7 @@ public class UberUtil {
             return 1;
         }
     }
-
+    public static int getHeightBits(){
+        return 8;
+    }
 }

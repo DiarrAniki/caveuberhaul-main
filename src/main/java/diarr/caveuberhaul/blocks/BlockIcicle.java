@@ -29,7 +29,7 @@ public class BlockIcicle extends BlockStalactiteBase {
                 break;
             }
         }
-        this.setTickOnLoad(true);
+        this.setTicking(true);
     }
 
     public int getRenderBlockPass() {

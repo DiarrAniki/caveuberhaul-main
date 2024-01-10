@@ -16,7 +16,7 @@ public class BlockStalagtite extends BlockStalactiteBase {
 
     public BlockStalagtite(String s,int i, Material material,  int state) {
         super(s,i, Material.stone,state);
-        this.setTickOnLoad(true);
+        this.setTicking(true);
         switch (state) {
             case 0: {
                 this.setBlockBounds(0.325F, 0.5F, 0.325F, 0.675F, 1F, 0.675F);

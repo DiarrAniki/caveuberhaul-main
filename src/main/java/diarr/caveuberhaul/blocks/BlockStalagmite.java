@@ -14,7 +14,7 @@ import java.util.Random;
 public class BlockStalagmite extends BlockStalactiteBase {
     public BlockStalagmite(String s, int i, int state) {
         super(s,i, Material.stone, state);
-        this.setTickOnLoad(true);
+        this.setTicking(true);
         switch (state) {
             case 0: {
                 this.setBlockBounds(0.325F, 0F, 0.325F, 0.675F, 0.5F, 0.675F);

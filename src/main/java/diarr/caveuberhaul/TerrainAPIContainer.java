@@ -245,59 +245,59 @@ public class TerrainAPIContainer implements TerrainAPI {
                         if (cb != null) {
                             switch (cb.id) {
                                 case 1: {
-                                    if (data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly] != 0 && data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly] != Block.bedrock.id && Block.getBlock(data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly]) instanceof BlockStone && placeFlowstone) {
-                                        data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly] = (short) cb.blockList[0].id;
+                                    if (data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly] != 0 && data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly] != Block.bedrock.id && Block.getBlock(data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly]) instanceof BlockStone && placeFlowstone) {
+                                        data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly] = (short) cb.blockList[0].id;
                                     }
 
-                                    if (data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly] != 0 && Block.getBlock(data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly]).blockMaterial == Material.stone && rand.nextFloat() >= 0.4f && UberUtil.isSurroundedFreeAboveNoLava(x + lx, ly, z + lz, worldObj)) {
+                                    if (data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly] != 0 && Block.getBlock(data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly]).blockMaterial == Material.stone && rand.nextFloat() >= 0.4f && UberUtil.isSurroundedFreeAboveNoLava(x + lx, ly, z + lz, worldObj)) {
                                         if (worldObj.isAirBlock(gx, ly - 1, gz)) {
-                                            data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly] = (short) Block.fluidWaterFlowing.id;
+                                            data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly] = (short) Block.fluidWaterFlowing.id;
                                         } else {
-                                            data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly] = (short) Block.fluidWaterStill.id;
+                                            data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly] = (short) Block.fluidWaterStill.id;
                                         }
                                     }
                                     break;
                                 }
                                 case 2: {
-                                    if (data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly] != 0  && Block.getBlock(data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly]) instanceof BlockStone && placeFlowstone) {
-                                            data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly] = (short) cb.blockList[0].id;
+                                    if (data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly] != 0  && Block.getBlock(data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly]) instanceof BlockStone && placeFlowstone) {
+                                            data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly] = (short) cb.blockList[0].id;
                                     }
                                     if(biomeDecNoise[lx][lz]>0.4)
                                     {
-                                        if(Block.getBlock(data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly]) instanceof BlockStone&&worldObj.isAirBlock(gx,ly-1,gz))
+                                        if(Block.getBlock(data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly]) instanceof BlockStone&&worldObj.isAirBlock(gx,ly-1,gz))
                                         {
                                             if(biomeDecNoise[lx][lz]>0.6) {
-                                                data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly+1] =(short) cb.blockList[3].id;
+                                                data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly+1] =(short) cb.blockList[3].id;
                                                 for(int h = 0;h<=3;h++)
                                                 {
-                                                    data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly-h] = (short) cb.blockList[1].id;
+                                                    data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly-h] = (short) cb.blockList[1].id;
                                                 }
-                                                data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly - 4] = (short) cb.blockList[2].id;
+                                                data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly - 4] = (short) cb.blockList[2].id;
                                             }
                                             else
                                             {
                                                 for(int h = 0;h<=3;h++)
                                                 {
-                                                    data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly-h] = (short) cb.blockList[2].id;
+                                                    data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly-h] = (short) cb.blockList[2].id;
                                                 }
                                             }
                                         }
-                                        if(Block.getBlock(data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly]) instanceof BlockStone&&worldObj.isAirBlock(gx,ly+1,gz))
+                                        if(Block.getBlock(data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly]) instanceof BlockStone&&worldObj.isAirBlock(gx,ly+1,gz))
                                         {
-                                            data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly-1] =(short) cb.blockList[3].id;
+                                            data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly-1] =(short) cb.blockList[3].id;
                                             if(biomeDecNoise[lx][lz]>0.6) {
-                                                data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly+1] =(short) cb.blockList[3].id;
+                                                data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly+1] =(short) cb.blockList[3].id;
                                                 for(int h = 0;h<=3;h++)
                                                 {
-                                                    data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly+h] = (short) cb.blockList[1].id;
+                                                    data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly+h] = (short) cb.blockList[1].id;
                                                 }
-                                                data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly + 4] = (short) cb.blockList[2].id;
+                                                data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly + 4] = (short) cb.blockList[2].id;
                                             }
                                             else
                                             {
                                                 for(int h = 0;h<=3;h++)
                                                 {
-                                                    data[lx << worldObj.getHeightBits() + 4 | lz << worldObj.getHeightBits() | ly+h] = (short) cb.blockList[2].id;
+                                                    data[lx << UberUtil.getHeightBits() + 4 | lz << UberUtil.getHeightBits() | ly+h] = (short) cb.blockList[2].id;
                                                 }
                                             }
                                         }
