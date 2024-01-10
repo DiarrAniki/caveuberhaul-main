@@ -365,7 +365,7 @@ public class UberUtil {
         return max;
     }
 
-    private static int getSurfaceHeight(int localX, int localZ,short[] data,World world)
+    public static int getSurfaceHeight(int localX, int localZ,short[] data,World world)
     {
         // Using a recursive binary search to find the surface
         return UberUtil.recursiveBinarySurfaceSearchUp(localX, localZ, world.getHeightBlocks()-1, 0,data,world);

@@ -10,6 +10,9 @@ import net.minecraft.core.world.generate.MapGenBase;
 import net.minecraft.core.world.generate.chunk.ChunkGeneratorResult;
 import org.spongepowered.asm.mixin.Unique;
 
+import static diarr.caveuberhaul.UberUtil.getMaxSurfaceHeight;
+import static diarr.caveuberhaul.UberUtil.getSurfaceHeight;
+
 public class MapGenNoiseCaves extends MapGenBase {
 
     private static final int lavaDepth = 10;
@@ -38,7 +41,7 @@ public class MapGenNoiseCaves extends MapGenBase {
 
     private void generateNoiseCaves(World world,int baseChunkX,int baseChunkZ, ChunkGeneratorResult data)
     {
-        int chunkMaxHeight = 130 /*getMaxSurfaceHeight(chunk)*/;
+        int chunkMaxHeight = 140;/*getMaxSurfaceHeight(chunk)*/
 
         float[][][] CheeseCave = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(baseChunkX,baseChunkZ,0,0,0,0.023f,1.2f,world, cavernNoise, FastNoiseLite.NoiseType.Perlin),world);
         float[][][] WormCave = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(baseChunkX,baseChunkZ,0,0,0,0.012f,1.2f,world, wormCaveNoise, FastNoiseLite.NoiseType.OpenSimplex2),world);
@@ -168,21 +171,6 @@ public class MapGenNoiseCaves extends MapGenBase {
             }
         }
 
-    }
-
-    @Unique
-    private int getMaxSurfaceHeight(Chunk chunk)
-    {
-        int max = 0;
-        for (int x = 0; x < Chunk.CHUNK_SIZE_X; x++){
-            for (int z = 0; z < Chunk.CHUNK_SIZE_Z; z++){
-                int height = chunk.getHeightValue(x, z);
-                if (height > max){
-                    max = height;
-                }
-            }
-        }
-        return max;
     }
     private boolean isFluidBlock(Block block)
     {

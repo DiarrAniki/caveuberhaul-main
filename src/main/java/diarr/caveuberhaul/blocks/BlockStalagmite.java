@@ -43,6 +43,7 @@ public class BlockStalagmite extends BlockStalactiteBase {
     }
 
     public void updateTick(World world, int i, int j, int k, Random random) {
+        boolean flag = world.scheduledUpdatesAreImmediate;
         if (this.state == 0) {
             int length = 0;
             while (world.getBlock(i, j - length, k) instanceof BlockStalagmite) {
@@ -53,11 +54,13 @@ public class BlockStalagmite extends BlockStalactiteBase {
                     if (random.nextInt(2048) == 1) {
                         world.setBlockWithNotify(i, j + 1, k, CaveUberhaul.flowstoneStalagmite1.id);
                     } else {
+                        world.scheduledUpdatesAreImmediate = false;
                         world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
                     }
                 }
             }
         }
+        world.scheduledUpdatesAreImmediate = flag;
     }
 
     public void onBlockAdded(World world, int x, int y, int z) {

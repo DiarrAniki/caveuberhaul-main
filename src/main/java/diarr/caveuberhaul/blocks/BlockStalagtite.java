@@ -14,7 +14,7 @@ import java.util.Random;
 
 public class BlockStalagtite extends BlockStalactiteBase {
 
-    public BlockStalagtite(String s,int i, Material material,  int state) {
+    public BlockStalagtite(String s, int i, int state) {
         super(s,i, Material.stone,state);
         this.setTicking(true);
         switch (state) {
@@ -72,6 +72,7 @@ public class BlockStalagtite extends BlockStalactiteBase {
     }
 
     public void updateTick(World world, int i, int j, int k, Random random) {
+        boolean flag = world.scheduledUpdatesAreImmediate;
         if(this.state==0) {
             int length = 0;
             while(world.getBlock(i,j+length,k)instanceof BlockStalagtite)
@@ -83,17 +84,20 @@ public class BlockStalagtite extends BlockStalactiteBase {
                     if (random.nextInt(512) == 1) {
                         world.setBlockAndMetadataWithNotify(i, j - 1, k, CaveUberhaul.flowstoneStalagtite1.id, 2);
                     } else {
+                        world.scheduledUpdatesAreImmediate = false;
                         world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
                     }
                 } else {
                     if (random.nextInt(2048) == 1) {
                         world.setBlockAndMetadataWithNotify(i, j - 1, k, CaveUberhaul.flowstoneStalagtite1.id, 0);
                     } else {
+                        world.scheduledUpdatesAreImmediate = false;
                         world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
                     }
                 }
             }
         }
+        world.scheduledUpdatesAreImmediate = flag;
     }
 
     public void randomDisplayTick(World world, int x, int y, int z, Random rand)
