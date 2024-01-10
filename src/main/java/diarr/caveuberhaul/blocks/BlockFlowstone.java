@@ -9,20 +9,22 @@ import java.util.Random;
 public class BlockFlowstone extends Block {
     public BlockFlowstone(String s, int i, Material material) {
         super(s,i, material);
-        this.setTickOnLoad(true);
+        this.setTicking(true);
     }
-
+    @Override
     public int tickRate() {
         //return 12000; //10 min
         return 1500;
     }
 
-
+    @Override
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
         world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
     }
-
+    @Override
     public void updateTick(World world, int x, int y, int z, Random rand){
+        boolean flag = world.scheduledUpdatesAreImmediate;
+        world.scheduledUpdatesAreImmediate = false;
         Block b = Block.getBlock(world.getBlockId(x,y-1,z));
         if(b instanceof BlockStalagtite && !world.isAirBlock(x,y+1,z)&&(world.getBlockId(x,y+2,z) == Block.fluidWaterStill.id||world.getBlockId(x,y+2,z) == Block.fluidWaterFlowing.id)) {
             if (world.getBlockId(x, y + 1, z) == Block.gravel.id) {
@@ -35,5 +37,6 @@ public class BlockFlowstone extends Block {
                 world.setBlockWithNotify(x, y + 1, z, Block.blockClay.id);
             }
         }
+        world.scheduledUpdatesAreImmediate = flag;
     }
 }

@@ -7,6 +7,7 @@ import net.minecraft.core.world.generate.MapGenBase;
 import net.minecraft.core.world.generate.MapGenCaves;
 import net.minecraft.core.world.generate.chunk.ChunkDecorator;
 import net.minecraft.core.world.generate.chunk.ChunkGenerator;
+import net.minecraft.core.world.generate.chunk.ChunkGeneratorResult;
 import net.minecraft.core.world.generate.chunk.perlin.ChunkGeneratorPerlin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -23,11 +24,11 @@ public abstract class ChunkGeneratorPerlinMixin extends ChunkGenerator {
     public ChunkGeneratorPerlinMixin(World world, ChunkDecorator decorator) {
         super(world, decorator);
     }
-    @Redirect(method = "doBlockGeneration", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/generate/MapGenBase;generate(Lnet/minecraft/core/world/World;II[S)V"))
-    public void provideChunk(MapGenBase mapGenBase, World world, int baseChunkX, int baseChunkZ, short[] blocks){
-        caveGen.generate(this.world, baseChunkX, baseChunkZ, blocks);
+    @Redirect(method = "doBlockGeneration", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/world/generate/MapGenBase;generate(Lnet/minecraft/core/world/World;IILnet/minecraft/core/world/generate/chunk/ChunkGeneratorResult;)V"))
+    public void provideChunk(MapGenBase instance, World world, int baseChunkX, int baseChunkZ, ChunkGeneratorResult result){
+        caveGen.generate(this.world, baseChunkX, baseChunkZ, result);
         if(CaveUberhaul.config.getBoolean("Additional_Old_Caves")) {
-            caveGen2.generate(this.world, baseChunkX, baseChunkZ, blocks);
+            caveGen2.generate(this.world, baseChunkX, baseChunkZ, result);
         }
     }
 }

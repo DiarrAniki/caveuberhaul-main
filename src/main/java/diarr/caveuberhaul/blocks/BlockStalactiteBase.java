@@ -18,11 +18,12 @@ public abstract class BlockStalactiteBase extends Block {
     public abstract void doConnectLogic(World world, int x, int y, int z);
     public void doFall(World world, int i,int j,int k){}
 
+    @Override
     public boolean renderAsNormalBlock() {
         return false;
     }
-
-    public boolean isOpaqueCube() {
+    @Override
+    public boolean isSolidRender() {
         return false;
     }
 

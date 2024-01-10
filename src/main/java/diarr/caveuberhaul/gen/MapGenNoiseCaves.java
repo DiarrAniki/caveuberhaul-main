@@ -4,7 +4,14 @@ import diarr.caveuberhaul.UberUtil;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.BlockFluid;
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.chunk.Chunk;
+import net.minecraft.core.world.chunk.ChunkSection;
 import net.minecraft.core.world.generate.MapGenBase;
+import net.minecraft.core.world.generate.chunk.ChunkGeneratorResult;
+import org.spongepowered.asm.mixin.Unique;
+
+import static diarr.caveuberhaul.UberUtil.getMaxSurfaceHeight;
+import static diarr.caveuberhaul.UberUtil.getSurfaceHeight;
 
 public class MapGenNoiseCaves extends MapGenBase {
 
@@ -26,15 +33,15 @@ public class MapGenNoiseCaves extends MapGenBase {
         this.isAlpha = isAlpha;
     }
 
-    public void generate(World world, int baseChunkX, int baseChunkZ, short[] ashort0)
+    public void generate(World world, int baseChunkX, int baseChunkZ, ChunkGeneratorResult result)
     {
         this.worldObj = world;
-        generateNoiseCaves(worldObj,baseChunkX, baseChunkZ, ashort0);
+        generateNoiseCaves(worldObj,baseChunkX, baseChunkZ, result);
     }
 
-    private void generateNoiseCaves(World world,int baseChunkX,int baseChunkZ, short[]data)
+    private void generateNoiseCaves(World world,int baseChunkX,int baseChunkZ, ChunkGeneratorResult data)
     {
-        int chunkMaxHeight = getMaxSurfaceHeight(data,world);
+        int chunkMaxHeight = 140;/*getMaxSurfaceHeight(chunk)*/
 
         float[][][] CheeseCave = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(baseChunkX,baseChunkZ,0,0,0,0.023f,1.2f,world, cavernNoise, FastNoiseLite.NoiseType.Perlin),world);
         float[][][] WormCave = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(baseChunkX,baseChunkZ,0,0,0,0.012f,1.2f,world, wormCaveNoise, FastNoiseLite.NoiseType.OpenSimplex2),world);
@@ -43,60 +50,61 @@ public class MapGenNoiseCaves extends MapGenBase {
         float[][][] NoodleCaveOffset = UberUtil.getInterpolatedNoiseValue(UberUtil.sampleNoise(baseChunkX,baseChunkZ,128,8,128,0.021f,1.5f,world, cavernNoise, FastNoiseLite.NoiseType.Perlin),world);
         float[][] ModifierNoise = UberUtil.getInterpolatedNoiseValue2D(UberUtil.sampleNoise2D(baseChunkX,baseChunkZ,0.008f,world, caveModifierNoise, FastNoiseLite.NoiseType.Perlin));
 
-        for (int x = 0; x < 16; ++x) {
-            for (int z = 0; z <16; ++z) {
-                double modif = UberUtil.clamp(ModifierNoise[x][z],-0.015f,1f);
-                int coreCavernBlockHeight = (int) (32+6*modif);
+        for (int s = 0; s < Chunk.CHUNK_SECTIONS; s++) {
+            for (int x = 0; x < Chunk.CHUNK_SIZE_X; ++x) {
+                for (int z = 0; z < Chunk.CHUNK_SIZE_Z; ++z) {
+                    double modif = UberUtil.clamp(ModifierNoise[x][z],-0.015f,1f);
+                    int coreCavernBlockHeight = (int) (32+6*modif);
 
-                for (int y = world.getHeightBlocks()-1; y >= 0; y--) {
+                    for (int _y = ChunkSection.SECTION_SIZE_Y - 1; _y >= 0; _y--) {
+                        int y = s * ChunkSection.SECTION_SIZE_Y + _y;
+                        float noiseValCheese = CheeseCave[x][y][z];
 
-                    float noiseValCheese = CheeseCave[x][y][z];
+                        float noiseValWormCave = Math.abs(WormCave[x][y][z])*-1;
+                        float noiseValWormCaveOffset = Math.abs(WormCaveOffset[x][y][z])*-1;
 
-                    float noiseValWormCave = Math.abs(WormCave[x][y][z])*-1;
-                    float noiseValWormCaveOffset = Math.abs(WormCaveOffset[x][y][z])*-1;
+                        float noiseValNoodleCave = Math.abs(NoodleCave[x][y][z])*-1;
+                        float noiseValNoodleCaveOffset = Math.abs(NoodleCaveOffset[x][y][z])*-1;
 
-                    float noiseValNoodleCave = Math.abs(NoodleCave[x][y][z])*-1;
-                    float noiseValNoodleCaveOffset = Math.abs(NoodleCaveOffset[x][y][z])*-1;
+                        float coreCavernNoiseCutoff = coreThresCheese;
+                        float adjustedCheeseNoiseCutoffBetween = coreThresCheese;
 
-                    float coreCavernNoiseCutoff = coreThresCheese;
-                    float adjustedCheeseNoiseCutoffBetween = coreThresCheese;
-
-                    float noodleCavernNoiseCutoff = caveThresNoodle;
-                    float wormCavernNoiseCutoff = caveThresWorm;
+                        float noodleCavernNoiseCutoff = caveThresNoodle;
+                        float wormCavernNoiseCutoff = caveThresWorm;
 
 
 
-                    //World Core caves
-                    if(y < coreCavernBlockHeight && y > 16) {
-                        coreCavernNoiseCutoff = UberUtil.clamp(coreCavernNoiseCutoff-((coreCavernBlockHeight - y) * (0.069f )),0,.95f);
-                    }
-                    else if(y <= 16) {
-                        coreCavernNoiseCutoff = UberUtil.clamp(coreCavernNoiseCutoff-(1-((16 - y) * 0.04f)),0,1f);
-                    }
-                    if (y < 14)
-                    {
-                        coreCavernNoiseCutoff += (14 - y) * 0.04;
-                    }
+                        //World Core caves
+                        if(y < coreCavernBlockHeight && y > 16) {
+                            coreCavernNoiseCutoff = UberUtil.clamp(coreCavernNoiseCutoff-((coreCavernBlockHeight - y) * (0.069f )),0,.95f);
+                        }
+                        else if(y <= 16) {
+                            coreCavernNoiseCutoff = UberUtil.clamp(coreCavernNoiseCutoff-(1-((16 - y) * 0.04f)),0,1f);
+                        }
+                        if (y < 14)
+                        {
+                            coreCavernNoiseCutoff += (14 - y) * 0.04;
+                        }
 
-                    // increase cutoff as we get closer to the minCaveHeight, so it's not all flat floors
-                    if (y < 32)
-                    {
-                        adjustedCheeseNoiseCutoffBetween += (32 - y) * 0.05;
-                    }
-                    //TODO find solution to decrease cave size near surface
-                    if (y > chunkMaxHeight-32)
-                    {
-                        adjustedCheeseNoiseCutoffBetween /= UberUtil.clamp((32 - y) * 0.032,0,1);
-                        noodleCavernNoiseCutoff *= UberUtil.clamp((32 - y) * 0.032,0,1);
-                    }
+                        // increase cutoff as we get closer to the minCaveHeight, so it's not all flat floors
+                        if (y < 32)
+                        {
+                            adjustedCheeseNoiseCutoffBetween += (32 - y) * 0.05;
+                        }
+                        //TODO find solution to decrease cave size near surface
+                        if (y > chunkMaxHeight-32)
+                        {
+                            adjustedCheeseNoiseCutoffBetween /= UberUtil.clamp((32 - y) * 0.032,0,1);
+                            noodleCavernNoiseCutoff *= UberUtil.clamp((32 - y) * 0.032,0,1);
+                        }
 
-                    //noiseValWormCave -= modif;
-                    //noiseValWormCaveOffset -= modif;
-                    noiseValNoodleCave -= modif;
-                    noiseValNoodleCaveOffset -= modif;
-                    noiseValCheese -= modif;
+                        //noiseValWormCave -= modif;
+                        //noiseValWormCaveOffset -= modif;
+                        noiseValNoodleCave -= modif;
+                        noiseValNoodleCaveOffset -= modif;
+                        noiseValCheese -= modif;
 
-                    //This leads to a very cool "pillar" like worldtype
+                        //This leads to a very cool "pillar" like worldtype
                     /*coreCavernNoiseCutoff *= modif;
                     //adjustedCheeseNoiseCutoffBetween *=modif;
                     noiseValWormCave *= modif;
@@ -104,85 +112,66 @@ public class MapGenNoiseCaves extends MapGenBase {
                     noiseValNoodleCave *=modif;
                     noiseValNoodleCaveOffset *=modif;*/
 
-                    boolean caveFlagWorm =noiseValWormCave > wormCavernNoiseCutoff && noiseValWormCaveOffset > wormCavernNoiseCutoff;
-                    boolean caveFlagNoodle = noiseValNoodleCave > noodleCavernNoiseCutoff && noiseValNoodleCaveOffset > noodleCavernNoiseCutoff;
-                    boolean caveFlagChambers = noiseValCheese > adjustedCheeseNoiseCutoffBetween;
-                    boolean caveFlagCoreCavern = noiseValCheese > coreCavernNoiseCutoff;
+                        boolean caveFlagWorm =noiseValWormCave > wormCavernNoiseCutoff && noiseValWormCaveOffset > wormCavernNoiseCutoff;
+                        boolean caveFlagNoodle = noiseValNoodleCave > noodleCavernNoiseCutoff && noiseValNoodleCaveOffset > noodleCavernNoiseCutoff;
+                        boolean caveFlagChambers = noiseValCheese > adjustedCheeseNoiseCutoffBetween;
+                        boolean caveFlagCoreCavern = noiseValCheese > coreCavernNoiseCutoff;
 
-                    boolean bedrockFlag = data[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y] == (short) Block.bedrock.id;
-                    boolean waterFlag = Block.getBlock(data[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y]) instanceof BlockFluid;
+                        int block = data.getBlock(x, y, z);
 
-                    if ((caveFlagCoreCavern||caveFlagChambers||caveFlagNoodle||caveFlagWorm)&&!bedrockFlag&&!waterFlag)
-                    {
-                        if (!isFluidBlock(Block.getBlock(data[x << world.getHeightBits() + 4 | z << world.getHeightBits() | y+1]))|| y <= lavaDepth)
+                        boolean bedrockFlag = block == (short) Block.bedrock.id;
+                        boolean waterFlag = Block.getBlock(block) instanceof BlockFluid;
+
+                        if ((caveFlagCoreCavern||caveFlagChambers||caveFlagNoodle||caveFlagWorm)&&!bedrockFlag&&!waterFlag)
                         {
-                            // if we are in the easeInDepth range or near sea level, do some extra checks for water before digging
-                            if ((y > (world.getHeightBlocks()/2 - 8) ) && y > lavaDepth)
+                            if (!isFluidBlock(Block.getBlock(data.getBlock(x, y + 1, z)))|| y <= lavaDepth)
                             {
-                                if (x < 15)
-                                    if (isFluidBlock(Block.getBlock(data[x+1 << world.getHeightBits() + 4 | z << world.getHeightBits() | y]))) {
-                                        continue;
-                                    }
-                                if (x > 0)
-                                    if (isFluidBlock(Block.getBlock(data[x-1 << world.getHeightBits() + 4 | z << world.getHeightBits() | y]))){
-                                        continue;
-                                    }
-                                if (z < 15)
-                                    if (isFluidBlock(Block.getBlock(data[x << world.getHeightBits() + 4 | z+1 << world.getHeightBits() | y]))){
-                                        continue;
-                                    }
-                                if (z > 0)
-                                    if (isFluidBlock(Block.getBlock(data[x << world.getHeightBits() + 4 | z-1 << world.getHeightBits() | y]))){
-                                        continue;
-                                    }
-                            }
+                                // if we are in the easeInDepth range or near sea level, do some extra checks for water before digging
+                                if ((y > (world.getHeightBlocks()/2 - 8) ) && y > lavaDepth)
+                                {
+                                    if (x < 15)
+                                        if (isFluidBlock(Block.getBlock(data.getBlock(x + 1, y, z)))) {
+                                            continue;
+                                        }
+                                    if (x > 0)
+                                        if (isFluidBlock(Block.getBlock(data.getBlock(x - 1, y, z)))){
+                                            continue;
+                                        }
+                                    if (z < 15)
+                                        if (isFluidBlock(Block.getBlock(data.getBlock(x, y, z + 1)))){
+                                            continue;
+                                        }
+                                    if (z > 0)
+                                        if (isFluidBlock(Block.getBlock(data.getBlock(x, y, z - 1)))){
+                                            continue;
+                                        }
+                                }
 
-                            digBlock(data, x,y,z,world);
+                                digBlock(data, x,y,z);
+                            }
                         }
                     }
                 }
             }
         }
+
     }
 
-    private void digBlock(short[] data , int localX,int localY,int localZ,World world)
+    private void digBlock(ChunkGeneratorResult result, int localX,int localY,int localZ)
     {
         if(localY<= lavaDepth)
         {
-            data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY] = (short)Block.fluidLavaStill.id;
+            result.setBlock(localX, localY, localZ, Block.fluidLavaStill.id);
         } else
         {
-            data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY]=0;
-            if (data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY] == 0 && data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY-1] == Block.dirt.id)
+            result.setBlock(localX, localY, localZ, 0);
+            if (result.getBlock(localX, localY - 1, localZ) == Block.dirt.id)
             {
-                data[localX << world.getHeightBits() + 4 | localZ << world.getHeightBits() | localY-1] = (short) Block.grass.id;
+                result.setBlock(localX, localY - 1, localZ, Block.grass.id);
             }
         }
 
     }
-
-    private int getMaxSurfaceHeight(short[] data,World world)
-    {
-        int max = 0;
-        int[][] testcords = {{2, 6}, {3, 11}, {7, 2}, {9, 13}, {12,4}, {13, 9}};
-
-        for (int[] testcord : testcords) {
-            int testmax = getSurfaceHeight(testcord[0], testcord[1], data, world);
-            if (testmax > max) {
-                max = testmax;
-                if (max > 134)
-                    return max;
-            }
-        }
-        return max;
-    }
-
-    private int getSurfaceHeight(int localX, int localZ,short[] data,World world)
-    {
-        // Using a recursive binary search to find the surface
-        return UberUtil.recursiveBinarySurfaceSearchUp(localX, localZ, world.getHeightBlocks()-1, 0,data,world);
-    }
-
     private boolean isFluidBlock(Block block)
     {
         return block instanceof BlockFluid;

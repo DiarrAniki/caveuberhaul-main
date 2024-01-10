@@ -1,8 +1,8 @@
 package diarr.caveuberhaul.particles;
 
+import net.minecraft.client.entity.fx.EntityFX;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.core.block.material.Material;
-import net.minecraft.core.entity.fx.EntityFX;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.World;
 

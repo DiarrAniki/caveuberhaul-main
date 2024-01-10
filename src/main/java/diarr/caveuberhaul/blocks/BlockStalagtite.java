@@ -14,9 +14,9 @@ import java.util.Random;
 
 public class BlockStalagtite extends BlockStalactiteBase {
 
-    public BlockStalagtite(String s,int i, Material material,  int state) {
+    public BlockStalagtite(String s, int i, int state) {
         super(s,i, Material.stone,state);
-        this.setTickOnLoad(true);
+        this.setTicking(true);
         switch (state) {
             case 0: {
                 this.setBlockBounds(0.325F, 0.5F, 0.325F, 0.675F, 1F, 0.675F);
@@ -66,12 +66,13 @@ public class BlockStalagtite extends BlockStalactiteBase {
             }
         }
     }
-
+    @Override
     public int tickRate() {
         return 256;
     }
-
+    @Override
     public void updateTick(World world, int i, int j, int k, Random random) {
+        boolean flag = world.scheduledUpdatesAreImmediate;
         if(this.state==0) {
             int length = 0;
             while(world.getBlock(i,j+length,k)instanceof BlockStalagtite)
@@ -83,19 +84,22 @@ public class BlockStalagtite extends BlockStalactiteBase {
                     if (random.nextInt(512) == 1) {
                         world.setBlockAndMetadataWithNotify(i, j - 1, k, CaveUberhaul.flowstoneStalagtite1.id, 2);
                     } else {
+                        world.scheduledUpdatesAreImmediate = false;
                         world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
                     }
                 } else {
                     if (random.nextInt(2048) == 1) {
                         world.setBlockAndMetadataWithNotify(i, j - 1, k, CaveUberhaul.flowstoneStalagtite1.id, 0);
                     } else {
+                        world.scheduledUpdatesAreImmediate = false;
                         world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
                     }
                 }
             }
         }
+        world.scheduledUpdatesAreImmediate = flag;
     }
-
+    @Override
     public void randomDisplayTick(World world, int x, int y, int z, Random rand)
     {
         if(world.getBlockMetadata(x,y,z)==2&&rand.nextInt(3)==1) {
@@ -141,29 +145,28 @@ public class BlockStalagtite extends BlockStalactiteBase {
             }
         }
     }
-
+    @Override
     public void onBlockAdded(World world, int x, int y, int z) {
         //((BlockStalagtite) Block.getBlock(world.getBlockId(x,y,z))).doConnectLogic(world,x,y,z);
         this.doConnectLogic(world,x,y,z);
         this.checkForGrowthConditionAndPropagate(world,x,y,z);
         world.scheduleBlockUpdate(x, y, z, this.id, this.tickRate());
     }
-
+    @Override
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
         if(world.isAirBlock(i,j+1,k))
         {
             tryToFall(world,i,j,k);
         }
     }
-
-    public void onBlockRemoval(World world, int x, int y, int z) {
+    @Override
+    public void onBlockRemoved(World world, int x, int y, int z, int data) {
         if(Block.getBlock(world.getBlockId(x,y+1,z)) instanceof BlockStalagtite)
         {
             this.doConnectLogic(world,x,y+1,z);
         }
     }
-
-
+    @Override
     public ItemStack[] getBreakResult(World world, EnumDropCause dropCause, int x, int y, int z, int meta, TileEntity tileEntity) {
         return dropCause != EnumDropCause.IMPROPER_TOOL ? new ItemStack[]{new ItemStack(CaveUberhaul.flowstoneStalagtiteItem.id,1,0)} : null;
     }
@@ -223,7 +226,7 @@ public class BlockStalagtite extends BlockStalactiteBase {
         super.notInCreativeMenu = notInCreativeMenu;
         return this;
     }*/
-
+    @Override
     public boolean canPlaceBlockAt(World world, int i, int j, int k) {
         int l = world.getBlockId(i, j, k);
         Block u = Block.getBlock(world.getBlockId(i, j+1, k));

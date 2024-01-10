@@ -28,12 +28,12 @@ public class EntityFallingIcicle extends Entity {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compoundTag) {
+    public void readAdditionalSaveData(CompoundTag compoundTag) {
 
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compoundTag) {
+    public void addAdditionalSaveData(CompoundTag compoundTag) {
 
     }
 

@@ -1,7 +1,7 @@
 package diarr.caveuberhaul.particles;
 
+import net.minecraft.client.entity.fx.EntityFX;
 import net.minecraft.client.render.Tessellator;
-import net.minecraft.core.entity.fx.EntityFX;
 import net.minecraft.core.world.World;
 
 public class EntityVoidFogFX  extends EntityFX {
