@@ -9,6 +9,8 @@ import net.minecraft.core.block.BlockLeavesBase;
 import net.minecraft.core.block.BlockLog;
 import net.minecraft.core.block.material.Material;
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.chunk.Chunk;
+import net.minecraft.core.world.chunk.ChunkSection;
 
 public class UberUtil {
     public static float[][][] getInterpolatedNoiseValue(float[][][] NoiseSamples, World world) {
@@ -207,7 +209,7 @@ public class UberUtil {
         int top = searchTop;
         if (searchTop > searchBottom) {
             int searchMid = (searchBottom + searchTop) / 2;
-            if (isRockBlock(Block.getBlock(data[localX << UberUtil.getHeightBits() + 4 | localZ << UberUtil.getHeightBits() | searchMid]))) {
+            if (isRockBlock(Block.getBlock(data[ChunkSection.makeBlockIndex(localX, searchMid, localZ)]))) {
                 top = recursiveBinarySurfaceSearchUp(localX, localZ, searchTop, searchMid + 1, data, world);
             } else {
                 top = recursiveBinarySurfaceSearchUp(localX, localZ, searchMid, searchBottom, data, world);
@@ -391,7 +393,7 @@ public class UberUtil {
             return 1;
         }
     }
-    public static int getHeightBits(){
-        return 8;
+    public static void setBlockDirectely(Chunk chunk, int x, int y, int z, int id){
+        chunk.getSection(y/ChunkSection.SECTION_SIZE_Y).setBlock(x, y % 16, z, id);
     }
 }

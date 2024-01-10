@@ -6,6 +6,7 @@ import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.biome.Biomes;
 import net.minecraft.core.world.chunk.ChunkPosition;
+import net.minecraft.core.world.chunk.ChunkSection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,14 +51,14 @@ public class CaveBiomeProvider
                 {
                     if(frostyBiomes.contains(biome) && y>((world.getHeightBlocks()/4)-world.rand.nextInt(4)))
                     {
-                        caveBiomesInChunk[x << UberUtil.getHeightBits() + 4 | z << UberUtil.getHeightBits() | y] = CaveBiomes.CAVE_FROST;
+                        caveBiomesInChunk[ChunkSection.makeBlockIndex(x, y, z)] = CaveBiomes.CAVE_FROST;
                     }
                     for (int b = 0; b< CaveBiomes.caveBiomeList.size();b++)
                     {
                         CaveBiome cb = CaveBiomes.caveBiomeList.get(b);
                         if(checkIfIsBiome(cb,temperature,weird))
                         {
-                            caveBiomesInChunk[x << UberUtil.getHeightBits() + 4 | z << UberUtil.getHeightBits() | y] = cb;
+                            caveBiomesInChunk[ChunkSection.makeBlockIndex(x, y, z)] = cb;
                         }
                     }
                 }
@@ -67,7 +68,7 @@ public class CaveBiomeProvider
 
     public CaveBiome getCaveBiomeAt(int x,int y,int z,World world)
     {
-        return caveBiomesInChunk[x << UberUtil.getHeightBits() + 4 | z << UberUtil.getHeightBits() | y];
+        return caveBiomesInChunk[ChunkSection.makeBlockIndex(x, y, z)];
     }
 
     private boolean checkIfIsBiome(CaveBiome b,double t, double w)
