@@ -34,14 +34,15 @@ public class BlockStalagmite extends BlockStalactiteBase {
             }
         }
     }
-
+    @Override
     public ItemStack[] getBreakResult(World world, EnumDropCause dropCause, int x, int y, int z, int meta, TileEntity tileEntity) {
         return dropCause != EnumDropCause.IMPROPER_TOOL ? new ItemStack[]{new ItemStack(CaveUberhaul.flowstoneStalagtiteItem.id,1,0)} : null;
     }
+    @Override
     public int tickRate() {
         return 256;
     }
-
+    @Override
     public void updateTick(World world, int i, int j, int k, Random random) {
         boolean flag = world.scheduledUpdatesAreImmediate;
         if (this.state == 0) {
@@ -62,12 +63,12 @@ public class BlockStalagmite extends BlockStalactiteBase {
         }
         world.scheduledUpdatesAreImmediate = flag;
     }
-
+    @Override
     public void onBlockAdded(World world, int x, int y, int z) {
         this.doConnectLogic(world,x,y,z);
         world.scheduleBlockUpdate(x, y, z, this.id, this.tickRate());
     }
-
+    @Override
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
         if(world.isAirBlock(i,j-1,k))
         {
@@ -79,13 +80,14 @@ public class BlockStalagmite extends BlockStalactiteBase {
             }
         }
     }
-
-    public void onBlockRemoval(World world, int x, int y, int z) {
+    @Override
+    public void onBlockRemoved(World world, int x, int y, int z, int data) {
         if(Block.getBlock(world.getBlockId(x,y-1,z)) instanceof BlockStalagmite)
         {
             this.doConnectLogic(world,x,y-1,z);
         }
     }
+    @Override
     public void doConnectLogic(World world, int x, int y, int z)
     {
         int connectState;
@@ -131,7 +133,7 @@ public class BlockStalagmite extends BlockStalactiteBase {
             }
         }
     }
-
+    @Override
     public boolean canPlaceBlockAt(World world, int i, int j, int k) {
         int l = world.getBlockId(i, j, k);
         Block u = Block.getBlock(world.getBlockId(i, j-1, k));

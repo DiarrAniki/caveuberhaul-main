@@ -31,18 +31,18 @@ public class BlockIcicle extends BlockStalactiteBase {
         }
         this.setTicking(true);
     }
-
+    @Override
     public int getRenderBlockPass() {
         return 1;
     }
-
+    @Override
     public void onBlockAdded(World world, int x, int y, int z) {
         //((BlockStalagtite) Block.getBlock(world.getBlockId(x,y,z))).doConnectLogic(world,x,y,z);
         this.doConnectLogic(world,x,y,z);
         //this.checkForGrowthConditionAndPropagate(world,x,y,z);
         //world.scheduleBlockUpdate(x, y, z, this.id, this.tickRate());
     }
-
+    @Override
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
             tryToFall(world,i,j,k);
     }
@@ -82,8 +82,8 @@ public class BlockIcicle extends BlockStalactiteBase {
             }
         }
     }
-
-    public void onBlockRemoval(World world, int x, int y, int z) {
+    @Override
+    public void onBlockRemoved(World world, int x, int y, int z, int data) {
         if(Block.getBlock(world.getBlockId(x,y+1,z)) instanceof BlockIcicle)
         {
             this.doConnectLogic(world,x,y+1,z);
@@ -140,6 +140,7 @@ public class BlockIcicle extends BlockStalactiteBase {
             }
         }
     }
+    @Override
     public boolean canPlaceBlockAt(World world, int i, int j, int k) {
         int l = world.getBlockId(i, j, k);
         Block u = Block.getBlock(world.getBlockId(i, j+1, k));

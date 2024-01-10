@@ -66,11 +66,11 @@ public class BlockStalagtite extends BlockStalactiteBase {
             }
         }
     }
-
+    @Override
     public int tickRate() {
         return 256;
     }
-
+    @Override
     public void updateTick(World world, int i, int j, int k, Random random) {
         boolean flag = world.scheduledUpdatesAreImmediate;
         if(this.state==0) {
@@ -99,7 +99,7 @@ public class BlockStalagtite extends BlockStalactiteBase {
         }
         world.scheduledUpdatesAreImmediate = flag;
     }
-
+    @Override
     public void randomDisplayTick(World world, int x, int y, int z, Random rand)
     {
         if(world.getBlockMetadata(x,y,z)==2&&rand.nextInt(3)==1) {
@@ -145,29 +145,28 @@ public class BlockStalagtite extends BlockStalactiteBase {
             }
         }
     }
-
+    @Override
     public void onBlockAdded(World world, int x, int y, int z) {
         //((BlockStalagtite) Block.getBlock(world.getBlockId(x,y,z))).doConnectLogic(world,x,y,z);
         this.doConnectLogic(world,x,y,z);
         this.checkForGrowthConditionAndPropagate(world,x,y,z);
         world.scheduleBlockUpdate(x, y, z, this.id, this.tickRate());
     }
-
+    @Override
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
         if(world.isAirBlock(i,j+1,k))
         {
             tryToFall(world,i,j,k);
         }
     }
-
-    public void onBlockRemoval(World world, int x, int y, int z) {
+    @Override
+    public void onBlockRemoved(World world, int x, int y, int z, int data) {
         if(Block.getBlock(world.getBlockId(x,y+1,z)) instanceof BlockStalagtite)
         {
             this.doConnectLogic(world,x,y+1,z);
         }
     }
-
-
+    @Override
     public ItemStack[] getBreakResult(World world, EnumDropCause dropCause, int x, int y, int z, int meta, TileEntity tileEntity) {
         return dropCause != EnumDropCause.IMPROPER_TOOL ? new ItemStack[]{new ItemStack(CaveUberhaul.flowstoneStalagtiteItem.id,1,0)} : null;
     }
@@ -227,7 +226,7 @@ public class BlockStalagtite extends BlockStalactiteBase {
         super.notInCreativeMenu = notInCreativeMenu;
         return this;
     }*/
-
+    @Override
     public boolean canPlaceBlockAt(World world, int i, int j, int k) {
         int l = world.getBlockId(i, j, k);
         Block u = Block.getBlock(world.getBlockId(i, j+1, k));

@@ -11,17 +11,17 @@ public class BlockFlowstone extends Block {
         super(s,i, material);
         this.setTicking(true);
     }
-
+    @Override
     public int tickRate() {
         //return 12000; //10 min
         return 1500;
     }
 
-
+    @Override
     public void onNeighborBlockChange(World world, int i, int j, int k, int l) {
         world.scheduleBlockUpdate(i, j, k, this.id, this.tickRate());
     }
-
+    @Override
     public void updateTick(World world, int x, int y, int z, Random rand){
         boolean flag = world.scheduledUpdatesAreImmediate;
         world.scheduledUpdatesAreImmediate = false;
