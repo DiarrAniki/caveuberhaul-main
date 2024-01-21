@@ -31,10 +31,7 @@ public class BlockIcicle extends BlockStalactiteBase {
         }
         this.setTicking(true);
     }
-    @Override
-    public int getRenderBlockPass() {
-        return 0;
-    }
+
     @Override
     public void onBlockAdded(World world, int x, int y, int z) {
         //((BlockStalagtite) Block.getBlock(world.getBlockId(x,y,z))).doConnectLogic(world,x,y,z);
