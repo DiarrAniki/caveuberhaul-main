@@ -33,7 +33,7 @@ public class BlockIcicle extends BlockStalactiteBase {
     }
     @Override
     public int getRenderBlockPass() {
-        return 1;
+        return 0;
     }
     @Override
     public void onBlockAdded(World world, int x, int y, int z) {
