@@ -69,11 +69,11 @@ public class EntityFallingStalactite extends Entity {
             this.yo = this.y;
             this.zo = this.z;
             ++this.fallTime;
-            this.yd -= 0.03999999910593033;
+            this.yd -= 0.04;
             this.move(this.xd, this.yd, this.zd);
-            this.xd *= 0.9800000190734863;
-            this.yd *= 0.9800000190734863;
-            this.zd *= 0.9800000190734863;
+            this.xd *= 0.98;
+            this.yd *= 0.98;
+            this.zd *= 0.98;
             int i = MathHelper.floor_double(this.x);
             int j = MathHelper.floor_double(this.y);
             int k = MathHelper.floor_double(this.z);
@@ -82,13 +82,13 @@ public class EntityFallingStalactite extends Entity {
             }
 
             if (this.onGround) {
-                this.xd *= 0.699999988079071;
-                this.zd *= 0.699999988079071;
+                this.xd *= 0.7;
+                this.zd *= 0.7;
                 this.yd *= -0.5;
                 this.remove();
                 if ((!this.world.canBlockBePlacedAt(this.blockID, i, j, k, true, Side.BOTTOM) || BlockStalagtite.canFallBelow(this.world, i, j - 1, k) || !this.world.setBlockWithNotify(i, j, k, this.blockID)) && !this.world.isClientSide) {
                     this.spawnAtLocation(CaveUberhaul.flowstoneStalagtiteItem.id, 1);
-                    world.playBlockSoundEffect(i,j,k, Block.stone, EnumBlockSoundEffectType.MINE);
+                    world.playBlockSoundEffect(null, i,j,k, Block.stone, EnumBlockSoundEffectType.MINE);
                     for (Entity e:world.getEntitiesWithinAABB(EntityLiving.class, AABB.getBoundingBox(i-0.5F,j-0.5F,k-0.5F,i+0.5F,j+0.5F,k+0.5F)))
                     {
                         e.hurt(null,this.fallTime, DamageType.COMBAT);

@@ -22,14 +22,14 @@ public class ItemFlowstoneItem extends Item {
             if(side == Side.TOP &&CaveUberhaul.flowstoneStalagmite1.canPlaceBlockAt(world,blockX,blockY+1,blockZ))
             {
                 world.setBlockWithNotify(blockX,blockY+1,blockZ,CaveUberhaul.flowstoneStalagmite1.id);
-                world.playBlockSoundEffect(blockX,blockY+1,blockZ,Block.stone, EnumBlockSoundEffectType.PLACE);
+                world.playBlockSoundEffect(player, blockX,blockY+1,blockZ,Block.stone, EnumBlockSoundEffectType.PLACE);
                 stack.consumeItem(player);
                 return true;
             }
             else if(side == Side.BOTTOM &CaveUberhaul.flowstoneStalagtite1.canPlaceBlockAt(world,blockX,blockY-1,blockZ))
             {
                 world.setBlockWithNotify(blockX,blockY-1,blockZ,CaveUberhaul.flowstoneStalagtite1.id);
-                world.playBlockSoundEffect(blockX,blockY-1,blockZ,Block.stone, EnumBlockSoundEffectType.PLACE);
+                world.playBlockSoundEffect(player, blockX,blockY-1,blockZ,Block.stone, EnumBlockSoundEffectType.PLACE);
                 stack.consumeItem(player);
                 return true;
             }
@@ -37,14 +37,14 @@ public class ItemFlowstoneItem extends Item {
         else if(Block.getBlock(world.getBlockId(blockX,blockY,blockZ)) instanceof BlockStalagmite &&CaveUberhaul.flowstoneStalagmite1.canPlaceBlockAt(world,blockX,blockY+1,blockZ))
         {
             world.setBlockWithNotify(blockX,blockY+1,blockZ,CaveUberhaul.flowstoneStalagmite1.id);
-            world.playBlockSoundEffect(blockX,blockY+1,blockZ,Block.stone, EnumBlockSoundEffectType.PLACE);
+            world.playBlockSoundEffect(player, blockX,blockY+1,blockZ,Block.stone, EnumBlockSoundEffectType.PLACE);
             stack.consumeItem(player);
             return true;
         }
         else if(Block.getBlock(world.getBlockId(blockX,blockY,blockZ)) instanceof BlockStalagtite &&CaveUberhaul.flowstoneStalagtite1.canPlaceBlockAt(world,blockX,blockY-1,blockZ))
         {
             world.setBlockWithNotify(blockX,blockY-1,blockZ,CaveUberhaul.flowstoneStalagtite1.id);
-            world.playBlockSoundEffect(blockX,blockY-1,blockZ,Block.stone, EnumBlockSoundEffectType.PLACE);
+            world.playBlockSoundEffect(player, blockX,blockY-1,blockZ,Block.stone, EnumBlockSoundEffectType.PLACE);
             stack.consumeItem(player);
             return true;
         }

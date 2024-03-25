@@ -11,9 +11,9 @@ public class EntityDripFx extends EntityFX {
         super(world, x, y, z, motionX, motionY, motionZ);
         this.particleTextureIndex= 22;
         this.particleScale *= this.random.nextFloat() * 0.5F + 1F;
-        this.xd *= 0.009999999776482582;
+        this.xd *= 0.01;
         this.yd = motionY  -0.35F;
-        this.zd *= 0.009999999776482582;
+        this.zd *= 0.01;
         this.particleMaxAge = 128;
     }
 
@@ -28,13 +28,13 @@ public class EntityDripFx extends EntityFX {
         if(mat == Material.lava)
         {
             //this.world.spawnParticle("smoke", this.x, this.y, this.z, 0.0, 0.1f, 0.0);
-            this.world.playSoundAtEntity(this, "random.fizz", 0.1F+(random.nextFloat()-0.5f)*0.2f, 0.5F+random.nextFloat()*0.5f);
+            this.world.playSoundAtEntity(null, this, "random.fizz", 0.1F+(random.nextFloat()-0.5f)*0.2f, 0.5F+random.nextFloat()*0.5f);
             this.remove();
         }
         else if (mat == Material.water||this.collision)
         {
             this.world.spawnParticle("splash", this.x, this.y+0.01f, this.z, 0.0, 0.0f, 0.0);
-            this.world.playSoundAtEntity(this, "note.snare", 0.02f, 0.5F+random.nextFloat()*0.5f);
+            this.world.playSoundAtEntity(null, this, "note.snare", 0.02f, 0.5F+random.nextFloat()*0.5f);
             this.remove();
         }
     }
