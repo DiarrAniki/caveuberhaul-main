@@ -111,27 +111,27 @@ public class BlockStalagtite extends BlockStalactiteBase {
         }
     }
 
-    private void tryToFall(World world, int i, int j, int k) {
-        if (!(world.getBlock(i, j + 1, k) instanceof BlockFlowstone)|| !(world.getBlock(i, j + 1, k) instanceof BlockStalagtite)) {
-                doFall(world,i,j,k);
+    private void tryToFall(World world, int x, int y, int z) {
+        if (!(world.getBlock(x, y + 1, z) instanceof BlockFlowstone)|| !(world.getBlock(x, y + 1, z) instanceof BlockStalagtite)) {
+                doFall(world,x,y,z);
         }
     }
 
     @Override
-    public void doFall(World world, int i,int j,int k)
+    public void doFall(World world, int x,int y,int z)
     {
-        world.playBlockSoundEffect(i,j,k,Block.stone, EnumBlockSoundEffectType.MINE);
-        while(Block.getBlock(world.getBlockId(i,j,k))instanceof BlockStalagtite)
+        world.playBlockSoundEffect(null, x,y,z,Block.stone, EnumBlockSoundEffectType.MINE);
+        while(Block.getBlock(world.getBlockId(x,y,z))instanceof BlockStalagtite)
         {
-            EntityFallingStalactite entityfallingStalactite = new EntityFallingStalactite(world, ((float) i + 0.5F), ((float) j + 0.5F),  ((float) k + 0.5F), this.id);
+            EntityFallingStalactite entityfallingStalactite = new EntityFallingStalactite(world, ((float) x + 0.5F), ((float) y + 0.5F),  ((float) z + 0.5F), this.id);
             world.entityJoinedWorld(entityfallingStalactite);
-            world.setBlockWithNotify(i, j, k, 0);
-            j--;
+            world.setBlockWithNotify(x, y, z, 0);
+            y--;
         }
     }
 
-    public static boolean canFallBelow(World world, int i, int j, int k) {
-        int l = world.getBlockId(i, j, k);
+    public static boolean canFallBelow(World world, int x, int y, int z) {
+        int l = world.getBlockId(x, y, z);
         if (l == 0||Block.getBlock(l)instanceof BlockStalagtite) {
             return true;
         } else if (l == Block.fire.id) {

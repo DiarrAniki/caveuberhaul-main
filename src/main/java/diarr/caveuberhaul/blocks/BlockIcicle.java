@@ -44,28 +44,28 @@ public class BlockIcicle extends BlockStalactiteBase {
             tryToFall(world,i,j,k);
     }
 
-    private void tryToFall(World world, int i, int j, int k) {
-        Block u = Block.getBlock(world.getBlockId(i, j+1, k));
-        if (u != Block.ice && u != Block.permaice && u != Block.permafrost && u != Block.blockSnow && !(u instanceof BlockIcicle)) {
-                doFall(world,i,j,k);
+    private void tryToFall(World world, int x, int y, int z) {
+        Block block = Block.getBlock(world.getBlockId(x, y+1, z));
+        if (block != Block.ice && block != Block.permaice && block != Block.permafrost && block != Block.blockSnow && !(block instanceof BlockIcicle)) {
+                doFall(world,x,y,z);
         }
     }
 
     @Override
-    public void doFall(World world, int i,int j,int k)
+    public void doFall(World world, int x,int y,int z)
     {
-        world.playBlockSoundEffect(i,j,k,Block.ice, EnumBlockSoundEffectType.MINE);
-        while(Block.getBlock(world.getBlockId(i,j,k))instanceof BlockIcicle)
+        world.playBlockSoundEffect(null, x,y,z,Block.ice, EnumBlockSoundEffectType.MINE);
+        while(Block.getBlock(world.getBlockId(x,y,z))instanceof BlockIcicle)
         {
-            EntityFallingIcicle entityfallingIcicle = new EntityFallingIcicle(world, (double) ((float) i + 0.5F), (double) ((float) j + 0.5F), (double) ((float) k + 0.5F), this.id);
+            EntityFallingIcicle entityfallingIcicle = new EntityFallingIcicle(world, (double) ((float) x + 0.5F), (double) ((float) y + 0.5F), (double) ((float) z + 0.5F), this.id);
             world.entityJoinedWorld(entityfallingIcicle);
-            world.setBlockWithNotify(i, j, k, 0);
-            j--;
+            world.setBlockWithNotify(x, y, z, 0);
+            y--;
         }
     }
 
-    public static boolean canFallBelow(World world, int i, int j, int k) {
-        int l = world.getBlockId(i, j, k);
+    public static boolean canFallBelow(World world, int x, int y, int z) {
+        int l = world.getBlockId(x, y, z);
         if (l == 0||Block.getBlock(l)instanceof BlockIcicle) {
             return true;
         } else if (l == Block.fire.id) {

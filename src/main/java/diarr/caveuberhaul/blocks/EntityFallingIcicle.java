@@ -69,11 +69,11 @@ public class EntityFallingIcicle extends Entity {
             this.yo = this.y;
             this.zo = this.z;
             ++this.fallTime;
-            this.yd -= 0.03999999910593033;
+            this.yd -= 0.04;
             this.move(this.xd, this.yd, this.zd);
-            this.xd *= 0.9800000190734863;
-            this.yd *= 0.9800000190734863;
-            this.zd *= 0.9800000190734863;
+            this.xd *= 0.98;
+            this.yd *= 0.98;
+            this.zd *= 0.98;
             int i = MathHelper.floor_double(this.x);
             int j = MathHelper.floor_double(this.y);
             int k = MathHelper.floor_double(this.z);
@@ -82,12 +82,12 @@ public class EntityFallingIcicle extends Entity {
             }
 
             if (this.onGround) {
-                this.xd *= 0.699999988079071;
-                this.zd *= 0.699999988079071;
+                this.xd *= 0.7;
+                this.zd *= 0.7;
                 this.yd *= -0.5;
                 this.remove();
                 if ((!this.world.canBlockBePlacedAt(this.blockID, i, j, k, true, Side.BOTTOM) || BlockIcicle.canFallBelow(this.world, i, j - 1, k) || !this.world.setBlockWithNotify(i, j, k, this.blockID)) && !this.world.isClientSide) {
-                    world.playBlockSoundEffect(i,j,k, Block.ice, EnumBlockSoundEffectType.MINE);
+                    world.playBlockSoundEffect(null,i,j,k, Block.ice, EnumBlockSoundEffectType.MINE);
                     if(world.isAirBlock(i,j,k))
                     {
                         world.setBlockWithNotify(i,j,k,Block.layerSnow.id);
