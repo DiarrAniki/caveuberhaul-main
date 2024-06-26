@@ -12,10 +12,10 @@ import net.minecraft.core.util.helper.Side;
 import net.minecraft.core.world.World;
 
 public class ItemFlowstoneItem extends Item {
-    public ItemFlowstoneItem(int i) {
-        super(i);
+    public ItemFlowstoneItem(String key, int i) {
+        super(key, i);
     }
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int blockX, int blockY, int blockZ, Side side, double xPlaced, double yPlaced) {
+    public boolean onUseItemOnBlock(ItemStack stack, EntityPlayer player, World world, int blockX, int blockY, int blockZ, Side side, double xPlaced, double yPlaced) {
         //0 = unten, 1= oben
         if(world.getBlockId(blockX,blockY,blockZ)== CaveUberhaul.flowstone.id||world.getBlockId(blockX,blockY,blockZ)==CaveUberhaul.flowstonePillar.id)
         {
@@ -48,7 +48,7 @@ public class ItemFlowstoneItem extends Item {
             stack.consumeItem(player);
             return true;
         }
-        return super.onItemUse(stack, player, world, blockX, blockY, blockZ, side, xPlaced, yPlaced);
+        return super.onUseItemOnBlock(stack, player, world, blockX, blockY, blockZ, side, xPlaced, yPlaced);
     }
 
 }

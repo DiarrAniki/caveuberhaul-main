@@ -1,7 +1,8 @@
 package diarr.caveuberhaul.particles;
 
 import net.minecraft.client.entity.fx.EntityFX;
-import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.stitcher.TextureRegistry;
+import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.core.world.World;
 
 public class EntityVoidFogFX  extends EntityFX {
@@ -12,7 +13,7 @@ public class EntityVoidFogFX  extends EntityFX {
         this.particleRed = var14;
         this.particleGreen = var14;
         this.particleBlue = var14;
-        this.particleTextureIndex = 0;
+        this.particleTexture = TextureRegistry.getTexture("minecraft:particle/puff_0");
         this.setSize(0.02F, 0.02F);
         this.particleScale *= this.random.nextFloat() * 0.6F + 0.5F;
         this.xd *= 0.02F;

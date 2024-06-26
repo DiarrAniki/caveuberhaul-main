@@ -1,7 +1,8 @@
 package diarr.caveuberhaul.particles;
 
 import net.minecraft.client.entity.fx.EntityFX;
-import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.stitcher.TextureRegistry;
+import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.core.block.material.Material;
 import net.minecraft.core.util.helper.MathHelper;
 import net.minecraft.core.world.World;
@@ -9,7 +10,7 @@ import net.minecraft.core.world.World;
 public class EntityDripFx extends EntityFX {
     public EntityDripFx(World world, double x, double y, double z, double motionX, double motionY, double motionZ) {
         super(world, x, y, z, motionX, motionY, motionZ);
-        this.particleTextureIndex= 22;
+        this.particleTexture = TextureRegistry.getTexture("minecraft:particle/splash_rain_3");
         this.particleScale *= this.random.nextFloat() * 0.5F + 1F;
         this.xd *= 0.01;
         this.yd = motionY  -0.35F;
@@ -18,7 +19,7 @@ public class EntityDripFx extends EntityFX {
     }
 
     public void renderParticle(Tessellator t, float renderPartialTicks, float rotationX, float rotationXZ, float rotationZ, float rotationYZ, float rotationXY) {
-        super.renderParticle(t,renderPartialTicks,rotationX,rotationXZ,rotationZ,rotationYZ,rotationXY);
+        super.renderParticle(t, renderPartialTicks,rotationX,rotationXZ,rotationZ,rotationYZ,rotationXY);
     }
 
     public void tick()
@@ -33,7 +34,7 @@ public class EntityDripFx extends EntityFX {
         }
         else if (mat == Material.water||this.collision)
         {
-            this.world.spawnParticle("splash", this.x, this.y+0.01f, this.z, 0.0, 0.0f, 0.0);
+            this.world.spawnParticle("splash", this.x, this.y+0.01f, this.z, 0.0, 0.0f, 0.0, 0);
             this.world.playSoundAtEntity(null, this, "note.snare", 0.02f, 0.5F+random.nextFloat()*0.5f);
             this.remove();
         }

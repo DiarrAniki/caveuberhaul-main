@@ -27,14 +27,14 @@ public class FogManagerMixin {
     @Unique
     private float caveFogMinStart;
     @Shadow
-    private float fogRed;
+    public float fogRed;
     @Shadow
-    private float fogGreen;
+    public float fogGreen;
     @Shadow
-    private float fogBlue;
+    public float fogBlue;
     @Final
     @Shadow
-    private Minecraft mc;
+    public Minecraft mc;
 
     @Inject(method = "setupFog", at = @At("TAIL"))
     private void fogMixin(int fogMode, float farPlaneDistance, float partialTick, CallbackInfo ci) {
@@ -70,13 +70,14 @@ public class FogManagerMixin {
         float yCord = (float) vec.yCoord;
         if (yCord < 48) {
             float caveCol = UberUtil.lerp(0,1,(yCord-8)/40);
-            Vec3d vec3d1 = this.mc.theWorld.getFogColor(renderPartialTicks);
+            Vec3d vec3d1 = this.mc.theWorld.getFogColor(mc.activeCamera, renderPartialTicks);
             this.fogRed *= caveCol;
             this.fogGreen *= caveCol;
             this.fogBlue *= caveCol;
             GL11.glClearColor(this.fogRed, this.fogGreen, this.fogBlue, 1.0F);
         }
     }
+    @Unique
     private FloatBuffer getFogColor(float r, float g, float b, float a) {
         this.fogColorBuffer.clear();
         this.fogColorBuffer.put(r).put(g).put(b).put(a);

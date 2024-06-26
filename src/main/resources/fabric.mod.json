@@ -20,6 +20,9 @@
     "main": [
       "diarr.caveuberhaul.CaveUberhaul"
     ],
+    "beforeGameStart": [
+      "diarr.caveuberhaul.CaveUberhaul"
+    ],
     "terrain-api": [
       "diarr.caveuberhaul.TerrainAPIContainer"
     ]
