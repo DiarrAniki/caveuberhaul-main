@@ -8,13 +8,10 @@
     "ChunkGeneratorPerlinMixin",
     "EntityLivingMixin",
     "ExplosionMixin",
-    "RenderBlocksMixin",
-    "RenderGlobalMixin",
     "FogManagerMixin",
     "WorldMixin",
     "EntityArrowMixin",
-    "EntitySnowballMixin",
-    "RenderManagerMixin"
+    "EntitySnowballMixin"
   ],
   "client": [
   ],

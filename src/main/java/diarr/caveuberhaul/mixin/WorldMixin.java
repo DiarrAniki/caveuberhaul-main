@@ -22,7 +22,7 @@ public class WorldMixin {
         int k1 = k + this.rand.nextInt(16) - this.rand.nextInt(16);
         int l1 = ((World)(Object)this).getBlockId(i1, j1, k1);
         if(this.rand.nextInt(12) > j1 && l1 == 0) {
-            ((World)(Object)this).spawnParticle("voidFog", ((float)i1 + this.rand.nextFloat()), ((float)j1 + this.rand.nextFloat()), ((float)k1 + this.rand.nextFloat()), 0.0D, 0.0D, 0.0D);
+            ((World)(Object)this).spawnParticle("voidFog", ((float)i1 + this.rand.nextFloat()), ((float)j1 + this.rand.nextFloat()), ((float)k1 + this.rand.nextFloat()), 0.0D, 0.0D, 0.0D, 0);
         }
     }
 }
