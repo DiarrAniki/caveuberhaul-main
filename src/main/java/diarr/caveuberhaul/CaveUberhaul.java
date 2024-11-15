@@ -1,15 +1,12 @@
 package diarr.caveuberhaul;
 
-import diarr.caveuberhaul.blocks.BlockFlowstone;
-import diarr.caveuberhaul.blocks.BlockIcicle;
-import diarr.caveuberhaul.blocks.BlockStalagmite;
-import diarr.caveuberhaul.blocks.BlockStalagtite;
-import diarr.caveuberhaul.blocks.EntityFallingIcicle;
-import diarr.caveuberhaul.blocks.EntityFallingStalactite;
-import diarr.caveuberhaul.blocks.RenderFallingIcicle;
-import diarr.caveuberhaul.blocks.RenderFallingStalactite;
+import diarr.caveuberhaul.blocks.*;
+import diarr.caveuberhaul.entity.EntityWasp;
+import diarr.caveuberhaul.entity.EntityWaspModel;
+import diarr.caveuberhaul.entity.EntityWaspRender;
 import diarr.caveuberhaul.items.ItemFlowstoneItem;
 import diarr.caveuberhaul.particles.EntityDripFx;
+import diarr.caveuberhaul.particles.EntitySmokerFx;
 import diarr.caveuberhaul.particles.EntityVoidFogFX;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.client.entity.fx.EntityFX;
@@ -22,6 +19,7 @@ import net.minecraft.core.item.Item;
 import net.minecraft.core.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.useless.dragonfly.helper.ModelHelper;
 import turniplabs.halplibe.helper.BlockBuilder;
 import turniplabs.halplibe.helper.EntityHelper;
 import turniplabs.halplibe.helper.ItemBuilder;
@@ -54,6 +52,7 @@ public class CaveUberhaul implements ModInitializer, GameStartEntrypoint {
         Properties prop = new Properties();
         prop.setProperty("ItemStartId","20000");
         prop.setProperty("BlockStartId","2000");
+        prop.setProperty("EntityStartId","468");
         prop.setProperty("Additional_Old_Caves","true");
         config = new ConfigHandler(MOD_ID,prop);
     }
@@ -189,19 +188,46 @@ public class CaveUberhaul implements ModInitializer, GameStartEntrypoint {
             .setBlockModel(BlockModelCrossedSquares::new)
             .setTickOnLoad()
             .build(new BlockIcicle("cu.icicle4",config.getInt("BlockStartId")+15,Material.ice,3));
+    public static final Block hivecomb = new BlockBuilder(MOD_ID)
+            .setHardness(0.8f)
+            .setResistance(0.8f)
+            .setTextures(MOD_ID + ":block/hiveComb")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE)
+            .setTickOnLoad()
+            .build(new BlockHive("cu.hivecomb",config.getInt("BlockStartId")+16,Material.moss));
+    public static final Block smokerRock = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setSideTextures(MOD_ID+":block/smokerRockSide")
+            .setTopBottomTextures(MOD_ID+":block/smokerRockTop")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE)
+            .setTickOnLoad()
+            .build(new Block("cu.smokerRock",config.getInt("BlockStartId")+17,Material.stone));
+    public static final Block smokerRockMaw = new BlockBuilder(MOD_ID)
+            .setHardness(1.2f)
+            .setResistance(8f)
+            .setSideTextures(MOD_ID+":block/smokerRockSide")
+            .setTopTexture(MOD_ID+":block/smokerRockHoleTop")
+            .setBottomTexture(MOD_ID+":block/smokerRockTop")
+            .setTags(BlockTags.MINEABLE_BY_PICKAXE)
+            .setTickOnLoad()
+            .build(new BlockSmoker("cu.smokerRockMaw",config.getInt("BlockStartId")+18,Material.stone));
 
     @Override
     public void onInitialize() {
         LOGGER.info("Duct Tape applied, CaveUberhaul initialized.");
     }
 
+
     @Override
     public void beforeGameStart() {
         ParticleHelper.createParticle("drip", (world, x, y, z, motionX, motionY, motionZ, data) -> new EntityDripFx(world, x, y, z, motionX, motionY, motionZ));
         ParticleHelper.createParticle("voidFog", (world, x, y, z, motionX, motionY, motionZ, data) -> new EntityVoidFogFX(world, x, y, z, motionX, motionY, motionZ));
+        ParticleHelper.createParticle("smokerSmoke", (world, x, y, z, motionX, motionY, motionZ, data) -> new EntitySmokerFx(world, x, y, z, motionX, motionY, motionZ));
 
-        EntityHelper.createEntity(EntityFallingStalactite.class, 468, "caveuberhaul$falling_stalactite", RenderFallingStalactite::new);
-        EntityHelper.createEntity(EntityFallingIcicle.class, 469, "caveuberhaul$falling_icicle", RenderFallingIcicle::new);
+        EntityHelper.createEntity(EntityWasp.class, config.getInt("EntityStartId"), "caveuberhaul$wasp_worker", ()->new EntityWaspRender(ModelHelper.getOrCreateEntityModel(MOD_ID,"entity/workerbee.geo.json",EntityWaspModel.class),0.5f));
+        EntityHelper.createEntity(EntityFallingStalactite.class, config.getInt("EntityStartId")+1, "caveuberhaul$falling_stalactite", RenderFallingStalactite::new);
+        EntityHelper.createEntity(EntityFallingIcicle.class, config.getInt("EntityStartId")+2, "caveuberhaul$falling_icicle", RenderFallingIcicle::new);
     }
 
     @Override

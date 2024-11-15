@@ -12,20 +12,20 @@ public class CaveBiome {
     public final double maxTemp;
     public final double minWeird;
     public final double maxWeird;
-    public final int bigPillarChance;
-    public final int smallPillarChance;
+    public final double minHeight;
+    public final double maxHeight;
     protected List<SpawnListEntry> spawnableMonsterList;
     protected List<SpawnListEntry> spawnableWaterCreatureList;
     protected List<SpawnListEntry> spawnableAmbientCreatureList;
 
-    public CaveBiome(int id,double minT,double maxT,double minW, double maxW,int bpc,int spc)
+    public CaveBiome(int id,double minT,double maxT,double minW, double maxW,double minH,double maxH)
     {
         this.id = id;
         minTemp = minT;
         maxTemp = maxT;
         minWeird = minW;
         maxWeird = maxW;
-        bigPillarChance = bpc;
-        smallPillarChance = spc;
+        minHeight = minH;
+        maxHeight = maxH;
     }
 }

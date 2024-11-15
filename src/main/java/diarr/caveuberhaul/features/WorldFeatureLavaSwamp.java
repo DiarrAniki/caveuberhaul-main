@@ -10,8 +10,8 @@ import java.util.Random;
 
 public class WorldFeatureLavaSwamp extends WorldFeature {
     public boolean generate(World world, Random random, int x, int y, int z) {
-        int radius = random.nextInt(20)+6;
-        int height = random.nextInt(5)+1;
+        int radius = random.nextInt(24)+6;
+        int height = random.nextInt(7)+1;
         for(int circleX = x-radius;circleX<=x+radius;circleX++)
         {
             for(int circleZ = z-radius;circleZ<=z+radius;circleZ++)

@@ -106,7 +106,7 @@ public class BlockStalagtite extends BlockStalactiteBase {
             if (anyPlayerInRange(world, x, y, z)) {
                 double xp = (double)x + 0.5 + (rand.nextFloat()-0.5f)*0.1f;
                 double zp = (double)z + 0.5 + (rand.nextFloat()-0.5f)*0.1f;
-                world.spawnParticle("drip", xp, y, zp, 0.0, -0.5f, 0.0, 0);
+                world.spawnParticle("drip", xp, y, zp, 0.0, -0.5f, 0.0, 0,32);
             }
         }
     }

@@ -2,6 +2,7 @@ package diarr.caveuberhaul.gen.cavebiomes;
 
 import diarr.caveuberhaul.UberUtil;
 import diarr.caveuberhaul.gen.FastNoiseLite;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.biome.Biomes;
@@ -22,6 +23,12 @@ public class CaveBiomeProvider
         frostyBiomes.add(Biomes.OVERWORLD_TAIGA);
         frostyBiomes.add(Biomes.OVERWORLD_TUNDRA);
     }
+    public static final List<Biome> tropicBiomes = new ArrayList<>();
+    static {
+        tropicBiomes.add(Biomes.OVERWORLD_RAINFOREST);
+        tropicBiomes.add(Biomes.OVERWORLD_CAATINGA);
+        tropicBiomes.add(Biomes.OVERWORLD_CAATINGA_PLAINS);
+    }
 
     public CaveBiomeProvider(World world,int chunkX, int chunkZ)
     {
@@ -36,8 +43,8 @@ public class CaveBiomeProvider
         double weird;
         double temperature;
 
-        float[][] tempVals = UberUtil.getInterpolatedNoiseValue2D(UberUtil.sampleNoise2D(chunkX,chunkZ,0.002f,world, temperatureNoise ,FastNoiseLite.NoiseType.Perlin));
-        float[][] weirdVals = UberUtil.getInterpolatedNoiseValue2D(UberUtil.sampleNoise2D(chunkX,chunkZ,0.004f,world, weirdNoise ,FastNoiseLite.NoiseType.OpenSimplex2S));
+        float[][] tempVals = UberUtil.getInterpolatedNoiseValue2D(UberUtil.sampleNoise2D(chunkX,chunkZ,0.002f,world, temperatureNoise ,FastNoiseLite.NoiseType.Value));
+        float[][] weirdVals = UberUtil.getInterpolatedNoiseValue2D(UberUtil.sampleNoise2D(chunkX,chunkZ,0.004f,world, weirdNoise ,FastNoiseLite.NoiseType.Value));
         for(int x = 0; x<16;x++)
         {
             int gx = x+chunkX*16;
@@ -49,14 +56,18 @@ public class CaveBiomeProvider
                 temperature = (1+tempVals[x][z])/2;
                 for(int y = world.getHeightBlocks()-1; y>0;y--)
                 {
-                    if(frostyBiomes.contains(biome) && y>((world.getHeightBlocks()/4)-world.rand.nextInt(4)))
+                    if(frostyBiomes.contains(biome) && y>((world.getHeightBlocks()*CaveBiomes.CAVE_FROST.minHeight)+world.rand.nextInt(4)))
                     {
                         caveBiomesInChunk[ChunkSection.makeBlockIndex(x, y, z)] = CaveBiomes.CAVE_FROST;
+                    }
+                    if(tropicBiomes.contains(biome) && y>((world.getHeightBlocks()*CaveBiomes.CAVE_JUNGLE.minHeight)+world.rand.nextInt(4))&&y<((world.getHeightBlocks()*CaveBiomes.CAVE_JUNGLE.maxHeight)-world.rand.nextInt(4)))
+                    {
+                        caveBiomesInChunk[ChunkSection.makeBlockIndex(x, y, z)] = CaveBiomes.CAVE_JUNGLE;
                     }
                     for (int b = 0; b< CaveBiomes.caveBiomeList.size();b++)
                     {
                         CaveBiome cb = CaveBiomes.caveBiomeList.get(b);
-                        if(checkIfIsBiome(cb,temperature,weird))
+                        if(checkIfIsBiome(cb,temperature,weird,y,world))
                         {
                             caveBiomesInChunk[ChunkSection.makeBlockIndex(x, y, z)] = cb;
                         }
@@ -66,18 +77,20 @@ public class CaveBiomeProvider
         }
     }
 
-    public CaveBiome getCaveBiomeAt(int x,int y,int z,World world)
+    public CaveBiome getCaveBiomeAt(int x,int y,int z)
     {
         return caveBiomesInChunk[ChunkSection.makeBlockIndex(x, y, z)];
     }
 
-    private boolean checkIfIsBiome(CaveBiome b,double t, double w)
+    public CaveBiome[] getCaveBiomesInChunk()
     {
-        return inRange(t,b.minTemp,b.maxTemp)&&inRange(w,b.minWeird,b.maxWeird);
+        return caveBiomesInChunk;
     }
 
-    private boolean inRange(double val,double min, double max)
+    private boolean checkIfIsBiome(CaveBiome b,double t, double w,int y,World world)
     {
-        return min<val&&max>val;
+        return UberUtil.inRange(t,b.minTemp,b.maxTemp)&&UberUtil.inRange(w,b.minWeird,b.maxWeird)&&UberUtil.inRange(y,b.minHeight*(world.getHeightBlocks()*0.5f) ,b.maxHeight*(world.getHeightBlocks()*0.5f));
     }
+
+
 }

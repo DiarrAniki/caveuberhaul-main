@@ -136,6 +136,33 @@ public class UberUtil {
         return vals;
     }
 
+    public static float[][][] sampleNoiseDomainWarp(int chunkX, int chunkZ, int offX, int offY, int offZ, float freq, float yCrunch,float warp, World world, FastNoiseLite tNoise, FastNoiseLite.NoiseType nType) {
+        float[][][] noiseSamples = new float[5][130][5];
+        float noise;
+
+        tNoise.SetSeed((int) world.getRandomSeed());
+        tNoise.SetNoiseType(nType);
+        tNoise.SetFrequency(freq);
+        tNoise.SetFractalType(FastNoiseLite.FractalType.FBm);
+        tNoise.SetDomainWarpAmp(warp);
+
+        for (int x = 0; x < 5; x++) {
+            int realX = x * 4 + chunkX * 16;
+            for (int z = 0; z < 5; z++) {
+                int realZ = z * 4 + chunkZ * 16;
+
+                // loop from top down for y values so we can adjust noise above current y later on
+                for (int y = world.getHeightBlocks() / 2; y >= 0; y--) {
+                    float realY = y * 2;
+
+                    noise = tNoise.GetNoise(realX + offX, (realY + offY) * yCrunch, realZ + offZ);
+                    noiseSamples[x][y][z] = noise;
+                }
+            }
+        }
+        return noiseSamples;
+    }
+
     public static float[][][] sampleNoise(int chunkX, int chunkZ, int offX, int offY, int offZ, float freq, float yCrunch, World world, FastNoiseLite tNoise, FastNoiseLite.NoiseType nType) {
         float[][][] noiseSamples = new float[5][130][5];
         float noise;
@@ -287,6 +314,13 @@ public class UberUtil {
         int difZ = z1 - z2;
         return Math.sqrt(difX * difX + difY * difY + difZ * difZ);
     }
+    public static float distanceAB(float x1,float y1,float z1,float x2, float y2, float z2)
+    {
+        float difX = x1 - x2;
+        float difY = y1 - y2;
+        float difZ = z1 - z2;
+        return (float) Math.sqrt(difX * difX + difY * difY + difZ * difZ);
+    }
 
     public static boolean isSurroundedAndFreeAbove(int x, int y, int z, World world)
     {
@@ -305,6 +339,30 @@ public class UberUtil {
     public static boolean isSurrounded(int x,int y,int z, World world)
     {
         return isSolid(x-1,y,z,world)&&isSolid(x+1,y,z,world)&&isSolid(x,y,z-1,world)&&isSolid(x,y,z+1,world)&&isSolid(x,y-1,z,world)&&isSolid(x,y+1,z,world);
+    }
+
+    public static boolean isSurroundedSides(int x,int y,int z, World world)
+    {
+        return !world.isAirBlock(x-1,y,z)&&!world.isAirBlock(x+1,y,z)&&!world.isAirBlock(x,y,z-1)&&!world.isAirBlock(x,y,z+1);
+    }
+    public static boolean bordersWaterSource(int x, int y, int z, World world)
+    {
+        return isWaterSource(x-1,y,z,world)||isWaterSource(x+1,y,z,world)||isWaterSource(x,y,z-1,world)||isWaterSource(x,y,z+1,world)||isWaterSource(x,y+1,z,world);
+    }
+
+    public static boolean bordersLavaSource(int x, int y, int z, World world)
+    {
+        return isLavaSource(x-1,y,z,world)||isLavaSource(x+1,y,z,world)||isLavaSource(x,y,z-1,world)||isLavaSource(x,y,z+1,world)||isLavaSource(x,y+1,z,world);
+    }
+
+    public static boolean isWaterSource(int x,int y,int z, World world)
+    {
+        return world.getBlock(x,y,z) == Block.fluidWaterStill;
+    }
+
+    public static boolean isLavaSource(int x,int y,int z, World world)
+    {
+        return world.getBlock(x,y,z) == Block.fluidLavaStill;
     }
 
     public static boolean isSolid(int x,int y,int z, World world)
@@ -349,20 +407,25 @@ public class UberUtil {
         return 0;
     }
 
-    public static int getMaxSurfaceHeight(short[] data, World world)
+    public static int getMaxSurfaceHeight(World world)
     {
         int max = 0;
         int[][] testcords = {{2, 6}, {3, 11}, {7, 2}, {9, 13}, {12,4}, {13, 9}};
 
         for (int[] testcord : testcords) {
-            int testmax = getSurfaceHeight(testcord[0], testcord[1], data, world);
+            int testmax = world.getHeightValue(testcord[0], testcord[1]);
             if (testmax > max) {
                 max = testmax;
-                if (max > 134)
+                if (max > 140)
                     return max;
             }
         }
         return max;
+    }
+
+    public static boolean inRange(double val,double min, double max)
+    {
+        return min<val&&max>val;
     }
 
     public static int getSurfaceHeight(int localX, int localZ,short[] data,World world)

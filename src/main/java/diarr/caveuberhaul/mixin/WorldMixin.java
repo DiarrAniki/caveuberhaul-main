@@ -1,6 +1,8 @@
 package diarr.caveuberhaul.mixin;
 
 import net.minecraft.core.world.World;
+import net.minecraft.core.world.type.WorldTypeFlat;
+import net.minecraft.core.world.type.WorldTypes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,12 +19,14 @@ public class WorldMixin {
     @Inject(method = "randomDisplayUpdates", at = @At(value = "INVOKE",target ="Lnet/minecraft/core/world/World;getBlockId(III)I",shift = At.Shift.AFTER))
     private void randomDisplayUpdatesMixin(int i, int j, int k, CallbackInfo ci)
     {
-        int i1 = i + this.rand.nextInt(16) - this.rand.nextInt(16);
-        int j1 = j + this.rand.nextInt(16) - this.rand.nextInt(16);
-        int k1 = k + this.rand.nextInt(16) - this.rand.nextInt(16);
-        int l1 = ((World)(Object)this).getBlockId(i1, j1, k1);
-        if(this.rand.nextInt(12) > j1 && l1 == 0) {
-            ((World)(Object)this).spawnParticle("voidFog", ((float)i1 + this.rand.nextFloat()), ((float)j1 + this.rand.nextFloat()), ((float)k1 + this.rand.nextFloat()), 0.0D, 0.0D, 0.0D, 0);
+        if( ((World) (Object) this).getWorldType() != WorldTypes.FLAT || ((World) (Object) this).getWorldType() != WorldTypes.DEBUG) {
+            int i1 = i + this.rand.nextInt(16) - this.rand.nextInt(16);
+            int j1 = j + this.rand.nextInt(16) - this.rand.nextInt(16);
+            int k1 = k + this.rand.nextInt(16) - this.rand.nextInt(16);
+            int l1 = ((World) (Object) this).getBlockId(i1, j1, k1);
+            if (this.rand.nextInt(12) > j1 && l1 == 0) {
+                ((World) (Object) this).spawnParticle("voidFog", ((float) i1 + this.rand.nextFloat()), ((float) j1 + this.rand.nextFloat()), ((float) k1 + this.rand.nextFloat()), 0.0D, 0.0D, 0.0D, 0);
+            }
         }
     }
 }
