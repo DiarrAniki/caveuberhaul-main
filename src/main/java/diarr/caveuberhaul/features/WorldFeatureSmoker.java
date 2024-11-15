@@ -36,7 +36,7 @@ public class WorldFeatureSmoker extends WorldFeature {
                     {
                         world.setBlock(i,j+y,k, Block.oreGoldBasalt.id);
                     }
-                    else if(r<40)
+                    else if(r<15)
                     {
                         world.setBlock(i,j+y,k, Block.oreCoalBasalt.id);
                     }

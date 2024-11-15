@@ -14,9 +14,6 @@ public class CaveBiome {
     public final double maxWeird;
     public final double minHeight;
     public final double maxHeight;
-    protected List<SpawnListEntry> spawnableMonsterList;
-    protected List<SpawnListEntry> spawnableWaterCreatureList;
-    protected List<SpawnListEntry> spawnableAmbientCreatureList;
 
     public CaveBiome(int id,double minT,double maxT,double minW, double maxW,double minH,double maxH)
     {
