@@ -2,7 +2,6 @@ package diarr.caveuberhaul.gen.cavebiomes;
 
 import diarr.caveuberhaul.UberUtil;
 import diarr.caveuberhaul.gen.FastNoiseLite;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.world.World;
 import net.minecraft.core.world.biome.Biome;
 import net.minecraft.core.world.biome.Biomes;

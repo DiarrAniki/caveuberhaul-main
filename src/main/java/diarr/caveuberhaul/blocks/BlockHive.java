@@ -3,7 +3,6 @@ package diarr.caveuberhaul.blocks;
 import diarr.caveuberhaul.entity.EntityWasp;
 import net.minecraft.core.block.Block;
 import net.minecraft.core.block.material.Material;
-import net.minecraft.core.entity.animal.EntityWolf;
 import net.minecraft.core.world.World;
 
 public class BlockHive extends Block {

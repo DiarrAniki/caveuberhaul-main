@@ -8,15 +8,6 @@ import net.minecraft.core.world.chunk.Chunk;
 import net.minecraft.core.world.chunk.ChunkSection;
 import net.minecraft.core.world.generate.MapGenBase;
 import net.minecraft.core.world.generate.chunk.ChunkGeneratorResult;
-import org.apache.commons.lang3.ArrayUtils;
-import org.spongepowered.asm.mixin.Unique;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import static diarr.caveuberhaul.UberUtil.getMaxSurfaceHeight;
 
 public class MapGenNoiseCaves extends MapGenBase {
 //TODO: Höhlen fluten wenn auf Wasser quelle getroffen wird.
@@ -33,10 +24,9 @@ public class MapGenNoiseCaves extends MapGenBase {
     private static final FastNoiseLite caveModifierNoise = new FastNoiseLite();
     private static final FastNoiseLite pillarNoise = new FastNoiseLite();
 
-    private final boolean isAlpha;
 
     public MapGenNoiseCaves(boolean isAlpha) {
-        this.isAlpha = isAlpha;
+
     }
 
     public void generate(World world, int baseChunkX, int baseChunkZ, ChunkGeneratorResult result)
@@ -55,12 +45,9 @@ public class MapGenNoiseCaves extends MapGenBase {
         float[][] ModifierNoise = UberUtil.getInterpolatedNoiseValue2D(UberUtil.sampleNoise2D(baseChunkX,baseChunkZ,0.005f,world, caveModifierNoise, FastNoiseLite.NoiseType.Perlin));
         float[][] PillarNoise = UberUtil.getInterpolatedNoiseValue2D(UberUtil.sampleNoise2D(baseChunkX,baseChunkZ,0.07f,world, pillarNoise, FastNoiseLite.NoiseType.Value));
 
-       // int chunkheight = getChunkHeight(world.getChunkFromChunkCoords(baseChunkX,baseChunkZ));
-
         for (int s = 0; s < Chunk.CHUNK_SECTIONS; s++) {
             for (int x = 0; x < Chunk.CHUNK_SIZE_X; ++x) {
                 for (int z = 0; z < Chunk.CHUNK_SIZE_Z; ++z) {
-                    //System.out.println(world.getHeightValue(x,z));
                     double cheeseModif = UberUtil.clamp(ModifierNoise[x][z],-0.1f,0.14f);
                     double noodleModif = UberUtil.clamp(ModifierNoise[x][z],-0.01f,0.1f);
                     double coreHeight = UberUtil.clamp(ModifierNoise[x][z],-0.5f,0.5f);
@@ -140,6 +127,10 @@ public class MapGenNoiseCaves extends MapGenBase {
             {
                 result.setBlock(localX, localY - 1, localZ, Block.grass.id);
             }
+        }
+        if(result.getBlock(localX, localY + 1, localZ)  == Block.fluidWaterStill.id)
+        {
+            result.setBlock(localX, localY, localZ, Block.fluidWaterFlowing.id);
         }
     }
 }

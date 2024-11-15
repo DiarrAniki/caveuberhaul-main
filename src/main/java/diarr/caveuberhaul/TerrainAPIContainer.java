@@ -6,7 +6,6 @@ import diarr.caveuberhaul.gen.cavebiomes.CaveBiome;
 import diarr.caveuberhaul.gen.cavebiomes.CaveBiomeChunkMap;
 import diarr.caveuberhaul.gen.cavebiomes.CaveBiomeProvider;
 import net.minecraft.core.block.Block;
-import net.minecraft.core.block.BlockFluid;
 import net.minecraft.core.block.BlockStone;
 import net.minecraft.core.block.material.Material;
 import net.minecraft.core.entity.animal.EntityWolf;
@@ -36,7 +35,6 @@ public class TerrainAPIContainer implements TerrainAPI {
         return CaveUberhaul.MOD_ID;
     }
     public void onInitialize() {
-        //ChunkDecoratorOverworldAPI.structureFeatures.addFeature(TerrainAPIContainer::generateLaveSwamp, null);
         ChunkDecoratorOverworldAPI.structureFeatures.addFeature(TerrainAPIContainer::generateCaveBiomes, null);
         ChunkDecoratorOverworldAPI.structureFeatures.addFeature(TerrainAPIContainer::func_01, null);
         ChunkDecoratorOverworldAPI.structureFeatures.addFeature(TerrainAPIContainer::func_02, null);
@@ -99,13 +97,20 @@ public class TerrainAPIContainer implements TerrainAPI {
                         if (cbp.getCaveBiomeAt(lx, realY, lz) != null) {
                             CaveBiome cb = cbp.getCaveBiomeAt(lx, realY, lz);
                             if (cb != null) {
-                                switch (cb.id) {
+                                /*switch (cb.id) {
                                     case 4:
                                         if(rand.nextInt(75)==1)
                                         {
                                             new WorldFeatureSmoker().generate(worldObj,rand,gx,realY,gz);
                                         }
                                         break;
+                                }*/
+                                if(cb.id == 4)
+                                {
+                                    if(rand.nextInt(75)==1)
+                                    {
+                                        new WorldFeatureSmoker().generate(worldObj,rand,gx,realY,gz);
+                                    }
                                 }
                             }
                         }
@@ -228,7 +233,6 @@ public class TerrainAPIContainer implements TerrainAPI {
                                             //Create Lava swamps
                                             if (UberUtil.isSurroundedAndFreeAbove(gx, realY, gz, worldObj)) {
                                                 if ((rand.nextInt(11) <= Math.abs(biomeDecNoise[lx][lz] * 10))) {
-                                                    //data[ChunkSection.makeBlockIndex(lx, ly, lz)] = (short) cb.blockList[2].id;
                                                     worldObj.setBlock(gx,realY,gz,cb.blockList[2].id);
                                                 }
                                             }
@@ -246,13 +250,11 @@ public class TerrainAPIContainer implements TerrainAPI {
                                         }
                                         if(data[ChunkSection.makeBlockIndex(lx, ly, lz)]!=0&&UberUtil.inRange(Math.abs(biomeDecNoise[lx][lz]),0,0.065))
                                         {data[ChunkSection.makeBlockIndex(lx, ly, lz)] = (short) cb.blockList[1].id;}
-                                        //Place Smokers
                                         break;
                                     }
                                 }
                             }
                         }
-                        //placePillars(gx,realY,gz,worldObj, rand, cbp.getCaveBiomeAt(lx,realY,lz,worldObj));
                     }
                 }
             }
@@ -260,16 +262,6 @@ public class TerrainAPIContainer implements TerrainAPI {
         }
     }
 
-    public static Void generateLaveSwamp(Parameters parameters){
-        if (parameters.random.nextFloat() < 0.92f) {return null;}
-        int x = parameters.chunk.xPosition * 16;
-        int z = parameters.chunk.zPosition * 16;
-        // Generate Lava Swamp
-        int lsx = x + parameters.random.nextInt(16);
-        int lsz = z + parameters.random.nextInt(16);
-        new WorldFeatureLavaSwamp().generate(parameters.decorator.world, parameters.random, lsx, 14, lsz);
-        return null;
-    }
     public static Void func_01(Parameters parameters){
         if(parameters.random.nextFloat()>0.0001f) {return null;}
         int x = parameters.chunk.xPosition * 16;

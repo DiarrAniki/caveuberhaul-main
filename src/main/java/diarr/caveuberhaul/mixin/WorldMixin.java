@@ -1,7 +1,6 @@
 package diarr.caveuberhaul.mixin;
 
 import net.minecraft.core.world.World;
-import net.minecraft.core.world.type.WorldTypeFlat;
 import net.minecraft.core.world.type.WorldTypes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
